@@ -15,11 +15,12 @@ function resolveKingdomBoosts(entry: KingdomCHG, choices: KingdomAbility[]): Kin
 /** Assemble what will be collected during the kingdom's upkeep phase */
 function calculateKingdomCollectionData(kingdom: Kingdom): {
     formula: string;
-    commodities: Record<Exclude<KingdomCommodity, "food">, number>;
-} {
-    const commodityTypes = ["luxuries", "lumber", "ore", "stone"] as const;
+    commodities: Record<Exclude<KingdomCommodity, "food"|"fish"|"aqueduct"|"bridge"|"canal"|"fort"
+    |"highway"|"road"|"watchtower"|"refuge"|"landmark"|"river">, number>;
+} { 
+    const commodityTypes = ["lumber", "ore", "stone"] as const;
     return {
-        formula: `${kingdom.resources.dice.number}d${kingdom.resources.dice.faces}`,
+        formula: "1d20+"+`${kingdom.skills.economy.mod}`,
         commodities: R.mapToObj(commodityTypes, (type) => {
             const value = kingdom.resources.workSites[type];
             return [type, value.value + value.resource * 2];

@@ -25,7 +25,7 @@
                     {{/if}}
                 </div>
                 <div class="details">
-                    <span class="role">{{label}}</span>
+                    <span class="role" data-tooltip="{{description}}">{{label}}</span>
                     {{#if leader.actor.hasPlayerOwner}}
                         <label class="vacant" title="{{leader.penaltyLabel}}">
                             <input type="checkbox" name="leadership.{{leader.slug}}.vacant" {{checked leader.vacant}} />
@@ -48,29 +48,6 @@
             </button>
         </header>
         <div class="resource-data">
-            <section class="resource-dice">
-                {{localize "PF2E.Kingmaker.Kingdom.Resources.Dice"}}
-                <span class="rollable">{{{resourceDice.icon}}} {{resourceDice.number}}d{{resourceDice.faces}}</span>
-                <label>
-                    {{localize "PF2E.Bonus"}}
-                    <input type="number" class="{{resourceDice.bonusAdjustment}}" value="{{resourceDice.bonus}}" data-property="system.campaign.resources.dice.bonus"/>
-                </label>
-                <label>
-                    {{localize "PF2E.Kingmaker.Penalty"}}
-                    <input type="number" class="{{resourceDice.penaltyAdjustment}}" value="{{resourceDice.penalty}}" data-property="system.campaign.resources.dice.penalty"/>
-                </label>
-            </section>
-            <section class="commodities">
-                {{#each commodities as |commodity|}}
-                    <div class="commodity">
-                        <label class="type" for="commodity-{{commodity.type}}">{{commodity.label}}</label>
-                        <div class="value-max">
-                            <input id="commodity-{{commodity.type}}" type="number" value="{{commodity.value}}" name="resources.commodities.{{commodity.type}}.value" />
-                            / {{commodity.max}}
-                        </div>
-                    </div>
-                {{/each}}
-            </section>
             <section class="stats">
                 <div>
                     {{localize "PF2E.Kingmaker.Consumption.Label"}}
@@ -97,21 +74,6 @@
                 <div class="score">
                     <label>{{ability.label}}</label>
                     <div class="value">{{numberFormat ability.mod sign=true}}</div>
-                </div>
-                <div class="corruption-section">
-                    <div class="stat corruption">
-                        <label for="abilities.{{ability.slug}}.ruin.value">{{ability.ruinLabel}}</label>
-                        <section class="ruin-value">
-                            <input type="number" id="abilities.{{ability.slug}}.ruin.value" name="abilities.{{ability.slug}}.ruin.value" value="{{ability.ruin.value}}"/>
-                            /
-                            <input type="number" name="abilities.{{ability.slug}}.ruin.max" value="{{ability.ruin.max}}"/>
-                        </span>
-                    </div>
-                    <label class="stat penalty">
-                        <span>{{localize "PF2E.Kingmaker.Penalty"}}</span>
-                        <input type="number" name="abilities.{{ability.slug}}.penalty" value="{{numberFormat ability.penalty}}"/>
-                    </label>
-                    <div class="progress" style="--value:{{ability.ruin.value}}; --max:{{ability.ruin.max}};"></div>
                 </div>
             </section>
         {{/each}}

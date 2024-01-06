@@ -55,6 +55,9 @@ section.effects {
     & > header {
         margin-top: 0;
     }
+    select {
+        margin-bottom: 0.5rem;
+    }
     .effects-list {
         @include effects-list;
         .item {

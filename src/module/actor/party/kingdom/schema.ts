@@ -3,11 +3,17 @@ import { ZeroToFour } from "@module/data.ts";
 import { DataUnionField, RecordField, StrictBooleanField, StrictStringField } from "@system/schema-data-fields.ts";
 import * as R from "remeda";
 import type { ArrayField, SchemaField, StringField } from "types/foundry/common/data/fields.d.ts";
-import { KingdomAbility, KingdomSettlementData, KingdomSettlementType, KingdomSkill } from "./types.ts";
+import { KingdomAbility, KingdomDistrictData, KingdomEdictsChoice, KingdomSettlementData, KingdomSettlementType, KingdomSkill } from "./types.ts";
 import {
     KINGDOM_ABILITIES,
     KINGDOM_COMMODITIES,
+    KINGDOM_EDICTS,
+    KINGDOM_EDICT_CHOICES,
     KINGDOM_LEADERSHIP,
+    KINGDOM_SETTLEMENT_GRID_BLOCKS,
+    KINGDOM_SETTLEMENT_GRID_BORDERS,
+    KINGDOM_SETTLEMENT_GRID_LOTS,
+    KINGDOM_SETTLEMENT_QUALITIES,
     KINGDOM_SETTLEMENT_TYPES,
     KINGDOM_SKILLS,
 } from "./values.ts";
@@ -77,7 +83,17 @@ const KINGDOM_BUILD_SCHEMA = {
     ),
     /** Boost selections made by the user, both during the build process and levelling */
     boosts: new fields.SchemaField(
-        R.mapToObj(["charter", "heartland", "government", "1", "5", "10", "15", "20"] as const, (category) => {
+        R.mapToObj(["charter", "heartland", "government", "ruler",
+        "councilor",
+        "general",
+        "grand_diplomat",
+        "high_priest",
+        "magister",
+        "marshal",
+        "royal_enforcer",
+        "spymaster",
+        "treasurer",
+        "warden"] as const, (category) => {
             const schema = new fields.ArrayField<StringField<KingdomAbility, KingdomAbility, true, false>>(
                 new fields.StringField<KingdomAbility, KingdomAbility, true, false>({
                     choices: KINGDOM_ABILITIES,
@@ -91,15 +107,13 @@ const KINGDOM_BUILD_SCHEMA = {
 };
 
 const KINGDOM_RESOURCES_SCHEMA = {
-    dice: new fields.SchemaField({
-        number: new fields.NumberField<number, number>(),
-        faces: new fields.NumberField<number, number>(),
-        bonus: new fields.NumberField<number, number, true, false>({ required: true, nullable: false, initial: 0 }),
-        penalty: new fields.NumberField<number, number, true, false>({ required: true, nullable: false, initial: 0 }),
-    }),
     fame: new fields.SchemaField({
         value: new fields.NumberField<number, number, true, false>({ required: true, nullable: false, initial: 0 }),
-        max: new fields.NumberField<number, number, true, false>({ required: true, nullable: false, initial: 3 }),
+        max: new fields.NumberField<number, number, true, false>({ required: true, nullable: false, initial: 99 }),
+    }),
+    infamy: new fields.SchemaField({
+        value: new fields.NumberField<number, number, true, false>({ required: true, nullable: false, initial: 0 }),
+        max: new fields.NumberField<number, number, true, false>({ required: true, nullable: false, initial: 99 }),
     }),
     commodities: new fields.SchemaField(
         R.mapToObj(KINGDOM_COMMODITIES, (type) => {
@@ -127,7 +141,8 @@ const KINGDOM_RESOURCES_SCHEMA = {
     }),
     /** Worksites by commodity type, for the commodities that can have work sites */
     workSites: new fields.SchemaField(
-        R.mapToObj(["food", "luxuries", "lumber", "ore", "stone"], (type) => {
+        R.mapToObj(["food", "fish","lumber", "ore", "stone","aqueduct","bridge","canal","fort"
+        ,"highway","road","watchtower","refuge","landmark","river"], (type) => {
             const schema = new fields.SchemaField({
                 /** The number of regular non-resource work sites */
                 value: new fields.NumberField<number, number, false, false>({
@@ -150,6 +165,31 @@ const KINGDOM_RESOURCES_SCHEMA = {
     ),
 };
 
+const KINGDOM_DISTRICT_SCHEMA = {
+    name: new fields.StringField<string, string, true, false, true>({
+        required: true,
+        blank: true,
+        nullable: false,
+        initial: "",
+    }),
+    grid: new fields.SchemaField(
+        R.mapToObj(KINGDOM_SETTLEMENT_GRID_BLOCKS, (block) => {
+            const lots = new fields.SchemaField(
+                R.mapToObj(KINGDOM_SETTLEMENT_GRID_LOTS, (lot) => {
+                    const schema = new fields.SchemaField({
+                        uuid: new fields.StringField<string, string, false, true>({
+                            required: false,
+                            nullable: true,
+                            initial: null,
+                        }),
+                    });
+                    return [lot, schema];
+                })
+            )
+            return [block, lots];
+        })
+    ),
+};
 const KINGDOM_SETTLEMENT_SCHEMA = {
     name: new fields.StringField<string, string, true, false, true>({
         required: true,
@@ -183,7 +223,7 @@ const KINGDOM_SETTLEMENT_SCHEMA = {
         total: new fields.NumberField<number, number, false, false>({ required: false, nullable: false, initial: 0 }),
     }),
     storage: new fields.SchemaField(
-        R.mapToObj(["food", "luxuries", "lumber", "ore", "stone"], (type) => {
+        R.mapToObj(["economy","loyalty","stability","corruption","crime","productivity","law","lore","society","defense","danger","fame","infamy","population","consumption","basevalue"], (type) => {
             const schema = new fields.NumberField<number, number, false, false>({
                 required: false,
                 nullable: false,
@@ -192,6 +232,103 @@ const KINGDOM_SETTLEMENT_SCHEMA = {
             });
             return [type, schema];
         }),
+    ),
+    districts: new RecordField<
+    StringField<string, string, true, false, false>,
+    SchemaField<
+        typeof KINGDOM_DISTRICT_SCHEMA,
+        SourceFromSchema<typeof KINGDOM_DISTRICT_SCHEMA>,
+        KingdomDistrictData
+    >,
+    true,
+    false
+    >(
+        new fields.StringField({ required: true, nullable: false, blank: false }),
+        new fields.SchemaField(KINGDOM_DISTRICT_SCHEMA, { required: true }),
+        { required: true, nullable: false, initial: {
+            0:{
+                name:"0",
+                grid: {
+                    AA: {0: {uuid: null,},1: {uuid: null,},2: {uuid: null,},3: {uuid: null,},},
+                    AB: {0: {uuid: null,},1: {uuid: null,},2: {uuid: null,},3: {uuid: null,},},
+                    AC: {0: {uuid: null,},1: {uuid: null,},2: {uuid: null,},3: {uuid: null,},},
+                    BA: {0: {uuid: null,},1: {uuid: null,},2: {uuid: null,},3: {uuid: null,},},
+                    BB: {0: {uuid: null,},1: {uuid: null,},2: {uuid: null,},3: {uuid: null,},},
+                    BC: {0: {uuid: null,},1: {uuid: null,},2: {uuid: null,},3: {uuid: null,},},
+                    CA: {0: {uuid: null,},1: {uuid: null,},2: {uuid: null,},3: {uuid: null,},},
+                    CB: {0: {uuid: null,},1: {uuid: null,},2: {uuid: null,},3: {uuid: null,},},
+                    CC: {0: {uuid: null,},1: {uuid: null,},2: {uuid: null,},3: {uuid: null,},},
+                },
+            }
+        } },
+    ),
+    qualities: new fields.SchemaField(
+        R.mapToObj(KINGDOM_SETTLEMENT_QUALITIES, (quality) => {
+            const schema = new fields.SchemaField({
+                uuid: new fields.StringField<string, string, false, true>({
+                    required: false,
+                    nullable: true,
+                    initial: null,
+                }),
+            });
+            return [quality, schema];
+        })
+    ),
+    /*districts: new RecordField<
+        StringField<string, string, true, false, false>,
+        SchemaField<
+            typeof KINGDOM_DISTRICT_SCHEMA,
+            SourceFromSchema<typeof KINGDOM_DISTRICT_SCHEMA>,
+            KingdomDistrictData, true, false, true
+        >
+    >(
+        new fields.StringField({ required: true, nullable: false, blank: false}),
+        new fields.SchemaField(KINGDOM_DISTRICT_SCHEMA, { required: true}),
+        { required: true, nullable: false, initial: {
+            0:{
+                name:"0",
+                grid: {
+                    AA: {0: {uuid: null,},1: {uuid: null,},2: {uuid: null,},3: {uuid: null,},},
+                    AB: {0: {uuid: null,},1: {uuid: null,},2: {uuid: null,},3: {uuid: null,},},
+                    AC: {0: {uuid: null,},1: {uuid: null,},2: {uuid: null,},3: {uuid: null,},},
+                    BA: {0: {uuid: null,},1: {uuid: null,},2: {uuid: null,},3: {uuid: null,},},
+                    BB: {0: {uuid: null,},1: {uuid: null,},2: {uuid: null,},3: {uuid: null,},},
+                    BC: {0: {uuid: null,},1: {uuid: null,},2: {uuid: null,},3: {uuid: null,},},
+                    CA: {0: {uuid: null,},1: {uuid: null,},2: {uuid: null,},3: {uuid: null,},},
+                    CB: {0: {uuid: null,},1: {uuid: null,},2: {uuid: null,},3: {uuid: null,},},
+                    CC: {0: {uuid: null,},1: {uuid: null,},2: {uuid: null,},3: {uuid: null,},},
+                },
+            }
+        } },
+    ),*/
+    /*grid: new fields.SchemaField(
+        R.mapToObj(KINGDOM_SETTLEMENT_GRID_BLOCKS, (block) => {
+            const lots = new fields.SchemaField(
+                R.mapToObj(KINGDOM_SETTLEMENT_GRID_LOTS, (lot) => {
+                    const schema = new fields.SchemaField({
+                        uuid: new fields.StringField<string, string, false, true>({
+                            required: false,
+                            nullable: true,
+                            initial: null,
+                        }),
+                    });
+                    return [lot, schema];
+                })
+            )
+            return [block, lots];
+        })
+    ),*/
+    borders: new fields.SchemaField(
+        R.mapToObj(KINGDOM_SETTLEMENT_GRID_BORDERS, (border) => {
+            const schema = new fields.SchemaField({
+                uuid: new fields.StringField<string, string, false, true>({
+                    required: false,
+                    nullable: true,
+                    initial: null,
+                }),
+            });
+            return [border, schema];
+        })
     ),
 };
 
@@ -223,6 +360,14 @@ const KINGDOM_SCHEMA = {
     }),
     capital: new fields.StringField({ initial: "", required: true }),
     size: new fields.NumberField<number, number, true, false>({ initial: 1, min: 1, required: true, nullable: false }),
+    sizeData: new fields.SchemaField({
+        type: new fields.StringField({required: true, nullable: false }),
+        inFame: new fields.NumberField({required: true,nullable: false,initial: 0}),
+        improvSettlements: new fields.NumberField({required: true,nullable: false,initial: 0}),
+        improvBuildings: new fields.NumberField({required: true,nullable: false,initial: 0}),
+        improvTerrain: new fields.NumberField({required: true,nullable: false,initial: 0}),
+        claimHex: new fields.NumberField({required: true,nullable: false,initial: 0}),
+    }),
     level: new fields.NumberField<number, number, true, false>({
         required: true,
         nullable: false,
@@ -351,8 +496,19 @@ const KINGDOM_SCHEMA = {
             initial: "",
         }),
     }),
+    edicts: new fields.SchemaField(
+        R.mapToObj(KINGDOM_EDICTS, (edict) => {
+            const schema = new fields.StringField<KingdomEdictsChoice, KingdomEdictsChoice, false, false, true>({
+                required: false,
+                nullable: false,
+                choices: KINGDOM_EDICT_CHOICES,
+                initial: "0",
+            });
+            return [edict, schema];
+        }),
+    ),
     /** Any kingmaker specific module configuration and tweaks. Not used otherwise */
     module: new fields.ObjectField({ required: false, initial: {} }),
 };
 
-export { KINGDOM_SCHEMA, KINGDOM_SETTLEMENT_SCHEMA };
+export { KINGDOM_SCHEMA, KINGDOM_SETTLEMENT_SCHEMA, KINGDOM_DISTRICT_SCHEMA };

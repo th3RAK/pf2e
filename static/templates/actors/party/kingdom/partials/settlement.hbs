@@ -29,44 +29,107 @@
         {{#if @root.editable}}
             {{#if settlement.editing}}
                 <a data-action="finish-settlement"><i class="fa-solid fa-fw fa-check"></i></a>
+                <a data-action="add-district"><i class="fa-solid fa-fw fa-plus"></i></a>
+                <a data-action="delete-settlement"><i class="fa-solid fa-fw fa-trash"></i></a>
             {{else}}
                 <a data-action="edit-settlement"><i class="fa-solid fa-fw fa-pencil"></i></a>
+                <i class="fa-solid fa-fw fa-plus"></i>
+                <i class="fa-solid fa-fw fa-trash"></i>
             {{/if}}
-            <a data-action="delete-settlement"><i class="fa-solid fa-fw fa-trash"></i></a>
         {{/if}}
     </div>
 
     <div class="item-summary" hidden="hidden">
         <section class="settlement-data">
             <section class="stats">
-                <div>{{settlement.blocks}} {{localize "PF2E.Kingmaker.Settlement.Blocks"}}</div>
+                <div>{{settlement.lotRange}} Lots</div>
+                <div>{{settlement.maxQualities}} Qualities</div>
                 <div>{{localize "PF2E.Kingmaker.Settlement.LevelRange"}}: {{settlement.levelRange}}</div>
                 <div>{{localize "PF2E.Kingmaker.Settlement.Population"}}: {{settlement.populationRange}}</div>
-                <label>{{localize "PF2E.Kingmaker.Settlement.Overcrowded"}} <input type="checkbox" name="settlements.{{settlement.id}}.overcrowded" {{checked settlement.overcrowded}}/></label>
             </section>
-
             <section class="storage">
-                <h4>{{localize "PF2E.Kingmaker.Kingdom.Storage"}}</h4>
+                <h4>Modifiers</h4>
                 <div class="storage-items">
                     {{#each settlement.storage as |storage|}}
                         <label class="value">
                             <span data-tooltip="{{storage.description}}">{{storage.label}}</span>
-                            <input type="number" value="{{storage.value}}" name="settlements.{{../settlement.id}}.storage.{{storage.type}}" />
+                            <div>{{storage.value}}</div>
                         </label>
                     {{/each}}
                 </div>
             </section>
-
-            <section>
-                <h4>{{localize "PF2E.Kingmaker.Consumption.Label"}}</h4>
-                <div class="value">
-                    {{localize "PF2E.Kingmaker.Consumption.Base"}}: {{settlement.consumption.base}}
-                </div>
-                <label>
-                    {{localize "PF2E.Kingmaker.Consumption.Reduction"}}:
-                    <input type="number" value="{{settlement.consumption.reduction}}" name="settlements.{{settlement.id}}.consumption.reduction"/>
-                </label>
-                <div class="value">Total: {{settlement.consumption.total}}</div>
+        </section>
+        <section class="settlement-qualities">
+            {{#each settlement.qualities as |quality|}}
+                <section class="quality" data-quality="{{quality.slug}}" data-settlement="{{quality.settlement}}" {{#if quality.uuid}}data-uuid="{{quality.uuid}}"{{/if}}>
+                    <div class="name">
+                        {{#if quality.actor}}
+                            {{#if @root.editable}}
+                                {{#if ../settlement.editing}}
+                                    <a data-action="remove-quality"><i class="fa-solid fa-times"></i></a>
+                                {{/if}}
+                            {{/if}}
+                        {{/if}}
+                    </div>
+                    {{#if quality.uuid}}
+                        <a class="image tooltip" data-action="open-sheet"><span data-tooltip="{{quality.label}}"><img src="{{quality.img}}"/></span></a>
+                    {{else}}
+                        <div class="image"></div>
+                    {{/if}}
+                </section>
+            {{/each}}
+        </section>
+        <section class="settlement-grid">
+            {{#each settlement.borders as |border|}}
+                <section class="border" style="grid-area:{{border.slug}}" data-border="{{border.slug}}" data-settlement="{{border.settlement}}" {{#if border.uuid}}data-uuid="{{border.uuid}}"{{/if}}>
+                    <div class="name">
+                        {{#if border.actor}}
+                            {{#if @root.editable}}
+                                {{#if ../settlement.editing}}
+                                    <a data-action="remove-border"><i class="fa-solid fa-times"></i></a>
+                                {{/if}}
+                            {{/if}}
+                        {{/if}}
+                    </div>
+                    {{#if border.uuid}}
+                        <a class="image tooltip" data-action="open-sheet"><span data-tooltip="{{border.label}}"><img src="{{border.img}}"/></span></a>
+                    {{else}}
+                        <div class="image"></div>
+                    {{/if}}
+                </section>
+            {{/each}}
+            <section class="districts">
+                {{#each settlement.districts as |district|}}
+                    <section class="grid">
+                        {{#each district.grid as |block|}}
+                            <section class="block">
+                                {{#each block.lots as |lot|}}
+                                    <section class="lot" data-lot="{{lot.slug}}" data-block="{{lot.block}}" data-district="{{lot.district}}" data-settlement="{{lot.settlement}}" {{#if lot.uuid}}data-uuid="{{lot.uuid}}"{{/if}}>
+                                        <div class="name">
+                                            {{#if lot.actor}}
+                                                {{#if @root.editable}}
+                                                    {{#if ../../../settlement.editing}}
+                                                        <a data-action="remove-lot"><i class="fa-solid fa-times"></i></a>
+                                                    {{/if}}
+                                                {{/if}}
+                                            {{/if}}
+                                        </div>
+                                        <div class="frame"></div>
+                                        {{#if (eq lot.actor.size "huge")}}
+                                            <a class="image4 tooltip" data-action="open-sheet"><span data-tooltip="{{lot.label}}"><img src="{{lot.img}}"/></span></a>
+                                        {{else if (eq lot.actor.size "lg")}}
+                                            <a class="image2 tooltip" data-action="open-sheet"><span data-tooltip="{{lot.label}}"><img src="{{lot.img}}"/></span></a>
+                                        {{else if lot.uuid}}
+                                            <a class="image tooltip" data-action="open-sheet"><span data-tooltip="{{lot.label}}"><img src="{{lot.img}}"/></span></a>
+                                        {{else}}
+                                            <div class="image"></div>
+                                        {{/if}}
+                                    </section>
+                                {{/each}}
+                            </section>
+                        {{/each}}
+                    </section>
+                {{/each}}
             </section>
         </section>
         <section class="details">

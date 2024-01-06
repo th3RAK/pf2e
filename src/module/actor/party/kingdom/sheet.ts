@@ -3,12 +3,13 @@ import { FeatGroup } from "@actor/character/feats.ts";
 import { MODIFIER_TYPES } from "@actor/modifiers.ts";
 import { ActorSheetPF2e } from "@actor/sheet/base.ts";
 import { ActorSheetDataPF2e } from "@actor/sheet/data-types.ts";
-import { ItemPF2e, type CampaignFeaturePF2e } from "@item";
+import { ItemPF2e, type CampaignFeaturePF2e, PhysicalItemPF2e } from "@item";
 import { ItemSourcePF2e } from "@item/base/data/index.ts";
+import { EquipmentPF2e } from "@item/equipment/index.ts";
 import { DropCanvasItemDataPF2e } from "@module/canvas/drop-canvas-data.ts";
 import { ChatMessagePF2e } from "@module/chat-message/document.ts";
 import { ValueAndMax } from "@module/data.ts";
-import { SheetOption, SheetOptions, createSheetTags, getAdjustment } from "@module/sheet/helpers.ts";
+import { SheetOption, SheetOptions, createSheetTags } from "@module/sheet/helpers.ts";
 import { eventToRollParams } from "@scripts/sheet-util.ts";
 import { SocketMessage } from "@scripts/socket.ts";
 import { Statistic } from "@system/statistic/index.ts";
@@ -16,7 +17,6 @@ import {
     ErrorPF2e,
     SORTABLE_BASE_OPTIONS,
     createHTMLElement,
-    fontAwesomeIcon,
     htmlClosest,
     htmlQuery,
     htmlQueryAll,
@@ -30,27 +30,44 @@ import { calculateKingdomCollectionData } from "./helpers.ts";
 import { Kingdom } from "./model.ts";
 import {
     KingdomAbilityData,
-    KingdomData,
+    KingdomEdict,
     KingdomLeadershipData,
     KingdomSettlementData,
+    KingdomSettlementGridBlock,
+    KingdomSettlementGridLot,
+    KingdomSettlementGridData,
     KingdomSource,
+    KingdomSettlementQuality,
+    KingdomSettlementGridBorder,
+    KingdomSkillSettlement,
+    KingdomDistrictData,
 } from "./types.ts";
 import {
     KINGDOM_ABILITIES,
     KINGDOM_ABILITY_LABELS,
     KINGDOM_COMMODITIES,
+    KINGDOM_COMMODITY_DESCRIPTIONS,
     KINGDOM_COMMODITY_LABELS,
+    KINGDOM_EDICT_DATA,
     KINGDOM_LEADERSHIP,
     KINGDOM_LEADERSHIP_ABILITIES,
+    KINGDOM_LEADERSHIP_DESCRIPTIONS,
     KINGDOM_RUIN_LABELS,
+    KINGDOM_SETTLEMENT_GRID_BLOCKS,
+    KINGDOM_SETTLEMENT_GRID_BORDERS,
+    KINGDOM_SETTLEMENT_GRID_LOTS,
+    KINGDOM_SETTLEMENT_QUALITIES,
     KINGDOM_SETTLEMENT_TYPE_DATA,
     KINGDOM_SETTLEMENT_TYPE_LABELS,
+    KINGDOM_SKILLS,
+    KINGDOM_SKILLS_SETTLEMENT,
+    KINGDOM_SKILL_DESCRIPTIONS,
     KINGDOM_SKILL_LABELS,
+    KingdomEdictData,
 } from "./values.ts";
 
 // Kingdom traits in order of when the phases occur in the process
-const KINGDOM_TRAITS = ["commerce", "leadership", "region", "civic", "army"] as const;
-
+const KINGDOM_TRAITS = ["upkeep", "edict", "income", "event"] as const;
 class KingdomSheetPF2e extends ActorSheetPF2e<PartyPF2e> {
     /** The current selected activity filter, which doubles as an active kingdom phase */
     protected selectedFilter: string | null = null;
@@ -151,22 +168,13 @@ class KingdomSheetPF2e extends ActorSheetPF2e<PartyPF2e> {
                 type,
                 label: game.i18n.localize(KINGDOM_COMMODITY_LABELS[type]),
                 workSites: {
-                    label: game.i18n.localize(`PF2E.Kingmaker.WorkSites.${type}.Name`),
-                    description: game.i18n.localize(`PF2E.Kingmaker.WorkSites.${type}.Description`),
-                    hasResource: ["lumber", "ore", "stone"].includes(type),
+                    label: KINGDOM_COMMODITY_LABELS[type],
+                    description: KINGDOM_COMMODITY_DESCRIPTIONS[type],
+                    hasResource: ["food","fish","lumber", "ore", "stone","landmark"].includes(type),
                     value: kingdom.resources.workSites[type].value,
                     resource: kingdom.resources.workSites[type].resource,
                 },
             })),
-            resourceDice: {
-                ...kingdom.resources.dice,
-                icon: fontAwesomeIcon(`dice-d${kingdom.resources.dice.faces}`).outerHTML,
-                bonusAdjustment: getAdjustment(kingdom.resources.dice.bonus, kingdom._source.resources.dice.bonus),
-                penaltyAdjustment: getAdjustment(
-                    kingdom.resources.dice.penalty,
-                    kingdom._source.resources.dice.penalty,
-                ),
-            },
             leadership: KINGDOM_LEADERSHIP.map((slug) => {
                 const data = this.kingdom.leadership[slug];
                 const document = fromUuidSync(data.uuid ?? "");
@@ -174,11 +182,12 @@ class KingdomSheetPF2e extends ActorSheetPF2e<PartyPF2e> {
                 return {
                     ...data,
                     slug,
-                    label: game.i18n.localize(`PF2E.Kingmaker.Kingdom.LeadershipRole.${slug}`),
+                    label: slug.capitalize(),
+                    description: KINGDOM_LEADERSHIP_DESCRIPTIONS[slug],
                     actor,
                     img: actor?.prototypeToken.texture.src ?? actor?.img ?? ActorPF2e.DEFAULT_ICON,
                     abilityLabel: game.i18n.localize(KINGDOM_ABILITY_LABELS[KINGDOM_LEADERSHIP_ABILITIES[slug]]),
-                    penaltyLabel: game.i18n.localize(`PF2E.Kingmaker.Kingdom.VacancyPenalty.${slug}`),
+                    penaltyLabel: "Vacancy: " + slug,
                 };
             }),
             actions: R.sortBy(kingdom.activities, (a) => a.name).map((item) => ({
@@ -188,10 +197,10 @@ class KingdomSheetPF2e extends ActorSheetPF2e<PartyPF2e> {
                     item.system.traits.value.filter((t) => t !== "downtime"),
                 ),
             })),
-            skills: R.sortBy(Object.values(this.kingdom.skills), (s) => s.label),
+            skills: Object.values(this.kingdom.skills),
             feats: [kingdom.features, kingdom.feats, kingdom.bonusFeats],
             actionFilterChoices: KINGDOM_TRAITS.map((trait) => ({
-                label: game.i18n.localize(CONFIG.PF2E.kingmakerTraits[trait]),
+                label: trait,
                 value: trait,
                 selected: false, // selected is handled without re-render
             })),
@@ -204,15 +213,50 @@ class KingdomSheetPF2e extends ActorSheetPF2e<PartyPF2e> {
                 async: true,
                 rollData: this.actor.getRollData(),
             }),
+            edictTypes: KINGDOM_EDICT_DATA,
             settlementTypes: KINGDOM_SETTLEMENT_TYPE_LABELS,
             abilityLabels: KINGDOM_ABILITY_LABELS,
             skillLabels: KINGDOM_SKILL_LABELS,
         };
     }
-
+    
+    async #prepareDistrict(id: string, district: KingdomDistrictData, settlement_id: string): Promise<DistrictSheetData> { 
+        return {
+            //...district,
+            id,
+            grid: KINGDOM_SETTLEMENT_GRID_BLOCKS.map((block) => {
+                const data2 = district.grid[block];
+                const lots = KINGDOM_SETTLEMENT_GRID_LOTS.map((lot) => {
+                    const data = district.grid[block][lot];
+                    const document = fromUuidSync(data.uuid ?? "");                    
+                    const actor = document instanceof EquipmentPF2e ? document : null;
+                    var label ="";
+                    if (actor) {
+                        label = actor.name;
+                    }
+                    return {
+                        ...data,
+                        slug: lot,
+                        block,
+                        district: id,
+                        settlement: settlement_id,
+                        label,
+                        actor,
+                        img: actor?.img ?? ActorPF2e.DEFAULT_ICON,
+                    };
+                });
+                return {
+                    ...data2,
+                    block,
+                    lots: lots,
+                };
+            }),
+        };
+    }
     async #prepareSettlement(id: string, settlement: KingdomSettlementData): Promise<SettlementSheetData> {
         const data = KINGDOM_SETTLEMENT_TYPE_DATA[settlement.type];
 
+        const lotRange = data.lots[1] === Infinity ? `${data.lots[0]}+` : data.lots[0]===data.lots[1] ?  `${data.lots[0]}` : data.lots.join("-");
         const levelRange =
             data.level[1] === Infinity
                 ? `${data.level[0]}+`
@@ -220,6 +264,11 @@ class KingdomSheetPF2e extends ActorSheetPF2e<PartyPF2e> {
                   ? String(data.level[0])
                   : data.level.join("-");
         const populationRange = data.population[1] === Infinity ? `${data.population[0]}+` : data.population.join("-");
+
+        const districtEntries = R.pipe(
+            Object.entries(settlement.districts),
+            R.filter((entry): entry is [string, KingdomDistrictData] => !!entry[1]),
+        );
 
         return {
             ...settlement,
@@ -229,15 +278,69 @@ class KingdomSheetPF2e extends ActorSheetPF2e<PartyPF2e> {
                 rollData: this.actor.getRollData(),
             }),
             editing: this.#editingSettlements[id] ?? false,
-            blocks: data.blocks === Infinity ? "10+" : data.blocks,
+            //blocks: data.blocks === Infinity ? "10+" : data.blocks,
+            lotRange,
             populationRange,
             levelRange,
             typeLabel: KINGDOM_SETTLEMENT_TYPE_LABELS[settlement.type],
-            storage: KINGDOM_COMMODITIES.map((type) => ({
-                type,
-                value: settlement.storage[type],
-                label: game.i18n.localize(KINGDOM_COMMODITY_LABELS[type]),
-            })),
+            districts: await Promise.all(
+                districtEntries.map(async ([districtdId, data]) => {
+                    return this.#prepareDistrict(districtdId, data!, id);
+                }),
+            ),
+            qualities: KINGDOM_SETTLEMENT_QUALITIES.map((quality) => {
+                const data = settlement.qualities[quality];
+                const document = fromUuidSync(data.uuid ?? "");                    
+                const actor = document instanceof EquipmentPF2e ? document : null;
+                var label ="";
+                if (actor) {
+                    label = actor.name;
+                }
+                return {
+                    ...data,
+                    slug: quality,
+                    settlement: id,
+                    label,
+                    actor,
+                    img: actor?.img ?? ActorPF2e.DEFAULT_ICON,
+                };
+            }),
+            maxQualities: data.qualities,
+            borders: KINGDOM_SETTLEMENT_GRID_BORDERS.map((border) => {
+                const data = settlement.borders[border];
+                const document = fromUuidSync(data.uuid ?? "");                    
+                const actor = document instanceof EquipmentPF2e ? document : null;
+                var label ="";
+                if (actor) {
+                    label = actor.name;
+                }
+                return {
+                    ...data,
+                    slug: border,
+                    settlement: id,
+                    label,
+                    actor,
+                    img: actor?.img ?? ActorPF2e.DEFAULT_ICON,
+                };
+            }),
+            storage: KINGDOM_SKILLS.map((type) => {
+                let value;
+                if (type != 'basevalue') {
+                    if (KINGDOM_SKILLS_SETTLEMENT.includes(<KingdomSkillSettlement>type)) {
+                        value = settlement.storage[type] + this.kingdom.skills[type].mod;
+                    } else {
+                        value = settlement.storage[type];
+                    }
+                } else {
+                    value = Math.min(settlement.storage[type], data.baseValueMax);
+                }
+                return {
+                    type,
+                    value,
+                    label: KINGDOM_SKILL_LABELS[type],
+                    description: KINGDOM_SKILL_DESCRIPTIONS[type],
+                };
+            }),
         };
     }
 
@@ -264,19 +367,6 @@ class KingdomSheetPF2e extends ActorSheetPF2e<PartyPF2e> {
                 new KingdomBuilder(this.kingdom).render(true, { tab });
             });
         }
-
-        // Controls for Fame/Infamy editing
-        const { fame } = this.kingdom.resources;
-        const famePips = htmlQuery(html, "[data-action=adjust-fame]");
-        famePips?.addEventListener("click", async () => {
-            const newValue = Math.min(fame.value + 1, fame.max);
-            await this.kingdom.update({ "resources.fame.value": newValue });
-        });
-        famePips?.addEventListener("contextmenu", async (event) => {
-            event.preventDefault();
-            const newValue = Math.max(fame.value - 1, 0);
-            await this.kingdom.update({ "resources.fame.value": newValue });
-        });
 
         // Data binding for leader roles
         for (const leader of htmlQueryAll(html, ".leader[data-role]")) {
@@ -311,7 +401,7 @@ class KingdomSheetPF2e extends ActorSheetPF2e<PartyPF2e> {
 
             rollableStat.addEventListener("click", (event) => {
                 const statistic = this.actor.getStatistic(statSlug);
-                statistic?.roll(eventToRollParams(event, { type: "check" }));
+                statistic?.roll(eventToRollParams(event, { type: "check"}));
             });
         }
 
@@ -423,7 +513,15 @@ class KingdomSheetPF2e extends ActorSheetPF2e<PartyPF2e> {
                 },
             });
 
-            stat.roll({ dc: this.kingdom.event.dc });
+            stat.roll({ dc: this.kingdom.event.dc }).then(result => {
+                if(result?.degreeOfSuccess) {
+                    if(result?.degreeOfSuccess >= 2) {
+                        this.kingdom.update({ event: { dc: 16 } });
+                    } else {
+                        this.kingdom.update({ event: { dc: 6 } });
+                    }
+                }
+            });
         });
 
         htmlQuery(html, "[data-action=reset-event-dc]")?.addEventListener("click", () => {
@@ -512,6 +610,65 @@ class KingdomSheetPF2e extends ActorSheetPF2e<PartyPF2e> {
                 this.kingdom.update({ [`settlements.-=${id}`]: null });
             }
         });
+        // Add district actions
+        htmlQuery(settlementElement, "[data-action=add-district]")?.addEventListener("click", async (event) => {
+            const settlement = this.kingdom.settlements[id];
+            if (!settlement) return;
+            const districtId = fu.randomID(16);
+            const result =
+            event?.ctrlKey ||
+            (await Dialog.confirm({
+                title: game.i18n.localize("PF2E.DeleteItemTitle"),
+                content: `<p>${game.i18n.format("PF2E.DeleteQuestion", { name: `"${settlement.name}"` })}</p>`,
+            }));
+            if (result) {
+                this.kingdom.update({ [`settlements.${id}.districts.${districtId}`]: {} });
+                rerenderSettlement();
+            }
+            
+        });
+
+        // Data binding for settlement qualities
+        for (const data of htmlQueryAll(settlementElement, ".quality[data-quality]")) {
+            const { quality, settlement, uuid } = data.dataset;
+
+            htmlQuery(data, "[data-action=remove-quality]")?.addEventListener("click", () => {
+                this.kingdom.update({ [`settlements.${settlement}.qualities.${quality}.uuid`]: null });
+            });
+
+            if (uuid) {
+                for (const clickable of htmlQueryAll(data, "[data-action=open-sheet]")) {
+                    clickable.addEventListener("click", () => fromUuid(uuid).then((a) => a?.sheet.render(true)));
+                }
+            }
+        }
+        // Data binding for settlement grid
+        for (const data of htmlQueryAll(settlementElement, ".lot[data-lot]")) {
+            const { lot, block, district, settlement, uuid } = data.dataset;
+
+            htmlQuery(data, "[data-action=remove-lot]")?.addEventListener("click", () => {
+                this.kingdom.update({ [`settlements.${settlement}.districts.${district}.grid.${block}.${lot}.uuid`]: null });
+            });
+
+            if (uuid) {
+                for (const clickable of htmlQueryAll(data, "[data-action=open-sheet]")) {
+                    clickable.addEventListener("click", () => fromUuid(uuid).then((a) => a?.sheet.render(true)));
+                }
+            }
+        }
+        for (const data of htmlQueryAll(settlementElement, ".border[data-border]")) {
+            const { border, settlement, uuid } = data.dataset;
+
+            htmlQuery(data, "[data-action=remove-border]")?.addEventListener("click", () => {
+                this.kingdom.update({ [`settlements.${settlement}.borders.${border}.uuid`]: null });
+            });
+
+            if (uuid) {
+                for (const clickable of htmlQueryAll(data, "[data-action=open-sheet]")) {
+                    clickable.addEventListener("click", () => fromUuid(uuid).then((a) => a?.sheet.render(true)));
+                }
+            }
+        }
     }
 
     protected filterActions(trait: string | null, options: { instant?: boolean } = {}): void {
@@ -587,6 +744,69 @@ class KingdomSheetPF2e extends ActorSheetPF2e<PartyPF2e> {
             const slotData = this.#getFeatSlotData(event) ?? { groupId: "bonus", slotId: null };
             const group = slotData.groupId === "bonus" ? this.kingdom.bonusFeats : this.kingdom.feats;
             return group.insertFeat(item, slotData.slotId);
+        }
+
+        if (item instanceof PhysicalItemPF2e){
+            const closestLot = htmlClosest(event.target, ".lot[data-lot]");
+            const closestQuality = htmlClosest(event.target, ".quality[data-quality]");
+            const closestBorder = htmlClosest(event.target, ".border[data-border]");
+            if (closestLot) {
+                const settlement = String(closestLot.dataset.settlement);
+                const district = String(closestLot.dataset.district);
+                const block = <KingdomSettlementGridBlock>String(closestLot.dataset.block);
+                const lot = <KingdomSettlementGridLot>String(closestLot.dataset.lot);
+                const uuid = item.uuid;
+                
+                console.log(district);
+                console.log(settlement);
+                console.log(this.kingdom);
+                console.log(this.kingdom.settlements[settlement]);
+                console.log(this.kingdom.settlements[settlement]!.districts);
+                console.log(this.kingdom.settlements[settlement]!.districts[district]);
+                const top = fromUuidSync(this.kingdom.settlements[settlement]!.districts[district]!.grid[block][0].uuid as ActorUUID);
+                const bottom = fromUuidSync(this.kingdom.settlements[settlement]!.districts[district]!.grid[block][2].uuid as ActorUUID);
+                if (top instanceof PhysicalItemPF2e) {
+                    if ((top.size == "lg"  && Number(lot) == 1) || top.size == "huge") {
+                        this.kingdom.update({ [`settlements.${settlement}.districts.${district}.grid.${block}.0.uuid`]: null });
+                    }
+                }
+                if (bottom instanceof PhysicalItemPF2e) {
+                    if (bottom.size == "lg" && Number(lot) == 3) {
+                        this.kingdom.update({ [`settlements.${settlement}.districts.${district}.grid.${block}.2.uuid`]: null });
+                    }
+                }
+
+                if (item.size == "huge") {
+                    KINGDOM_SETTLEMENT_GRID_LOTS.forEach(l => this.kingdom.update({ [`settlements.${settlement}.districts.${district}.grid.${block}.${l}.uuid`]: null }))
+                    this.kingdom.update({ [`settlements.${settlement}.districts.${district}.grid.${block}.0.uuid`]: uuid });
+                } else if (item.size == "lg") {
+                    if (Number(lot) % 2 == 0) {
+                        this.kingdom.update({ [`settlements.${settlement}.districts.${district}.grid.${block}.${lot}.uuid`]: uuid });
+                        this.kingdom.update({ [`settlements.${settlement}.districts.${district}.grid.${block}.${Number(lot) + 1}.uuid`]: null });
+                    } else {
+                        this.kingdom.update({ [`settlements.${settlement}.districts.${district}.grid.${block}.${Number(lot) - 1}.uuid`]: uuid });
+                    }
+                } else {
+                    this.kingdom.update({ [`settlements.${settlement}.districts.${district}.grid.${block}.${lot}.uuid`]: uuid });
+                }
+
+                const changed: PhysicalItemPF2e<ActorPF2e>[] = [];
+                return changed;
+            } else if (closestQuality) {
+                const settlement = String(closestQuality.dataset.settlement);
+                const quality = <KingdomSettlementGridBlock>String(closestQuality.dataset.quality);
+                const uuid = item.uuid;
+                this.kingdom.update({ [`settlements.${settlement}.qualities.${quality}.uuid`]: uuid });
+                const changed: PhysicalItemPF2e<ActorPF2e>[] = [];
+                return changed;
+            } else if (closestBorder) {
+                const settlement = String(closestBorder.dataset.settlement);
+                const border = <KingdomSettlementGridBlock>String(closestBorder.dataset.border);
+                const uuid = item.uuid;
+                this.kingdom.update({ [`settlements.${settlement}.borders.${border}.uuid`]: uuid });
+                const changed: PhysicalItemPF2e<ActorPF2e>[] = [];
+                return changed;
+            }
         }
 
         return super._onDropItem(event, data);
@@ -673,11 +893,6 @@ interface KingdomSheetData extends ActorSheetDataPF2e<PartyPF2e> {
         ruinLabel: string;
     })[];
     commodities: CommoditySheetData[];
-    resourceDice: KingdomData["resources"]["dice"] & {
-        icon: string;
-        bonusAdjustment: string | null;
-        penaltyAdjustment: string | null;
-    };
     leadership: LeaderSheetData[];
     actions: { item: CampaignFeaturePF2e; traits: SheetOptions }[];
     skills: Statistic[];
@@ -685,7 +900,8 @@ interface KingdomSheetData extends ActorSheetDataPF2e<PartyPF2e> {
     actionFilterChoices: SheetOption[];
     settlements: SettlementSheetData[];
     eventText: string;
-
+    //edicts: Record<string,string>[];
+    edictTypes: Record<KingdomEdict, Record<number,KingdomEdictData>>;
     settlementTypes: Record<string, string>;
     abilityLabels: Record<string, string>;
     skillLabels: Record<string, string>;
@@ -693,11 +909,45 @@ interface KingdomSheetData extends ActorSheetDataPF2e<PartyPF2e> {
 
 interface LeaderSheetData extends KingdomLeadershipData {
     actor: ActorPF2e | null;
-    img: string;
+    img: ImageFilePath | VideoFilePath;
     slug: string;
     label: string;
+    description: string;
     abilityLabel: string;
     penaltyLabel: string;
+}
+
+interface LotSheetData {
+    actor: ItemPF2e | null;
+    img: ImageFilePath | VideoFilePath;
+    slug: KingdomSettlementGridLot;
+    block: KingdomSettlementGridBlock;
+    district: string;
+    settlement: string;
+    label: string;
+}
+interface BlockSheetData extends KingdomSettlementGridData {
+    lots: LotSheetData[]
+}
+type DistrictSheetData = {
+    id: string;
+    grid: BlockSheetData[];
+}
+
+interface QualitySheetData {
+    actor: ItemPF2e | null;
+    img: ImageFilePath | VideoFilePath;
+    slug: KingdomSettlementQuality;
+    settlement: string;
+    label: string;
+}
+
+interface BorderSheetData {
+    actor: ItemPF2e | null;
+    img: ImageFilePath | VideoFilePath;
+    slug: KingdomSettlementGridBorder;
+    settlement: string;
+    label: string;
 }
 
 interface CommoditySheetData extends ValueAndMax {
@@ -713,18 +963,25 @@ interface CommoditySheetData extends ValueAndMax {
     };
 }
 
-type SettlementSheetData = Omit<KingdomSettlementData, "storage"> & {
+//type SettlementSheetData = Omit<KingdomSettlementData, "storage" | "grid" | "qualities" | "borders"> & {
+type SettlementSheetData = Omit<KingdomSettlementData, "storage" | "districts" | "qualities" | "borders"> & {
     id: string;
     editing: boolean;
-    blocks: number | string;
+    lotRange: string;
     levelRange: string;
     populationRange: string;
     typeLabel: string;
     storage: {
         type: string;
         label: string;
+        description: string;
         value: number;
     }[];
+    districts: DistrictSheetData[];
+    qualities: QualitySheetData[];
+    maxQualities: number;
+    //grid: GridSheetData[];
+    borders: BorderSheetData[];
 };
 
 export { KingdomSheetPF2e };

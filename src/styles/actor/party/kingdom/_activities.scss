@@ -116,6 +116,9 @@
         box-shadow: var(--drop-shadow);
         margin: 0 12px 0.5rem 2px;
         padding: 0.25rem 0.5rem;
+        select {
+            margin-bottom: 0.5rem;
+        }
         header {
             font-size: 1.2em;
             font-weight: bold;

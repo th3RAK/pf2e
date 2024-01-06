@@ -1,10 +1,9 @@
 import { ActorPF2e } from "@actor";
 import { FeatGroup } from "@actor/character/feats.ts";
-import { MODIFIER_TYPES, ModifierPF2e, RawModifier, createProficiencyModifier } from "@actor/modifiers.ts";
-import { CampaignFeaturePF2e, ItemPF2e } from "@item";
+import { MODIFIER_TYPES, ModifierPF2e, RawModifier } from "@actor/modifiers.ts";
+import { CampaignFeaturePF2e, ItemPF2e, PhysicalItemPF2e } from "@item";
 import { ItemType } from "@item/base/data/index.ts";
 import { ChatMessagePF2e } from "@module/chat-message/document.ts";
-import { ZeroToFour } from "@module/data.ts";
 import { extractModifierAdjustments } from "@module/rules/helpers.ts";
 import { Statistic } from "@system/statistic/index.ts";
 import { ErrorPF2e, createHTMLElement, fontAwesomeIcon, objectHasKey, setHasElement } from "@util";
@@ -15,6 +14,7 @@ import { KingdomBuilder } from "./builder.ts";
 import { calculateKingdomCollectionData, importDocuments, resolveKingdomBoosts } from "./helpers.ts";
 import { KINGDOM_SCHEMA } from "./schema.ts";
 import { KingdomSheetPF2e } from "./sheet.ts";
+
 import {
     KingdomCHG,
     KingdomCharter,
@@ -25,24 +25,33 @@ import {
     KingdomSource,
 } from "./types.ts";
 import {
-    CONTROL_DC_BY_LEVEL,
     KINGDOM_ABILITIES,
     KINGDOM_ABILITY_LABELS,
+    KINGDOM_COMMODITIES,
+    KINGDOM_COMMODITIES_MODIFIERS,
+    KINGDOM_EDICTS,
+    KINGDOM_EDICT_DATA,
     KINGDOM_LEADERSHIP,
-    KINGDOM_LEADERSHIP_ABILITIES,
-    KINGDOM_RUIN_LABELS,
-    KINGDOM_SETTLEMENT_TYPE_DATA,
+    KINGDOM_SETTLEMENT_GRID_BLOCKS,
+    KINGDOM_SETTLEMENT_GRID_BORDERS,
+    KINGDOM_SETTLEMENT_GRID_LOTS,
+    KINGDOM_SETTLEMENT_QUALITIES,
     KINGDOM_SIZE_DATA,
     KINGDOM_SKILLS,
+    KINGDOM_SKILLS_KINGDOM,
     KINGDOM_SKILL_ABILITIES,
     KINGDOM_SKILL_LABELS,
     VACANCY_PENALTIES,
+    KingdomSizeData,
+    KINGDOM_SETTLEMENT_TYPE_DATA,
+    KINGDOM_SKILLS_SETTLEMENT,
 } from "./values.ts";
 
 const { DataModel } = foundry.abstract;
 
 /** Model for the Kingmaker campaign data type, which represents a Kingdom */
 class Kingdom extends DataModel<PartyPF2e, KingdomSchema> implements PartyCampaign {
+    declare sizeData: KingdomSizeData;
     declare nationType: KingdomNationType;
     declare features: FeatGroup<PartyPF2e, CampaignFeaturePF2e>;
     declare feats: FeatGroup<PartyPF2e, CampaignFeaturePF2e>;
@@ -130,16 +139,20 @@ class Kingdom extends DataModel<PartyPF2e, KingdomSchema> implements PartyCampai
             },
             { rollMode: "publicroll" },
         );
+        if (roll.total >= this.control.dc.value) {
+            this.update({
+                resources: {
+                    points: this.resources.points + Math.floor(roll.total / 3) + commodities.lumber + commodities.ore + commodities.stone,
+                },
+            });
+        } else {
+            this.update({
+                resources: {
+                    points: this.resources.points + commodities.lumber + commodities.ore + commodities.stone,
+                },
+            });
+        }
 
-        this.update({
-            resources: {
-                points: roll.total,
-                commodities: R.mapValues(commodities, (incoming, type) => {
-                    const current = this.resources.commodities[type];
-                    return { value: Math.min(current.value + incoming, current.max) };
-                }),
-            },
-        });
     }
 
     /**
@@ -199,7 +212,7 @@ class Kingdom extends DataModel<PartyPF2e, KingdomSchema> implements PartyCampai
         // Calculate Ability Boosts (if calculated automatically)
         if (!build.manual) {
             for (const ability of KINGDOM_ABILITIES) {
-                this.abilities[ability].value = 10;
+                this.abilities[ability].value = 0;
             }
 
             // Charter/Heartland/Government boosts
@@ -208,36 +221,38 @@ class Kingdom extends DataModel<PartyPF2e, KingdomSchema> implements PartyCampai
                 const chosen = build.boosts[category];
                 if (!data) continue;
 
-                if ("flaw" in data && data.flaw) {
-                    this.abilities[data.flaw].value -= 2;
+                const activeBoosts = resolveKingdomBoosts(data, chosen);
+                if (activeBoosts.length == 1) {
+                    for (const ability of activeBoosts) {
+                        this.abilities[ability].value += 4;
+                    }
+                } else {
+                    for (const ability of activeBoosts) {
+                        this.abilities[ability].value += 2;
+                    }
                 }
 
-                const activeBoosts = resolveKingdomBoosts(data, chosen);
-                for (const ability of activeBoosts) {
-                    this.abilities[ability].value += this.abilities[ability].value >= 18 ? 1 : 2;
-                }
             }
 
             // Level boosts
-            const activeLevels = ([1, 5, 10, 15, 20] as const).filter((l) => this.level >= l);
+            const activeLevels = KINGDOM_LEADERSHIP;
             for (const level of activeLevels) {
                 const chosen = build.boosts[level].slice(0, 2);
-                for (const ability of chosen) {
-                    this.abilities[ability].value += this.abilities[ability].value >= 18 ? 1 : 2;
+                if (chosen.length == 1) {
+                    for (const ability of chosen) {
+                        this.abilities[ability].value += 4;
+                    }
+                } else {
+                    for (const ability of chosen) {
+                        this.abilities[ability].value += 2;
+                    }
                 }
             }
         }
 
         // Assign Ability modifiers base on values
         for (const ability of KINGDOM_ABILITIES) {
-            this.abilities[ability].mod = (this.abilities[ability].value - 10) / 2;
-        }
-
-        // Government skills
-        if (build.government && build.government.skills.length > 0) {
-            for (const skill of build.government.skills) {
-                build.skills[skill].rank = Math.max(1, build.skills[skill].rank) as ZeroToFour;
-            }
+            this.abilities[ability].mod = (this.abilities[ability].value);
         }
 
         // Bless raw custom modifiers as `ModifierPF2e`s
@@ -249,42 +264,11 @@ class Kingdom extends DataModel<PartyPF2e, KingdomSchema> implements PartyCampai
             (synthetics.modifiers[selector] ??= []).push(...modifiers.map((m) => () => m));
         }
 
-        const sizeData =
+        this.sizeData =
             Object.entries(KINGDOM_SIZE_DATA).findLast(([size]) => this.size >= Number(size))?.[1] ??
             KINGDOM_SIZE_DATA[1];
 
-        this.nationType = sizeData.type;
-        this.resources.dice.faces = sizeData.faces;
-
-        // Inject control dc size modifier
-        if (sizeData.controlMod) {
-            const modifiers = (synthetics.modifiers["control-dc"] ??= []);
-            modifiers.push(
-                () =>
-                    new ModifierPF2e({
-                        slug: "size",
-                        label: "Size Modifier",
-                        modifier: sizeData.controlMod,
-                    }),
-            );
-        }
-
-        // Add any relevant ruin penalties
-        for (const ability of KINGDOM_ABILITIES) {
-            const penalty = this.abilities[ability].penalty;
-            if (penalty) {
-                const modifiers = (synthetics.modifiers[`${ability}-based`] ??= []);
-                modifiers.push(
-                    () =>
-                        new ModifierPF2e({
-                            slug: "ruin",
-                            type: "item",
-                            label: KINGDOM_RUIN_LABELS[ability],
-                            modifier: penalty,
-                        }),
-                );
-            }
-        }
+        this.nationType = this.sizeData.type;
 
         // Auto-set if vacant (for npcs), and inject vacancy penalty modifiers and adjustments into synthetics
         for (const role of KINGDOM_LEADERSHIP) {
@@ -298,43 +282,22 @@ class Kingdom extends DataModel<PartyPF2e, KingdomSchema> implements PartyCampai
 
             if (data.vacant) {
                 const penalties = VACANCY_PENALTIES[role]();
-                for (const [selector, entries] of Object.entries(penalties.adjustments ?? {})) {
-                    const adjustments = (synthetics.modifierAdjustments[selector] ??= []);
-                    adjustments.push(...entries);
-                }
                 for (const [selector, entries] of Object.entries(penalties.modifiers ?? {})) {
                     const modifiers = (synthetics.modifiers[selector] ??= []);
                     modifiers.push(...entries.map((e) => () => new ModifierPF2e(e)));
                 }
             }
-
-            if (data.invested) {
-                const ability = KINGDOM_LEADERSHIP_ABILITIES[role];
-                const modifiers = (synthetics.modifiers[`${ability}-skill-check`] ??= []);
-                modifiers.push(
-                    () =>
-                        new ModifierPF2e({
-                            slug: "invested",
-                            label: "PF2E.Kingmaker.Kingdom.Invested",
-                            type: "status",
-                            modifier: 1,
-                        }),
-                );
-            }
         }
-
-        // Add a status penalty due to unrest
+        
+        // Add a penalty due to unrest
         if (this.unrest.value > 0) {
-            const thresholds = [1, 5, 10, 15];
-            const modifier = -(thresholds.findLastIndex((t) => this.unrest.value >= t) + 1);
-            const modifiers = (synthetics.modifiers["kingdom-check"] ??= []);
+            const modifiers = (synthetics.modifiers["kingdom-ability-check"] ??= []);
             modifiers.push(
                 () =>
                     new ModifierPF2e({
                         slug: "unrest",
                         label: "PF2E.Kingmaker.Kingdom.Unrest",
-                        type: "status",
-                        modifier,
+                        modifier: -this.unrest.value,
                     }),
             );
         }
@@ -345,33 +308,266 @@ class Kingdom extends DataModel<PartyPF2e, KingdomSchema> implements PartyCampai
         for (const settlement of settlements) {
             if (!settlement) continue;
             const typeData = KINGDOM_SETTLEMENT_TYPE_DATA[settlement.type];
-            settlement.consumption.base = typeData.consumption;
-            settlement.consumption.total = Math.max(0, typeData.consumption - settlement.consumption.reduction);
+            for (const skill in KINGDOM_SKILLS) {
+                const data = KINGDOM_SKILLS[skill];
+                settlement.storage[data] = 0;
+            }
+            for (const skill in KINGDOM_SKILLS_SETTLEMENT) {
+                const data = KINGDOM_SKILLS_SETTLEMENT[skill];
+                settlement.storage[data] = typeData.modifiers * Object.keys(settlement.districts).length
+            }
+            settlement.storage["danger"] = typeData.danger * Object.keys(settlement.districts).length
+
+            // Initialize settlement data
+            const districts = R.compact(Object.values(settlement.districts));
+            for (const district of districts) {
+                if (!district) continue;
+                KINGDOM_SETTLEMENT_GRID_BLOCKS.forEach((block) => {
+                    KINGDOM_SETTLEMENT_GRID_LOTS.forEach((lot) => {
+                        const building = district.grid[block][lot];
+                        const document = fromUuidSync(building.uuid ?? "");                
+                        const actor = document instanceof PhysicalItemPF2e ? document : null;
+                        if (actor) {
+                            if (actor.description.length > 40) {
+                                const parser = new DOMParser();
+                                const parsed = parser.parseFromString(actor.description, "text/html");
+
+                                const tableBody = parsed.body.firstChild?.childNodes[2];
+                                if (tableBody) {
+                                    tableBody?.childNodes.forEach((entry) => {
+                                        if (entry.childNodes[1] && entry.childNodes[3]){;
+                                            const nodeType = <KingdomSkill>entry.childNodes[1].childNodes[0].nodeValue?.toLowerCase();
+                                            const nodeValue = (Number)(entry.childNodes[3].childNodes[0].nodeValue);
+                                            const nodeIsNumber = !isNaN(nodeValue);
+                                            if ( KINGDOM_SKILLS.includes(nodeType!) && nodeIsNumber) {
+                                                settlement.storage[nodeType!] += nodeValue;
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                    });
+                });
+            }
+            KINGDOM_SETTLEMENT_GRID_BORDERS.forEach((border) => {
+                const data = settlement.borders[border];
+                const document = fromUuidSync(data.uuid ?? "");                
+                const actor = document instanceof PhysicalItemPF2e ? document : null;
+                if (actor) {
+                    if (actor.description.length > 40) {
+                        const parser = new DOMParser();
+                        const parsed = parser.parseFromString(actor.description, "text/html");
+
+                        const tableBody = parsed.body.firstChild?.childNodes[2];
+                        if (tableBody) {
+                            tableBody?.childNodes.forEach((entry) => {
+                                if (entry.childNodes[1] && entry.childNodes[3]){
+                                    const nodeType = <KingdomSkill>entry.childNodes[1].childNodes[0].nodeValue?.toLowerCase();
+                                    const nodeValue = (Number)(entry.childNodes[3].childNodes[0].nodeValue);
+                                    const nodeIsNumber = !isNaN(nodeValue);
+                                    if ( KINGDOM_SKILLS.includes(nodeType!) && nodeIsNumber) {
+                                        settlement.storage[nodeType!] += nodeValue;
+                                    }
+                                }
+                            });
+                        }
+                    }
+                }
+            });
+            KINGDOM_SETTLEMENT_QUALITIES.forEach((quality) => {
+                const data = settlement.qualities[quality];
+                const document = fromUuidSync(data.uuid ?? "");                
+                const actor = document instanceof PhysicalItemPF2e ? document : null;
+                if (actor) {
+                    if (actor.description.length > 40) {
+                        const parser = new DOMParser();
+                        const parsed = parser.parseFromString(actor.description, "text/html");
+
+                        const tableBody = parsed.body.firstChild?.childNodes[2];
+                        if (tableBody) {
+                            tableBody?.childNodes.forEach((entry) => {
+                                if (entry.childNodes[1] && entry.childNodes[3]){
+                                    const nodeType = <KingdomSkill>entry.childNodes[1].childNodes[0].nodeValue?.toLowerCase();
+                                    const nodeValue = (Number)(entry.childNodes[3].childNodes[0].nodeValue);
+                                    const nodeIsNumber = !isNaN(nodeValue);
+                                    if ( KINGDOM_SKILLS.includes(nodeType!) && nodeIsNumber) {
+                                        settlement.storage[nodeType!] += nodeValue;
+                                    }
+                                }
+                            });
+                        }
+                    }
+                }
+            });
         }
 
-        // Compute commodity max values
-        for (const [type, value] of Object.entries(this.resources.commodities)) {
-            const settlementStorage = R.sumBy(settlements, (s) => s.storage[type]);
-            value.max = sizeData.storage + settlementStorage;
+        //Inject Modifiers Size > Town > Improvements > Edicts
+        const modifiersMaybeFame = (synthetics.modifiers[this.aspiration] ??= []);
+        modifiersMaybeFame.push(
+            () =>
+                new ModifierPF2e({
+                    slug: "Size",
+                    label: "Size",
+                    modifier: this.sizeData.inFame,
+                })
+        );
+
+        // Inject control dc modifiers
+        const modifiers = (synthetics.modifiers["control-dc"] ??= []);
+        modifiers.push(
+            () =>
+                new ModifierPF2e({
+                    slug: "size",
+                    label: "Size Modifier",
+                    modifier: this.size,
+                })
+        );
+        modifiers.push(
+            () =>
+                new ModifierPF2e({
+                    slug: "districts",
+                    label: "Settlement Districts Modifier",
+                    modifier: settlements.reduce((sum, current) => sum + Object.keys(current.districts).length, 0),
+                })
+        );
+
+        const modifiersFame = (synthetics.modifiers["fame"] ??= []);
+        modifiersFame.push(
+            () =>
+                new ModifierPF2e({
+                    slug: "Settlements",
+                    label: "Lore & Society",
+                    modifier: Math.floor(settlements.reduce((sum, current) => sum + (current.storage['lore'] + current.storage['society'])/10, 0)),
+                })
+        );
+        const modifiersInfame = (synthetics.modifiers["infamy"] ??= []);
+        modifiersInfame.push(
+            () =>
+                new ModifierPF2e({
+                    slug: "Settlements",
+                    label: "Corruption & Crime",
+                    modifier: Math.floor(settlements.reduce((sum, current) => sum + (current.storage['corruption'] + current.storage['crime'])/10, 0)),
+                })
+        );
+        for (const settlement of settlements) {
+            if (!settlement) continue;
+            for (const skill in KINGDOM_SKILLS_KINGDOM) {
+                const data = KINGDOM_SKILLS_KINGDOM[skill];
+                const modifiers = (synthetics.modifiers[data] ??= []);
+                modifiers.push(
+                    () =>
+                        new ModifierPF2e({
+                            slug: data + settlement.name,
+                            label: settlement.name,
+                            modifier: settlement.storage[data],
+                        })
+                );
+            }
         }
+        for (const commodity of KINGDOM_COMMODITIES) {
+            for (const [selector, entries] of Object.entries(KINGDOM_COMMODITIES_MODIFIERS[commodity]().modifiers ?? {})) {
+                const modifiers = (synthetics.modifiers[selector] ??= []);
+                entries.forEach((entry) => {
+                    if (this.resources.workSites[commodity].value + this.resources.workSites[commodity].resource > 0) {
+                        if (selector == 'consumption' && commodity == 'food') {
+                            modifiers.push(
+                                () =>
+                                    new ModifierPF2e({
+                                        slug: entry.slug,
+                                        label: entry.label,
+                                        modifier: entry.modifier * this.resources.workSites[commodity].value + entry.modifier * 1.5 * this.resources.workSites[commodity].resource
+                                    })
+                            )
+                        } else {
+                            modifiers.push(
+                                () =>
+                                    new ModifierPF2e({
+                                        slug: entry.slug,
+                                        label: entry.label,
+                                        modifier: Math.floor(entry.modifier * this.resources.workSites[commodity].value + entry.modifier * 2 * this.resources.workSites[commodity].resource)
+                                    })
+                            )
+                        }
+                    }
+                });
+            }
+        }
+        KINGDOM_EDICTS.forEach((type) => {
+            const edict = this.edicts[type];
+            const data = KINGDOM_EDICT_DATA[type][edict];
+            if (data.economy != 0) {
+                const modifiers = (synthetics.modifiers["economy"] ??= []);
+                modifiers.push(
+                    () =>
+                        new ModifierPF2e({
+                            slug: type,
+                            label: data.label,
+                            modifier: data.economy,
+                        })
+                )
+            }
+            if (data.loyalty != 0) {
+                const modifiers = (synthetics.modifiers["loyalty"] ??= []);
+                modifiers.push(
+                    () =>
+                        new ModifierPF2e({
+                            slug: type,
+                            label: data.label,
+                            modifier: data.loyalty,
+                        })
+                )
+            }
+            if (data.stability != 0) {
+                const modifiers = (synthetics.modifiers["stability"] ??= []);
+                modifiers.push(
+                    () =>
+                        new ModifierPF2e({
+                            slug: type,
+                            label: data.label,
+                            modifier: data.stability,
+                        })
+                )
+            }
+            if (data.consumption != 0) {
+                const modifiers = (synthetics.modifiers["consumption"] ??= []);
+                modifiers.push(
+                    () =>
+                        new ModifierPF2e({
+                            slug: type,
+                            label: data.label,
+                            modifier: data.consumption,
+                        })
+                )
+            }
+        });
+
     }
 
     prepareDerivedData(): void {
         const { synthetics } = this.actor;
-        const { consumption, resources } = this;
+        const { consumption} = this;
 
-        // Autocompute resource dice
-        resources.dice.number = Math.max(0, this.level + 4 + resources.dice.bonus - resources.dice.penalty);
-
-        // Compute consumption
-        const settlements = R.compact(Object.values(this.settlements));
-        consumption.settlement = R.sumBy(settlements, (s) => s.consumption.total);
-        const computedConsumption =
-            consumption.base + consumption.settlement + consumption.army - this.resources.workSites.food.value;
-        consumption.value = Math.max(0, computedConsumption);
+        const modifiersCon = (synthetics.modifiers["consumption"] ??= []);
+        modifiersCon.push(
+            () =>
+                new ModifierPF2e({
+                    slug: "Size",
+                    label: "Size Modifier",
+                    modifier: this.size,
+                })
+        );
+        modifiersCon.push(
+            () =>
+                new ModifierPF2e({
+                    slug: "Armies",
+                    label: "Army Modifier",
+                    modifier: consumption.army,
+                })
+        );
 
         // Calculate the control dc, used for skill checks
-        const controlMod = CONTROL_DC_BY_LEVEL[Math.clamped(this.level - 1, 0, 19)] - 10;
+        const controlMod = 10;
         this.control = new Statistic(this.actor, {
             slug: "control",
             label: "PF2E.Kingmaker.Kingdom.ControlDC",
@@ -382,29 +578,44 @@ class Kingdom extends DataModel<PartyPF2e, KingdomSchema> implements PartyCampai
         // Calculate all kingdom skills
         this.skills = R.mapToObj(KINGDOM_SKILLS, (skill) => {
             const ability = KINGDOM_SKILL_ABILITIES[skill];
-            const abilityMod = this.abilities[ability].mod;
             const rank = this.build.skills[skill].rank;
-            const domains = ["kingdom-check", `${ability}-based`, `${ability}-skill-check`, skill];
-            const statistic = new Statistic(this.actor, {
-                slug: skill,
-                rank,
-                label: KINGDOM_SKILL_LABELS[skill],
-                domains,
-                modifiers: [
-                    new ModifierPF2e({
-                        slug: ability,
-                        label: KINGDOM_ABILITY_LABELS[ability],
-                        modifier: abilityMod,
-                        type: "ability",
-                        adjustments: extractModifierAdjustments(synthetics.modifierAdjustments, domains, ability),
-                    }),
-                    createProficiencyModifier({ actor: this.actor, rank, domains, level: this.level }),
-                ],
-                check: { type: "skill-check" },
-            });
+            var statistic;
+            if (ability) {
+                const abilityMod = this.abilities[ability].mod;
+                const domains = ["kingdom-check", "kingdom-ability-check", `${ability}-based`, `${ability}-skill-check`, skill];
+                statistic = new Statistic(this.actor, {
+                    slug: skill,
+                    rank,
+                    label: KINGDOM_SKILL_LABELS[skill],
+                    domains,
+                    modifiers: [
+                        new ModifierPF2e({
+                            slug: ability,
+                            label: KINGDOM_ABILITY_LABELS[ability],
+                            modifier: abilityMod,
+                            type: "ability",
+                            adjustments: extractModifierAdjustments(synthetics.modifierAdjustments, domains, ability),
+                        }),
+                    ],
+                    check: { type: "skill-check" },
+                });
+            } else {
+                const domains = ["kingdom-check", skill];
+                statistic = new Statistic(this.actor, {
+                    slug: skill,
+                    rank,
+                    label: KINGDOM_SKILL_LABELS[skill],
+                    domains,
+                    modifiers: [
+                    ],
+                    check: { type: "skill-check" },
+                });
+            }
 
             return [skill, statistic];
         });
+
+        consumption.value = Math.max(this.skills.consumption.mod, 0);
 
         // Create feat groups
         const evenLevels = new Array(this.level)

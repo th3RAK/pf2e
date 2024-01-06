@@ -11,7 +11,6 @@
                 </a>
                 <span class="name">{{skill.label}}</span>
                 <div class="button-group">
-                    {{> proficiencySelect property=(concat "build.skills." skill.slug ".rank") rank=skill.rank}}
                     <button type="button" class="hover small-button modifiers" data-tooltip-content="#{{@root.options.id}}-{{skill.slug}}-modifiers">
                         <i class="fa-solid fa-cog"></i>
                     </button>
@@ -35,33 +34,86 @@
         </span>
     </header>
     <ol class="actions-list item-list directory-list">
-        <div class="phase-summary" data-phase="commerce">
-            <header>{{localize "PF2E.Kingmaker.Kingdom.Phases.commerce.Header"}}</header>
-            <p>{{localize "PF2E.Kingmaker.Kingdom.Phases.commerce.Description"}}</p>
+        <div class="phase-summary" data-phase="upkeep">
+            <header>Upkeep Phase</header>
+            <p>During the Upkeep Phase, you adjust your kingdom’s scores based on what’s happened in the past month, how happy the people are, how much they’ve consumed and are taxed, and so on.</p>
             <ol>
-                <li>{{{localize "PF2E.Kingmaker.Kingdom.Phases.commerce.Step1"}}}</li>
-                <li>{{{localize "PF2E.Kingmaker.Kingdom.Phases.commerce.Step2"}}}</li>
-                <li>{{{localize "PF2E.Kingmaker.Kingdom.Phases.commerce.Step3"}}}</li>
-                <li>{{{localize "PF2E.Kingmaker.Kingdom.Phases.commerce.Step4"}}}</li>
+                <li><b>Determine Kingdom Stability:</b> Attempt a Stability check. If you succeed, Unrest decreases by 1 (if this would reduce Unrest below 0, add 1 BP to your Treasury instead). If you fail by 4 or less, Unrest increases by 1; if you fail by 5 or more, Unrest increases by 1d4.</li>
+                <li><b>Pay Consumption:</b>  Subtract your kingdom’s Consumption from the kingdom’s Treasury. If your Treasury is negative after paying Consumption, Unrest increases by 2.</li>
+                <li><b>Fill Vacant Magic Item Slots:</b> If any of your settlement districts have buildings that produce magic items with vacant magic item slots, there is a chance of those slots filling with new items.                
+                <li><b>Modify Unrest:</b> Unrest increases by 1 for each kingdom attribute (Economy, Loyalty, or Stability) that is a negative number. <br>The Royal Enforcer may attempt to reduce Unrest during this step. <br>If the kingdom’s Unrest is 11 or higher, it loses 1 hex (the leaders choose which hex).<br>If your kingdom’s Unrest ever reaches 20, the kingdom falls into anarchy. While in anarchy, your kingdom can take no action and treats all Economy, Loyalty, and Stability check results as 0. Restoring order once a kingdom falls into anarchy typically requires a number of quests and lengthy adventures by you and the other would-be leaders to restore the people’s faith in you.</li>
             </ol>
         </div>
-            <div class="phase-summary" data-phase="leadership">
-            <header>{{localize "PF2E.Kingmaker.Kingdom.Phases.leadership.Header"}}</header>
-            <p>{{localize "PF2E.Kingmaker.Kingdom.Phases.leadership.Description"}}</p>
+        <div class="phase-summary" data-phase="edict">
+            <header>Edict Phase</header>
+            <p>The Edict phase is when you make proclamations on expansion, improvements, taxation, holidays, and so on.</p>
+            <ol>
+                <li><b>Assign Leadership:</b> Assign PCs or NPCs to any vacant leadership roles or change the roles being filled by particular PCs or closely allied NPCs.</li>
+                <li><b>Claim and Abandon Hexes:</b> For your kingdom to grow, you must claim additional hexes. You can only claim a hex that is adjacent to at least 1 other hex in your kingdom. Before you can claim it, the hex must first be explored, then cleared of monsters and dangerous hazards (see Steps 2 and 3 of Founding a Settlement for more details). Then, to claim the hex, spend 1 BP; this establishes the hex as part of your kingdom and increases your kingdom’s Size by 1.<br>You may abandon any number of hexes to reduce your kingdom’s Size. Doing so increases Unrest by 1 for each hex abandoned (or by 4 if it contained a settlement). This otherwise functions like losing a hex due to unrest.</li>
+                <li><b>?:</b> ?</li>              
+                <li><b>Build Terrain Improvements:</b> You may spend BP to build terrain improvements like Farms, Forts, Roads, Mines, and Quarries.<br>You may also prepare a hex for constructing a settlement. Depending on the site, this may involve clearing trees, moving boulders, digging sanitation trenches, and so on.</li>
+                <li><b>Create and Improve Settlements:</b> You may create a settlement in a claimed hex.<br>You may construct a building in any settlement in your kingdom. The list of available building types begins. When a building is completed, apply its modifiers to your kingdom sheet.</li>        
+                <li><b>Create Army Units</b> You may create, expand, equip, or repair army units (see Mass Combat).</li>           
+                <li><b>Issue Edicts: </b> Select or adjust your edict levels (see Edicts).</li>
+                    <select class="edict" name="edicts.taxation" data-dtype="String">
+                        {{#select @root.kingdom.edicts.taxation}}
+                            {{#each @root.edictTypes.taxation as |data value|}}
+                                <option value="{{value}}">{{data.label}}</option>
+                            {{/each}}
+                        {{/select}}
+                    </select><br>
+                    <select class="edict" name="edicts.promotion" data-dtype="String">
+                        {{#select @root.kingdom.edicts.promotion}}
+                            {{#each @root.edictTypes.promotion as |data value|}}
+                                <option value="{{value}}">{{data.label}}</option>
+                            {{/each}}
+                        {{/select}}
+                    </select><br>
+                    <select class="edict" name="edicts.holiday" data-dtype="String">
+                        {{#select @root.kingdom.edicts.holiday}}
+                            {{#each @root.edictTypes.holiday as |data value|}}
+                                <option value="{{value}}">{{data.label}}</option>
+                            {{/each}}
+                        {{/select}}
+                    </select>
+                </li>
+            </ol>
+            <table border="1" cellpadding="5">
+                <thead> 
+                    <tr>
+                        <th class="text">New Settlements</th> 
+                        <th class="text">New Buildings</th> 
+                        <th class="text">Terrain Improvements</th> 
+                        <th class="text">Hex Claims</th> 
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="number">{{@root.kingdom.sizeData.improvSettlements}}</td> 
+                        <td class="number">{{@root.kingdom.sizeData.improvBuildings}}</td> 
+                        <td class="number">{{@root.kingdom.sizeData.improvTerrain}}</td> 
+                        <td class="number">{{@root.kingdom.sizeData.claimHex}}</td> 
+                    </tr>
+                </tbody> 
+            </table>
+            <p style="font-size:12px">Instead of creating a new settlement, your kingdom may create a new army unit, expand or equip an existing army unit, or bring an existing army unit back to full strength.
+                <br>Upgrading a building or destroying a building counts toward the building limit. The first House, Mansion, Noble Villa, or Tenement your kingdom builds each turn does not count against this number. </p>
         </div>
         </div>
-            <div class="phase-summary" data-phase="region">
-            <header>{{localize "PF2E.Kingmaker.Kingdom.Phases.region.Header"}}</header>
-            <p>{{localize "PF2E.Kingmaker.Kingdom.Phases.region.Description"}}</p>
+            <div class="phase-summary" data-phase="income">
+            <header>Income Phase</header>
+            <p>During the Income phase, you may add to or withdraw from the Treasury as well as collect taxes.</p>
+            <ol>
+                <li><b>Make Withdrawals from the Treasury:</b> The kingdom-building rules allow you to expend BP on things related to running the kingdom. If you want to spend some of the kingdom’s resources on something for your own personal benefit, you may withdraw BP from the Treasury and convert it into gp once per turn, but there is a penalty for doing so.<br>Each time you withdraw BP for your personal use, Unrest increases by the number of BP withdrawn. Each BP you withdraw this way converts to 200 gp of personal funds.</li>
+                <li><b>Make Deposits to the Treasury:</b> You can add funds to a kingdom’s Treasury by donating your personal wealth to the kingdom—coins, gems, jewelry, weapons, armor, magic items, and other valuables you find while adventuring, as long as they are individually worth 400 gp or less. For every full 400 gp in value of the deposit, increase your kingdom’s BP by 1.</li>
+                <li><b>Sell Expensive Items for BP:</b>You can attempt to sell expensive personal items (worth more than 400 gp each) through your kingdom’s markets to add to your Treasury. You may sell one item per settlement district per turn. You must choose the settlement where you want to sell the item, and the item cannot be worth more than the base value of that settlement.<br>To sell an item, divide its price by half (as if selling it to an NPC for gp), divide the result by 400 (rounded down), and add that many BP to your Treasury.<br>You cannot use this step to sell magic items held or created by buildings in your settlements; those items are the property of the owners of those businesses.</li>                
+                <li><b>Collect Taxes:</b> Attempt an Economy check and, if you succeed, divide the result by 3 (round down), and add a number of BP to your Treasury equal to the result.</li>
+            </ol>
         </div>
         </div>
-        <div class="phase-summary" data-phase="civic">
-            <header>{{localize "PF2E.Kingmaker.Kingdom.Phases.civic.Header"}}</header>
-            <p>{{localize "PF2E.Kingmaker.Kingdom.Phases.civic.Description"}}</p>
-        </div>
-        <div class="phase-summary" data-phase="army">
-            <header>{{localize "PF2E.Kingmaker.Kingdom.Phases.army.Header"}}</header>
-            <p>{{localize "PF2E.Kingmaker.Kingdom.Phases.army.Description"}}</p>
+        <div class="phase-summary" data-phase="event">
+            <header>Event Phase</header>
+            <p>In the Event phase, a random event may affect your kingdom as a whole or a single settlement or hex.<br>There is a 25% chance of an event occurring. If no event occurred during the last turn, this chance increases to 75%. Some events can be negated, ended, or compensated for with some kind of kingdom check. Others, such as a rampaging monster, require you to complete an adventure or deal with a problem in a way not covered by the kingdom-building rules.<br>In addition, the GM may have an adventure- or campaign-specific event take place. Other events may also happen during this phase, such as independence or unification.</p>
         </div>
         {{#each actions}}
             <li class="action item" data-item-id="{{item.id}}">

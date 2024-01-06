@@ -10,13 +10,14 @@ import { KingdomAbility, KingdomCHG } from "./types.ts";
 import {
     KINGDOM_ABILITIES,
     KINGDOM_ABILITY_LABELS,
+    KINGDOM_LEADERSHIP,
     KINGDOM_SKILL_LABELS,
     KingdomCHGData,
     getKingdomCHGData,
 } from "./values.ts";
 
 const KINGDOM_BUILD_CATEGORIES = ["charter", "heartland", "government"] as const;
-const KINGDOM_BOOST_LEVELS = [1, 5, 10, 15, 20] as const;
+const KINGDOM_BOOST_LEVELS = KINGDOM_LEADERSHIP;
 type KingdomBuildCategory = (typeof KINGDOM_BUILD_CATEGORIES)[number];
 type CurrentSelections = Record<KingdomBuildCategory, string | null>;
 
@@ -214,11 +215,18 @@ class KingdomBuilder extends FormApplication<Kingdom> {
         });
 
         const levelBoosts = R.mapToObj(KINGDOM_BOOST_LEVELS, (level) => {
-            const eligible = this.kingdom.level >= level;
+            const eligible = this.kingdom.leadership[level].invested
 
             const buttons = createButtons();
             const boosts = this.kingdom.build.boosts[level];
-            const remaining = eligible ? Math.max(0, 2 - boosts.length) : 0;
+            var remaining = 0
+            if (level == "ruler" && this.kingdom.size > 100 ) {
+                remaining = eligible ? Math.max(0, 3 - boosts.length) : 0;
+            } else if (level == "ruler" && this.kingdom.size > 25 ) {
+                remaining = eligible ? Math.max(0, 2 - boosts.length) : 0;
+            } else {
+                remaining = eligible ? Math.max(0, 1 - boosts.length) : 0;
+            }
             for (const ability of KINGDOM_ABILITIES) {
                 const selected = boosts.includes(ability) && eligible;
                 buttons[ability].boost = {
@@ -307,7 +315,7 @@ class KingdomBuilder extends FormApplication<Kingdom> {
 
         // Implement leveling boosts
         for (const button of htmlQueryAll(html, ".ability-builder [data-level] .boost")) {
-            const level = Number(htmlClosest(button, "[data-level]")?.dataset.level);
+            const level = htmlClosest(button, "[data-level]")?.dataset.level;
             const ability = htmlClosest(button, "[data-ability]")?.dataset.ability;
             if (!tupleHasValue(KINGDOM_ABILITIES, ability) || !tupleHasValue(KINGDOM_BOOST_LEVELS, level)) {
                 continue;
