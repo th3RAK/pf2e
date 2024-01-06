@@ -1,3 +1,10 @@
+# A somewhat messy hack of the Pathfinder Second Edition Kingdom sheet for Foundry VTT, repurposed for 1e Kingdom rules
+
+![Main tab](https://github.com/th3RAK/pf2e/blob/release/Main%20tab.png)
+![Activities tab](https://github.com/th3RAK/pf2e/blob/release/Activities%20tab.png)
+![World tab](https://github.com/th3RAK/pf2e/blob/release/World%20tab.png)
+![Building](https://github.com/th3RAK/pf2e/blob/release/World%20tab%20-%20Example%20building.png)
+
 # A system implementation of Pathfinder Second Edition for Foundry VTT
 
 This system uses trademarks and/or copyrights owned by Paizo Inc., which are used with permission granted as part of the partnership agreement between Foundry Gaming LLC and Paizo Inc. This system was created and is maintained by the PF2E For Foundry VTT volunteer development team, and is published for free with the endorsement of Foundry Gaming LLC.
