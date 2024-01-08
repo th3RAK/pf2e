@@ -719,7 +719,7 @@
                 },
                 "duration": {
                     "sustained": true,
-                    "value": "sustained up to 1 minute"
+                    "value": "1 minute"
                 },
                 "level": {
                     "value": 7
@@ -1006,7 +1006,7 @@
                 },
                 "category": "defensive",
                 "description": {
-                    "value": "<p>@Template[type:emanation|distance:50]{50 feet} @UUID[Compendium.pf2e.bestiary-ability-glossary-srd.Item.Aura]</p>\n<hr />\n<p>All good-aligned creatures in the aura have fast healing 30 for as long as they remain in range, and they gain a +2 status bonus to attack rolls and damage rolls.</p>\n<p>@UUID[Compendium.pf2e.bestiary-effects.Item.Effect: Bastion Aura]</p>"
+                    "value": "<p>50 feet. All good-aligned creatures in the aura have fast healing 30 for as long as they remain in range, and they gain a +2 status bonus to attack rolls and damage rolls.</p>\n<p>@UUID[Compendium.pf2e.bestiary-effects.Item.Effect: Bastion Aura]</p>"
                 },
                 "publication": {
                     "license": "OGL",
@@ -1402,12 +1402,6 @@
                 "temp": 0,
                 "value": 280
             },
-            "initiative": {
-                "statistic": "perception"
-            },
-            "perception": {
-                "value": 37
-            },
             "speed": {
                 "otherSpeeds": [],
                 "value": 70
@@ -1421,6 +1415,14 @@
         },
         "details": {
             "blurb": "",
+            "languages": {
+                "details": "tongues",
+                "value": [
+                    "diabolic",
+                    "draconic",
+                    "empyrean"
+                ]
+            },
             "level": {
                 "value": 20
             },
@@ -1431,6 +1433,23 @@
                 "remaster": false,
                 "title": "Pathfinder Bestiary 2"
             }
+        },
+        "initiative": {
+            "statistic": "perception"
+        },
+        "perception": {
+            "details": "",
+            "mod": 37,
+            "senses": [
+                {
+                    "type": "darkvision"
+                },
+                {
+                    "acuity": "precise",
+                    "range": 60,
+                    "type": "truesight"
+                }
+            ]
         },
         "resources": {
             "focus": {
@@ -1453,22 +1472,7 @@
             }
         },
         "traits": {
-            "attitude": {
-                "value": "hostile"
-            },
-            "languages": {
-                "custom": "Tongues",
-                "selected": [],
-                "value": [
-                    "diabolic",
-                    "draconic",
-                    "empyrean"
-                ]
-            },
             "rarity": "rare",
-            "senses": {
-                "value": "darkvision, true seeing"
-            },
             "size": {
                 "value": "huge"
             },

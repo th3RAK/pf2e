@@ -938,12 +938,6 @@
                 "temp": 0,
                 "value": 70
             },
-            "initiative": {
-                "statistic": "perception"
-            },
-            "perception": {
-                "value": 11
-            },
             "speed": {
                 "otherSpeeds": [],
                 "value": 25
@@ -951,6 +945,12 @@
         },
         "details": {
             "blurb": "Male Kellid hunter",
+            "languages": {
+                "details": "",
+                "value": [
+                    "hallit"
+                ]
+            },
             "level": {
                 "value": 4
             },
@@ -961,6 +961,14 @@
                 "remaster": false,
                 "title": "Pathfinder #175: Broken Tusk Moon"
             }
+        },
+        "initiative": {
+            "statistic": "perception"
+        },
+        "perception": {
+            "details": "",
+            "mod": 11,
+            "senses": []
         },
         "resources": {},
         "saves": {
@@ -978,17 +986,7 @@
             }
         },
         "traits": {
-            "languages": {
-                "custom": "",
-                "selected": [],
-                "value": [
-                    "hallit"
-                ]
-            },
             "rarity": "unique",
-            "senses": {
-                "value": ""
-            },
             "size": {
                 "value": "med"
             },

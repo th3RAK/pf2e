@@ -1,4 +1,4 @@
-import { ActorPF2e } from "@actor";
+import { ActorPF2e, type ArmyPF2e } from "@actor";
 import { FeatGroup } from "@actor/character/feats.ts";
 import { MODIFIER_TYPES, ModifierPF2e, RawModifier } from "@actor/modifiers.ts";
 import { CampaignFeaturePF2e, ItemPF2e, PhysicalItemPF2e } from "@item";
@@ -58,6 +58,7 @@ class Kingdom extends DataModel<PartyPF2e, KingdomSchema> implements PartyCampai
     declare bonusFeats: FeatGroup<PartyPF2e, CampaignFeaturePF2e>;
     declare skills: Record<KingdomSkill, Statistic>;
     declare control: Statistic;
+    declare armies: ArmyPF2e[];
 
     static override defineSchema(): KingdomSchema {
         return KINGDOM_SCHEMA;
@@ -205,9 +206,21 @@ class Kingdom extends DataModel<PartyPF2e, KingdomSchema> implements PartyCampai
         }
     }
 
+    /** Resets kingdom data preparation and re-renders all party actor sheets, which includes the kingmaker sheet */
+    notifyUpdate = fu.debounce(() => {
+        this.reset();
+        this.prepareBaseData();
+        this.prepareDerivedData();
+        this.actor.render();
+    }, 50);
+
     prepareBaseData(): void {
         const { synthetics } = this.actor;
         const { build } = this;
+
+        // All friendly armies are gathered to determine consumption
+        this.armies = game.actors.filter((a): a is ArmyPF2e<null> => a.isOfType("army") && a.alliance === "party");
+        this.consumption.army = R.sumBy(this.armies, (a) => a.system.consumption);
 
         // Calculate Ability Boosts (if calculated automatically)
         if (!build.manual) {

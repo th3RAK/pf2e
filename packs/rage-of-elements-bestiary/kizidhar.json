@@ -1350,12 +1350,6 @@
                 "temp": 0,
                 "value": 110
             },
-            "initiative": {
-                "statistic": "perception"
-            },
-            "perception": {
-                "value": 14
-            },
             "speed": {
                 "details": "parting the trees",
                 "otherSpeeds": [
@@ -1369,6 +1363,13 @@
         },
         "details": {
             "blurb": "",
+            "languages": {
+                "details": "speak with plants, truespeech",
+                "value": [
+                    "common",
+                    "muan"
+                ]
+            },
             "level": {
                 "value": 6
             },
@@ -1379,6 +1380,18 @@
                 "remaster": true,
                 "title": "Pathfinder Rage of Elements"
             }
+        },
+        "initiative": {
+            "statistic": "perception"
+        },
+        "perception": {
+            "details": "",
+            "mod": 14,
+            "senses": [
+                {
+                    "type": "darkvision"
+                }
+            ]
         },
         "resources": {},
         "saves": {
@@ -1396,18 +1409,7 @@
             }
         },
         "traits": {
-            "languages": {
-                "custom": "Speak With Plants, Truespeech",
-                "selected": [],
-                "value": [
-                    "common",
-                    "muan"
-                ]
-            },
             "rarity": "uncommon",
-            "senses": {
-                "value": "darkvision"
-            },
             "size": {
                 "value": "lg"
             },

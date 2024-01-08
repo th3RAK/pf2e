@@ -1,7 +1,6 @@
 import type { ActorPF2e } from "@actor";
 import { StrikeData } from "@actor/data/base.ts";
 import { ItemProxyPF2e, type ItemPF2e } from "@item";
-import { TrickMagicItemEntry, traditionSkills } from "@item/spellcasting-entry/trick.ts";
 import type { UserPF2e } from "@module/user/index.ts";
 import type { ScenePF2e, TokenDocumentPF2e } from "@scene/index.ts";
 import { InlineRollLinks } from "@scripts/ui/inline-roll-links.ts";
@@ -115,18 +114,11 @@ class ChatMessagePF2e extends ChatMessage {
         })();
         if (!item) return null;
 
-        // Assign spellcasting entry, currently only used for trick magic item
-        const { tradition } = this.flags.pf2e?.casting ?? {};
-        const isCharacter = !!item.actor?.isOfType("character");
-        if (tradition && item.isOfType("spell") && !item.spellcasting && isCharacter) {
-            const trick = new TrickMagicItemEntry(item.actor, traditionSkills[tradition]);
-            item.trickMagicEntry = trick;
-        }
-
         if (item?.isOfType("spell")) {
+            const entryId = this.flags.pf2e?.casting?.id ?? null;
             const overlayIds = this.flags.pf2e.origin?.variant?.overlays;
-            const castLevel = this.flags.pf2e.origin?.castLevel ?? item.rank;
-            const modifiedSpell = item.loadVariant({ overlayIds, castLevel });
+            const castRank = this.flags.pf2e.origin?.castRank ?? item.rank;
+            const modifiedSpell = item.loadVariant({ overlayIds, castRank, entryId });
             return modifiedSpell ?? item;
         }
 
@@ -282,7 +274,7 @@ class ChatMessagePF2e extends ChatMessage {
         super._onCreate(data, options, userId);
 
         // Handle critical hit and fumble card drawing
-        if (this.isRoll && game.settings.get("pf2e", "drawCritFumble")) {
+        if (this.isRoll && game.pf2e.settings.critFumble.cards) {
             CriticalHitAndFumbleCards.handleDraw(this);
         }
     }

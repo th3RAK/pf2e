@@ -981,7 +981,7 @@
                 },
                 "category": "defensive",
                 "description": {
-                    "value": "<p>@Template[type:emanation|distance:15]{15 feet} @UUID[Compendium.pf2e.bestiary-ability-glossary-srd.Item.Aura]</p>\n<p>A fallen champion emanates an aura of utter despair. Living creatures are @UUID[Compendium.pf2e.conditionitems.Item.Frightened]{Frightened 1} while in a fallen champion's aura. They can't naturally recover from this fear while in the area but recover instantly once they leave the aura.</p>\n<p>@UUID[Compendium.pf2e.bestiary-effects.Item.Effect: Despair]</p>"
+                    "value": "<p>15 feet. A fallen champion emanates an aura of utter despair. Living creatures are @UUID[Compendium.pf2e.conditionitems.Item.Frightened]{Frightened 1} while in a fallen champion's aura. They can't naturally recover from this fear while in the area but recover instantly once they leave the aura.</p>\n<p>@UUID[Compendium.pf2e.bestiary-effects.Item.Effect: Despair]</p>"
                 },
                 "publication": {
                     "license": "OGL",
@@ -1078,7 +1078,7 @@
                 "category": "defensive",
                 "deathNote": true,
                 "description": {
-                    "value": "<p>When the herexen is destroyed, it explodes in a wave of void energy with the effects of a 4th-level, 3-action <em>@UUID[Compendium.pf2e.spells-srd.Item.Harm]</em> spell (@Check[type:fortitude|dc:26|basic:true]). The herexen is destroyed, so it doesn't gain any Hit Points from this use of <em>harm</em>, and it doesn't need to have any <em>harm</em> spells remaining to use this ability.</p>"
+                    "value": "<p>When the herexen is destroyed, it explodes in a wave of void energy with the effects of a 4th-rank, 3-action <em>@UUID[Compendium.pf2e.spells-srd.Item.Harm]</em> spell (@Check[type:fortitude|dc:26|basic:true]). The herexen is destroyed, so it doesn't gain any Hit Points from this use of <em>harm</em>, and it doesn't need to have any <em>harm</em> spells remaining to use this ability.</p>"
                 },
                 "publication": {
                     "license": "OGL",
@@ -1476,12 +1476,6 @@
                     "type": "unconscious"
                 }
             ],
-            "initiative": {
-                "statistic": "perception"
-            },
-            "perception": {
-                "value": 17
-            },
             "speed": {
                 "otherSpeeds": [],
                 "special": "",
@@ -1490,6 +1484,13 @@
         },
         "details": {
             "blurb": "",
+            "languages": {
+                "details": "",
+                "value": [
+                    "common",
+                    "necril"
+                ]
+            },
             "level": {
                 "value": 8
             },
@@ -1500,6 +1501,18 @@
                 "remaster": false,
                 "title": "Pathfinder Book of the Dead"
             }
+        },
+        "initiative": {
+            "statistic": "perception"
+        },
+        "perception": {
+            "details": "",
+            "mod": 17,
+            "senses": [
+                {
+                    "type": "darkvision"
+                }
+            ]
         },
         "resources": {
             "focus": {
@@ -1522,18 +1535,7 @@
             }
         },
         "traits": {
-            "languages": {
-                "custom": "",
-                "selected": [],
-                "value": [
-                    "common",
-                    "necril"
-                ]
-            },
             "rarity": "uncommon",
-            "senses": {
-                "value": "darkvision"
-            },
             "size": {
                 "value": "med"
             },

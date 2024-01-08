@@ -27,6 +27,9 @@
         "rules": [
             {
                 "key": "Note",
+                "outcome": [
+                    "success"
+                ],
                 "predicate": [
                     "fear"
                 ],
@@ -44,14 +47,15 @@
                 ],
                 "selector": "will",
                 "type": "save"
-            },
-            {
-                "key": "ActiveEffectLike",
-                "mode": "upgrade",
-                "path": "system.saves.will.rank",
-                "value": 2
             }
         ],
+        "subfeatures": {
+            "proficiencies": {
+                "will": {
+                    "rank": 2
+                }
+            }
+        },
         "traits": {
             "rarity": "common",
             "value": [

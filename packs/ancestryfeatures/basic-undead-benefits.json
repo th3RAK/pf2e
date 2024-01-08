@@ -27,7 +27,7 @@
         "rules": [
             {
                 "key": "Sense",
-                "selector": "lowLightVision"
+                "selector": "low-light-vision"
             },
             {
                 "key": "Sense",
@@ -41,12 +41,6 @@
                 "mode": "override",
                 "path": "system.attributes.hp.negativeHealing",
                 "value": true
-            },
-            {
-                "key": "ActiveEffectLike",
-                "mode": "add",
-                "path": "system.traits.languages.value",
-                "value": "necril"
             },
             {
                 "key": "FlatModifier",
@@ -67,6 +61,14 @@
                 "type": "death-effects"
             }
         ],
+        "subfeatures": {
+            "languages": {
+                "granted": [
+                    "necril"
+                ],
+                "slots": 0
+            }
+        },
         "traits": {
             "rarity": "common",
             "value": []

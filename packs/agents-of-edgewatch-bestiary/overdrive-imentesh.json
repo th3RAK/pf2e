@@ -199,7 +199,7 @@
                 },
                 "duration": {
                     "sustained": true,
-                    "value": "sustained up to 1 minute"
+                    "value": "1 minute"
                 },
                 "level": {
                     "value": 9
@@ -876,7 +876,7 @@
                 "damage": {},
                 "defense": null,
                 "description": {
-                    "value": "<p>You repair the target item. You restore 5 Hit Points per spell level to the target, potentially removing the @UUID[Compendium.pf2e.conditionitems.Item.Broken] condition if this repairs it past the item's Broken Threshold. You can't replace lost pieces or repair an object that's been completely destroyed.</p>\n<hr />\n<p><strong>Heightened (2nd)</strong> You can target a non-magical object of 1 Bulk or less.</p>\n<p><strong>Heightened (3rd)</strong> You can target a non-magical object of 2 Bulk or less, or a magical object of 1 Bulk or less.</p>"
+                    "value": "<p>You repair the target item. You restore 5 Hit Points per spell rank to the target, potentially removing the @UUID[Compendium.pf2e.conditionitems.Item.Broken] condition if this repairs it past the item's Broken Threshold. You can't replace lost pieces or repair an object that's been completely destroyed.</p>\n<hr />\n<p><strong>Heightened (2nd)</strong> You can target a non-magical object of 1 Bulk or less.</p>\n<p><strong>Heightened (3rd)</strong> You can target a non-magical object of 2 Bulk or less, or a magical object of 1 Bulk or less.</p>"
                 },
                 "duration": {
                     "sustained": false,
@@ -1903,12 +1903,6 @@
                 "temp": 0,
                 "value": 315
             },
-            "initiative": {
-                "statistic": "perception"
-            },
-            "perception": {
-                "value": 29
-            },
             "resistances": [
                 {
                     "type": "precision",
@@ -1936,6 +1930,14 @@
         },
         "details": {
             "blurb": "",
+            "languages": {
+                "details": "tongues",
+                "value": [
+                    "chthonian",
+                    "empyrean",
+                    "protean"
+                ]
+            },
             "level": {
                 "value": 17
             },
@@ -1947,6 +1949,18 @@
                 "title": "Pathfinder #162: Ruins of the Radiant Siege"
             },
             "sidebarText": ""
+        },
+        "initiative": {
+            "statistic": "perception"
+        },
+        "perception": {
+            "details": "entropy sense (imprecise) 60 feet",
+            "mod": 29,
+            "senses": [
+                {
+                    "type": "darkvision"
+                }
+            ]
         },
         "resources": {
             "focus": {
@@ -1969,19 +1983,7 @@
             }
         },
         "traits": {
-            "languages": {
-                "custom": "Tongues",
-                "selected": [],
-                "value": [
-                    "chthonian",
-                    "empyrean",
-                    "protean"
-                ]
-            },
             "rarity": "rare",
-            "senses": {
-                "value": "darkvision, entropy sense (imprecise) 60 feet"
-            },
             "size": {
                 "value": "lg"
             },

@@ -191,7 +191,7 @@
                 "damage": {},
                 "defense": null,
                 "description": {
-                    "value": "<p>You create an opaque wall of shimmering, multicolored light. The wall is straight and vertical, stretching 60 feet long and 30 feet high. You must form the wall in an unbroken open space so its edges don't pass through any creatures or objects, or the spell is lost. You can pass through the wall and ignore its effects. The wall sheds bright light out to 20 feet on each side (and dim light to the next 20 feet). Creatures other than you that come into the wall's light must attempt a Will save; they're @UUID[Compendium.pf2e.conditionitems.Item.Dazzled] for 1 round on a success, @UUID[Compendium.pf2e.conditionitems.Item.Blinded] for 1 round on a failure, and Blinded for 1 minute on a critical failure. They are then temporarily immune to the blinding effect for 1 hour.</p>\n<p>A prismatic wall has seven different layers, each a different color. Red, orange, yellow, and green have the effect of a 5th-level <em>@UUID[Compendium.pf2e.spells-srd.Item.Chromatic Wall]</em> spell of that color, and the others have the effect of a 7th-level Chromatic Wall spell of that color. A creature that tries to pass through the wall must attempt a saving throw against each component wall. The effects take place simultaneously, so a creature turned to stone by the blue wall is still treated as a creature for the indigo and violet walls.</p>\n<p>The wall as a whole is immune to counteracting effects of the wall's level or lower; each color must be counteracted by its specific spell, as described in chromatic wall. This must be done in order (red, orange, yellow, green, blue, indigo, then violet). A given color can't be affected until the previous color is counteracted. Counteracting a color wall removes that color's effect from the wall, and counteracting them all ends prismatic wall. You can Dismiss the spell.</p>"
+                    "value": "<p>You create an opaque wall of shimmering, multicolored light. The wall is straight and vertical, stretching 60 feet long and 30 feet high. You must form the wall in an unbroken open space so its edges don't pass through any creatures or objects, or the spell is lost. You can pass through the wall and ignore its effects. The wall sheds bright light out to 20 feet on each side (and dim light to the next 20 feet). Creatures other than you that come into the wall's light must attempt a Will save; they're @UUID[Compendium.pf2e.conditionitems.Item.Dazzled] for 1 round on a success, @UUID[Compendium.pf2e.conditionitems.Item.Blinded] for 1 round on a failure, and Blinded for 1 minute on a critical failure. They are then temporarily immune to the blinding effect for 1 hour.</p>\n<p>A prismatic wall has seven different layers, each a different color. Red, orange, yellow, and green have the effect of a 5th-rank <em>@UUID[Compendium.pf2e.spells-srd.Item.Chromatic Wall]</em> spell of that color, and the others have the effect of a 7th-rank Chromatic Wall spell of that color. A creature that tries to pass through the wall must attempt a saving throw against each component wall. The effects take place simultaneously, so a creature turned to stone by the blue wall is still treated as a creature for the indigo and violet walls.</p>\n<p>The wall as a whole is immune to counteracting effects of the wall's level or lower; each color must be counteracted by its specific spell, as described in chromatic wall. This must be done in order (red, orange, yellow, green, blue, indigo, then violet). A given color can't be affected until the previous color is counteracted. Counteracting a color wall removes that color's effect from the wall, and counteracting them all ends prismatic wall. You can Dismiss the spell.</p>"
                 },
                 "duration": {
                     "sustained": false,
@@ -805,7 +805,7 @@
                 },
                 "duration": {
                     "sustained": true,
-                    "value": "sustained up to 1 minute"
+                    "value": "1 minute"
                 },
                 "heightening": {
                     "damage": {
@@ -2473,7 +2473,7 @@
                 },
                 "category": "defensive",
                 "description": {
-                    "value": "<p>@Template[type:emanation|distance:60]{60 feet} @UUID[Compendium.pf2e.bestiary-ability-glossary-srd.Item.Aura] @Check[type:will|dc:38]</p>\n<hr />\n<p>@Localize[PF2E.NPC.Abilities.Glossary.FrightfulPresence]</p>"
+                    "value": "<p>60 feet. @Check[type:will|dc:38]</p>\n<hr />\n<p>@Localize[PF2E.NPC.Abilities.Glossary.FrightfulPresence]</p>"
                 },
                 "publication": {
                     "license": "OGL",
@@ -2549,7 +2549,7 @@
                 },
                 "category": "defensive",
                 "description": {
-                    "value": "<p>@Template[type:emanation|distance:10]{10 feet} @UUID[Compendium.pf2e.bestiary-ability-glossary-srd.Item.Aura]</p>\n<hr />\n<p>The avatar of Walkena radiates with an intense light. Creatures that enter or begin their turn in the emanation are @UUID[Compendium.pf2e.conditionitems.Item.Dazzled] and take @Damage[3d8[fire]] damage (@Check[type:fortitude|dc:35|basic:true] save). Creatures remain dazzled until they leave the emanation.</p>"
+                    "value": "<p>10 feet. The avatar of Walkena radiates with an intense light. Creatures that enter or begin their turn in the emanation are @UUID[Compendium.pf2e.conditionitems.Item.Dazzled] and take @Damage[3d8[fire]] damage (@Check[type:fortitude|dc:35|basic:true] save). Creatures remain dazzled until they leave the emanation.</p>"
                 },
                 "publication": {
                     "license": "OGL",
@@ -2906,12 +2906,6 @@
                     "type": "unconscious"
                 }
             ],
-            "initiative": {
-                "statistic": "perception"
-            },
-            "perception": {
-                "value": 29
-            },
             "resistances": [
                 {
                     "type": "physical",
@@ -2931,6 +2925,12 @@
         },
         "details": {
             "blurb": "",
+            "languages": {
+                "details": "",
+                "value": [
+                    "common"
+                ]
+            },
             "level": {
                 "value": 17
             },
@@ -2941,6 +2941,18 @@
                 "remaster": false,
                 "title": "Pathfinder #172: Secrets of the Temple-City"
             }
+        },
+        "initiative": {
+            "statistic": "perception"
+        },
+        "perception": {
+            "details": "smoke vision",
+            "mod": 29,
+            "senses": [
+                {
+                    "type": "greater-darkvision"
+                }
+            ]
         },
         "resources": {},
         "saves": {
@@ -2958,17 +2970,7 @@
             }
         },
         "traits": {
-            "languages": {
-                "custom": "",
-                "selected": [],
-                "value": [
-                    "common"
-                ]
-            },
             "rarity": "rare",
-            "senses": {
-                "value": "greater darkvision, smoke vision"
-            },
             "size": {
                 "value": "huge"
             },

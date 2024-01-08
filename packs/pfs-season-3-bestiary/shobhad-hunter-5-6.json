@@ -903,12 +903,6 @@
                 "temp": 0,
                 "value": 72
             },
-            "initiative": {
-                "statistic": "perception"
-            },
-            "perception": {
-                "value": 13
-            },
             "speed": {
                 "otherSpeeds": [],
                 "value": 30
@@ -916,6 +910,13 @@
         },
         "details": {
             "blurb": "",
+            "languages": {
+                "details": "",
+                "value": [
+                    "akitonian",
+                    "shobhad"
+                ]
+            },
             "level": {
                 "value": 4
             },
@@ -926,6 +927,18 @@
                 "remaster": false,
                 "title": "Pathfinder Society Special #3-99: Fate in the Future"
             }
+        },
+        "initiative": {
+            "statistic": "perception"
+        },
+        "perception": {
+            "details": "",
+            "mod": 13,
+            "senses": [
+                {
+                    "type": "darkvision"
+                }
+            ]
         },
         "resources": {},
         "saves": {
@@ -943,18 +956,7 @@
             }
         },
         "traits": {
-            "languages": {
-                "custom": "",
-                "selected": [],
-                "value": [
-                    "akitonian",
-                    "shobhad"
-                ]
-            },
             "rarity": "rare",
-            "senses": {
-                "value": "darkvision"
-            },
             "size": {
                 "value": "lg"
             },

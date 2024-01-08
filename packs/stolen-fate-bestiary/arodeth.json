@@ -1102,7 +1102,7 @@
                 },
                 "duration": {
                     "sustained": true,
-                    "value": "sustained"
+                    "value": ""
                 },
                 "level": {
                     "value": 1
@@ -1523,7 +1523,7 @@
                 },
                 "containerId": null,
                 "description": {
-                    "value": "<p>This amulet is hollow and shaped in the form of an unblinking eye. Its cavity typically holds some fragment of occult text. While wearing the pendant, you gain a +2 item bonus to Occultism checks, and you can cast the <em>@UUID[Compendium.pf2e.spells-srd.Item.Guidance]</em> cantrip as an occult innate spell.</p>\n<p>The pendant can be activated.</p>\n<p><strong>Activate</strong> 10 minutes (Cast a Spell)</p>\n<p><strong>Frequency</strong> once per day</p>\n<hr />\n<p><strong>Effect</strong> You cast a 4th-level <em>@UUID[Compendium.pf2e.spells-srd.Item.Dream Message]</em> spell.</p>"
+                    "value": "<p>This amulet is hollow and shaped in the form of an unblinking eye. Its cavity typically holds some fragment of occult text. While wearing the pendant, you gain a +2 item bonus to Occultism checks, and you can cast the <em>@UUID[Compendium.pf2e.spells-srd.Item.Guidance]</em> cantrip as an occult innate spell.</p>\n<p>The pendant can be activated.</p>\n<p><strong>Activate</strong> 10 minutes (Cast a Spell)</p>\n<p><strong>Frequency</strong> once per day</p>\n<hr />\n<p><strong>Effect</strong> You cast a 4th-rank <em>@UUID[Compendium.pf2e.spells-srd.Item.Dream Message]</em> spell.</p>"
                 },
                 "equipped": {
                     "carryType": "worn",
@@ -2138,12 +2138,6 @@
                 "temp": 0,
                 "value": 255
             },
-            "initiative": {
-                "statistic": "perception"
-            },
-            "perception": {
-                "value": 22
-            },
             "speed": {
                 "otherSpeeds": [],
                 "value": 25
@@ -2151,6 +2145,14 @@
         },
         "details": {
             "blurb": "Female human magus",
+            "languages": {
+                "details": "",
+                "value": [
+                    "common",
+                    "draconic",
+                    "thassilonian"
+                ]
+            },
             "level": {
                 "value": 14
             },
@@ -2161,6 +2163,14 @@
                 "remaster": false,
                 "title": "Pathfinder #190: The Choosing"
             }
+        },
+        "initiative": {
+            "statistic": "perception"
+        },
+        "perception": {
+            "details": "",
+            "mod": 22,
+            "senses": []
         },
         "resources": {
             "focus": {
@@ -2183,19 +2193,7 @@
             }
         },
         "traits": {
-            "languages": {
-                "custom": "",
-                "selected": [],
-                "value": [
-                    "common",
-                    "draconic",
-                    "thassilonian"
-                ]
-            },
             "rarity": "unique",
-            "senses": {
-                "value": ""
-            },
             "size": {
                 "value": "med"
             },

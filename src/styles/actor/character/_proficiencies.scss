@@ -10,7 +10,7 @@
 
     h6 {
         @include micro;
-        padding: 2px 0.25rem;
+        padding: var(--space-2) 0.25rem;
         border-radius: 2px;
         box-shadow: inset 0 0 0 1px rgba(black, 0.5);
         color: var(--text-light);
@@ -21,58 +21,83 @@
         @include p-reset;
         display: grid;
         grid-template-columns: repeat(2, 1fr);
-        gap: 0.75rem;
+        gap: 0.5rem;
         align-items: center;
-        margin-bottom: 1rem;
+        margin-bottom: 0.75rem;
 
         li {
             @include frame-elegant;
             align-items: center;
             display: flex;
-            gap: 0.25rem;
-            padding: 0.125rem 0.875rem 0.125rem 0.25rem;
+            font-family: var(--serif);
+            font-size: var(--font-size-16);
+            min-height: 2.5rem;
+            padding: 0 0.5rem 0 0.25rem;
 
-            a.skill-name,
-            a.modifier {
+            a.d20 {
                 &:hover {
-                    color: var(--primary);
-                    text-shadow: none;
+                    @include die-spin;
+                }
+
+                filter: drop-shadow(0 0 1px var(--color-shadow-dark)) drop-shadow(0 0 3px var(--color-text-dark-4))
+                    drop-shadow(0 0 12px var(--color-text-light-3));
+                padding: 0.25rem;
+                path {
+                    fill: var(--color-text-light-1);
                 }
             }
 
-            a.modifier:hover,
-            a.skill-name:hover > .modifier {
-                text-decoration: underline;
+            .name,
+            .modifier,
+            .dc {
+                // Compensation for the font's alignment
+                padding-top: 0.1em;
+                margin-bottom: -0.1em;
             }
 
-            .modifier {
+            .modifier,
+            .dc {
                 color: var(--primary);
-                font: 600 var(--font-size-22) / 1em var(--serif);
+                font-weight: 600;
+                margin-right: 0.25rem;
                 text-align: end;
-                width: 2.5rem;
+                width: 1.75rem;
             }
 
-            .skill-name {
-                align-items: center;
-                display: flex;
+            .name {
                 flex: 1;
-                gap: 0.25rem;
+                margin-right: 0.25rem;
             }
 
             .button-group {
                 align-items: center;
                 display: flex;
-                flex-flow: column wrap;
                 justify-content: center;
 
-                h6 {
-                    margin: 1px 0;
+                button {
+                    @include micro;
+                    align-items: center;
                     background: var(--sub);
-                    box-shadow: inset 0 0 0 1px rgba(black, 0.2);
+                    border-radius: 2px;
+                    border: 1px solid rgba(black, 0.5);
+                    box-shadow: inset 0 0 0 1px rgba(white, 0.15);
+                    color: var(--text-light);
+                    display: flex;
+                    font-weight: 500;
+                    justify-content: center;
+                    line-height: 1.3em;
+                    margin: 0;
+                    padding: var(--space-1) 0 0;
+                    width: 6.5em;
 
                     &:hover {
                         background: var(--primary);
                     }
+                }
+
+                &.stacked {
+                    flex-flow: column wrap;
+                    gap: var(--space-1);
                 }
             }
 
@@ -81,14 +106,15 @@
                 position: relative;
 
                 a.delete {
+                    font-size: var(--font-size-12);
                     position: absolute;
-                    top: -0.5rem;
                     right: -0.5rem;
-                    opacity: 0.75;
+                    top: -0.5rem;
+                    opacity: 0.65;
+                }
 
-                    &:hover {
-                        opacity: 1;
-                    }
+                &:hover a.delete {
+                    opacity: 1;
                 }
             }
         }
@@ -104,40 +130,13 @@
             .item-controls {
                 font-size: var(--font-size-12);
                 margin-left: 0.5rem;
-                margin-top: 1px;
+                margin-top: var(--space-1);
             }
         }
     }
 
-    ul.lores-list {
-        grid-template-columns: 1fr;
-
-        input {
-            color: var(--text-dark);
-            font-weight: 600;
-        }
-    }
-
-    ul.combat-list {
-        grid-template: repeat(2, 1fr);
-
-        .item {
-            grid-column: 1 / 3;
-        }
-    }
-
-    .lore-header {
-        .item-controls {
-            white-space: nowrap;
-            color: var(--text-light);
-            @include micro;
-
-            .item-control {
-                padding: 0.25rem;
-                background: var(--secondary);
-                font-size: var(--font-size-10);
-                border-radius: 2px;
-            }
-        }
+    ul.lores-list > li,
+    li.all-by-myself {
+        grid-column: span 2;
     }
 }

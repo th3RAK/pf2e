@@ -509,12 +509,6 @@
                 "temp": 0,
                 "value": 60
             },
-            "initiative": {
-                "statistic": "perception"
-            },
-            "perception": {
-                "value": 9
-            },
             "resistances": [
                 {
                     "type": "bludgeoning",
@@ -543,6 +537,16 @@
         },
         "details": {
             "blurb": "",
+            "languages": {
+                "details": "",
+                "value": [
+                    "arboreal",
+                    "common",
+                    "fey",
+                    "senzar",
+                    "tien"
+                ]
+            },
             "level": {
                 "value": 3
             },
@@ -553,6 +557,18 @@
                 "remaster": false,
                 "title": "Pathfinder Society Scenario #1-06: Lost on the Spirit Road"
             }
+        },
+        "initiative": {
+            "statistic": "perception"
+        },
+        "perception": {
+            "details": "",
+            "mod": 9,
+            "senses": [
+                {
+                    "type": "low-light-vision"
+                }
+            ]
         },
         "resources": {},
         "saves": {
@@ -570,21 +586,7 @@
             }
         },
         "traits": {
-            "languages": {
-                "custom": "",
-                "selected": [],
-                "value": [
-                    "arboreal",
-                    "common",
-                    "fey",
-                    "senzar",
-                    "tien"
-                ]
-            },
             "rarity": "common",
-            "senses": {
-                "value": "low-light vision"
-            },
             "size": {
                 "value": "lg"
             },

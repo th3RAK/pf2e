@@ -477,12 +477,6 @@
                     "type": "cold"
                 }
             ],
-            "initiative": {
-                "statistic": "perception"
-            },
-            "perception": {
-                "value": 22
-            },
             "resistances": [
                 {
                     "doubleVs": [],
@@ -511,6 +505,15 @@
         },
         "details": {
             "blurb": "Male fleshwarp",
+            "languages": {
+                "details": "",
+                "value": [
+                    "common",
+                    "elven",
+                    "erutaki",
+                    "jotun"
+                ]
+            },
             "level": {
                 "value": 11
             },
@@ -521,6 +524,18 @@
                 "remaster": false,
                 "title": "Pathfinder #189: Dreamers of the Nameless Spires"
             }
+        },
+        "initiative": {
+            "statistic": "perception"
+        },
+        "perception": {
+            "details": "",
+            "mod": 22,
+            "senses": [
+                {
+                    "type": "darkvision"
+                }
+            ]
         },
         "resources": {},
         "saves": {
@@ -538,20 +553,7 @@
             }
         },
         "traits": {
-            "languages": {
-                "custom": "",
-                "selected": [],
-                "value": [
-                    "common",
-                    "elven",
-                    "erutaki",
-                    "jotun"
-                ]
-            },
             "rarity": "unique",
-            "senses": {
-                "value": "darkvision"
-            },
             "size": {
                 "value": "med"
             },

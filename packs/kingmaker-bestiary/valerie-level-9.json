@@ -2717,15 +2717,16 @@
                         ],
                         "selector": "will",
                         "type": "save"
-                    },
-                    {
-                        "key": "ActiveEffectLike",
-                        "mode": "upgrade",
-                        "path": "system.saves.will.rank",
-                        "value": 2
                     }
                 ],
                 "slug": "bravery",
+                "subfeatures": {
+                    "proficiencies": {
+                        "will": {
+                            "rank": 2
+                        }
+                    }
+                },
                 "traits": {
                     "rarity": "common",
                     "value": [
@@ -2866,15 +2867,16 @@
                         "selector": "initiative",
                         "type": "circumstance",
                         "value": 2
-                    },
-                    {
-                        "key": "ActiveEffectLike",
-                        "mode": "upgrade",
-                        "path": "system.attributes.perception.rank",
-                        "value": 3
                     }
                 ],
                 "slug": "battlefield-surveyor",
+                "subfeatures": {
+                    "proficiencies": {
+                        "perception": {
+                            "rank": 3
+                        }
+                    }
+                },
                 "traits": {
                     "rarity": "common",
                     "value": [
@@ -3059,15 +3061,16 @@
                         "key": "AdjustDegreeOfSuccess",
                         "selector": "fortitude",
                         "type": "save"
-                    },
-                    {
-                        "key": "ActiveEffectLike",
-                        "mode": "upgrade",
-                        "path": "system.saves.fortitude.rank",
-                        "value": 3
                     }
                 ],
                 "slug": "juggernaut",
+                "subfeatures": {
+                    "proficiencies": {
+                        "fortitude": {
+                            "rank": 3
+                        }
+                    }
+                },
                 "traits": {
                     "rarity": "common",
                     "value": []
@@ -3258,9 +3261,6 @@
                 "temp": 0,
                 "value": 134
             },
-            "initiative": {
-                "statistic": "perception"
-            },
             "speed": {
                 "otherSpeeds": [],
                 "value": 25
@@ -3320,6 +3320,10 @@
             "keyability": {
                 "value": "str"
             },
+            "languages": {
+                "details": "",
+                "value": []
+            },
             "level": {
                 "value": 9
             },
@@ -3342,6 +3346,9 @@
             }
         },
         "exploration": [],
+        "initiative": {
+            "statistic": "perception"
+        },
         "pfs": {
             "characterNumber": null,
             "currentFaction": "EA",
@@ -3417,17 +3424,6 @@
             "thi": {
                 "rank": 0
             }
-        },
-        "traits": {
-            "languages": {
-                "custom": "",
-                "selected": [],
-                "value": []
-            },
-            "senses": [],
-            "value": [
-                "lawful"
-            ]
         }
     },
     "type": "character"

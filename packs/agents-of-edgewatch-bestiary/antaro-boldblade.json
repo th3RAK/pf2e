@@ -833,12 +833,6 @@
                 "temp": 0,
                 "value": 9
             },
-            "initiative": {
-                "statistic": "perception"
-            },
-            "perception": {
-                "value": 4
-            },
             "speed": {
                 "otherSpeeds": [],
                 "value": 15
@@ -846,6 +840,13 @@
         },
         "details": {
             "blurb": "",
+            "languages": {
+                "details": "",
+                "value": [
+                    "common",
+                    "dwarven"
+                ]
+            },
             "level": {
                 "value": -1
             },
@@ -856,6 +857,14 @@
                 "remaster": false,
                 "title": "Pathfinder #157: Devil at the Dreaming Palace"
             }
+        },
+        "initiative": {
+            "statistic": "perception"
+        },
+        "perception": {
+            "details": "",
+            "mod": 4,
+            "senses": []
         },
         "resources": {
             "focus": {
@@ -878,21 +887,7 @@
             }
         },
         "traits": {
-            "attitude": {
-                "value": "hostile"
-            },
-            "languages": {
-                "custom": "",
-                "selected": [],
-                "value": [
-                    "common",
-                    "dwarven"
-                ]
-            },
             "rarity": "common",
-            "senses": {
-                "value": ""
-            },
             "size": {
                 "value": "med"
             },

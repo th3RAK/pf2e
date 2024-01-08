@@ -2103,9 +2103,6 @@
                 "temp": 0,
                 "value": 18
             },
-            "initiative": {
-                "statistic": "perception"
-            },
             "speed": {
                 "otherSpeeds": [],
                 "value": 25
@@ -2172,6 +2169,13 @@
             "keyability": {
                 "value": "str"
             },
+            "languages": {
+                "details": "",
+                "value": [
+                    "common",
+                    "draconic"
+                ]
+            },
             "level": {
                 "min": 1,
                 "value": 1
@@ -2190,6 +2194,9 @@
             }
         },
         "exploration": [],
+        "initiative": {
+            "statistic": "perception"
+        },
         "pfs": {
             "characterNumber": null,
             "currentFaction": "EA",
@@ -2275,22 +2282,6 @@
             "thi": {
                 "rank": 0
             }
-        },
-        "traits": {
-            "languages": {
-                "custom": "",
-                "selected": [],
-                "value": [
-                    "common",
-                    "draconic"
-                ]
-            },
-            "rarity": "common",
-            "senses": [],
-            "value": [
-                "good",
-                "lawful"
-            ]
         }
     },
     "type": "character"

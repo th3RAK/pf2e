@@ -1455,12 +1455,6 @@
                     "type": "death-effects"
                 }
             ],
-            "initiative": {
-                "statistic": "perception"
-            },
-            "perception": {
-                "value": 16
-            },
             "resistances": [
                 {
                     "doubleVs": [],
@@ -1484,6 +1478,14 @@
         },
         "details": {
             "blurb": "",
+            "languages": {
+                "details": "",
+                "value": [
+                    "aklo",
+                    "common",
+                    "necril"
+                ]
+            },
             "level": {
                 "value": 8
             },
@@ -1494,6 +1496,18 @@
                 "remaster": false,
                 "title": "Pathfinder #198: No Breath to Cry"
             }
+        },
+        "initiative": {
+            "statistic": "perception"
+        },
+        "perception": {
+            "details": "",
+            "mod": 16,
+            "senses": [
+                {
+                    "type": "darkvision"
+                }
+            ]
         },
         "resources": {},
         "saves": {
@@ -1511,18 +1525,7 @@
             }
         },
         "traits": {
-            "languages": {
-                "custom": "",
-                "value": [
-                    "aklo",
-                    "common",
-                    "necril"
-                ]
-            },
             "rarity": "rare",
-            "senses": {
-                "value": "darkvision"
-            },
             "size": {
                 "value": "med"
             },

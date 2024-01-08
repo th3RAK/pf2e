@@ -260,7 +260,7 @@
                 },
                 "duration": {
                     "sustained": true,
-                    "value": "sustained"
+                    "value": ""
                 },
                 "level": {
                     "value": 1
@@ -392,7 +392,7 @@
                 },
                 "duration": {
                     "sustained": true,
-                    "value": "sustained"
+                    "value": ""
                 },
                 "heightening": {
                     "levels": {
@@ -472,7 +472,7 @@
                 },
                 "duration": {
                     "sustained": true,
-                    "value": "sustained"
+                    "value": ""
                 },
                 "heightening": {
                     "levels": {
@@ -1241,12 +1241,6 @@
                 "temp": 0,
                 "value": 48
             },
-            "initiative": {
-                "statistic": "perception"
-            },
-            "perception": {
-                "value": 10
-            },
             "resistances": [
                 {
                     "type": "precision",
@@ -1271,6 +1265,15 @@
         },
         "details": {
             "blurb": "",
+            "languages": {
+                "details": "",
+                "value": [
+                    "chthonian",
+                    "common",
+                    "empyrean",
+                    "protean"
+                ]
+            },
             "level": {
                 "value": 3
             },
@@ -1281,6 +1284,18 @@
                 "remaster": false,
                 "title": "Pathfinder Society Scenario #3-18: Dacilane Academy's Delightful Disaster"
             }
+        },
+        "initiative": {
+            "statistic": "perception"
+        },
+        "perception": {
+            "details": "entropy sense (imprecise) 30 feet",
+            "mod": 10,
+            "senses": [
+                {
+                    "type": "darkvision"
+                }
+            ]
         },
         "resources": {},
         "saves": {
@@ -1298,20 +1313,7 @@
             }
         },
         "traits": {
-            "languages": {
-                "custom": "",
-                "selected": [],
-                "value": [
-                    "chthonian",
-                    "common",
-                    "empyrean",
-                    "protean"
-                ]
-            },
             "rarity": "unique",
-            "senses": {
-                "value": "darkvision, entropy sense (imprecise) 30 feet"
-            },
             "size": {
                 "value": "med"
             },

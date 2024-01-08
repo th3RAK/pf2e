@@ -1515,12 +1515,6 @@
                 "temp": 0,
                 "value": 190
             },
-            "initiative": {
-                "statistic": "perception"
-            },
-            "perception": {
-                "value": 18
-            },
             "speed": {
                 "otherSpeeds": [],
                 "value": 25
@@ -1528,6 +1522,15 @@
         },
         "details": {
             "blurb": "Male human ex-cleric",
+            "languages": {
+                "details": "",
+                "value": [
+                    "common",
+                    "requian",
+                    "shoanti",
+                    "varisian"
+                ]
+            },
             "level": {
                 "value": 10
             },
@@ -1538,6 +1541,14 @@
                 "remaster": false,
                 "title": "Pathfinder Adventure: Shadows at Sundown"
             }
+        },
+        "initiative": {
+            "statistic": "perception"
+        },
+        "perception": {
+            "details": "",
+            "mod": 18,
+            "senses": []
         },
         "resources": {},
         "saves": {
@@ -1560,20 +1571,7 @@
             }
         },
         "traits": {
-            "languages": {
-                "custom": "",
-                "selected": [],
-                "value": [
-                    "common",
-                    "requian",
-                    "shoanti",
-                    "varisian"
-                ]
-            },
             "rarity": "unique",
-            "senses": {
-                "value": ""
-            },
             "size": {
                 "value": "med"
             },

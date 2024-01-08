@@ -458,12 +458,6 @@
                     "type": "acid"
                 }
             ],
-            "initiative": {
-                "statistic": "perception"
-            },
-            "perception": {
-                "value": 17
-            },
             "resistances": [
                 {
                     "exceptions": [
@@ -481,6 +475,10 @@
         },
         "details": {
             "blurb": "Variant elite alchemical golem",
+            "languages": {
+                "details": "",
+                "value": []
+            },
             "level": {
                 "value": 10
             },
@@ -491,6 +489,18 @@
                 "remaster": false,
                 "title": "Pathfinder #153: Life's Long Shadows"
             }
+        },
+        "initiative": {
+            "statistic": "perception"
+        },
+        "perception": {
+            "details": "",
+            "mod": 17,
+            "senses": [
+                {
+                    "type": "darkvision"
+                }
+            ]
         },
         "resources": {},
         "saves": {
@@ -508,15 +518,7 @@
             }
         },
         "traits": {
-            "languages": {
-                "custom": "",
-                "selected": [],
-                "value": []
-            },
             "rarity": "uncommon",
-            "senses": {
-                "value": "darkvision"
-            },
             "size": {
                 "value": "lg"
             },

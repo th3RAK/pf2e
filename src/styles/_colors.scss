@@ -15,16 +15,14 @@ $tertiary-color: #e9d7a1; /* compliments the primary color, usually used in comb
 
 $alt-color: #786452 !default; /* for all other uses */
 $alt-dark: #443730;
-$background-color: #f8f4f1;
-$background-dark: darken($background-color, 10);
+$light-background-color: #f8f4f1;
+$less-light-background-color: darken($light-background-color, 10);
 $sub-color: #605856;
 
 /* Lighter / Darker */
 $light-color: lighten($primary-color, 5);
 $dark-color: darken($primary-color, 5);
 $darker-color: darken($primary-color, 10);
-$tertiary-dark-color: darken($tertiary-color, 10);
-$tertiary-light-color: lighten($tertiary-color, 10);
 
 /* Text */
 $text-dark-color: #1c1c1c !default;
@@ -50,19 +48,27 @@ $adjusted-lower: #cc3311;
 :root {
     /* Global */
     --color-pf-primary: #{$primary-color};
-    --color-pf-primary-light: #{$light-color};
     --color-pf-primary-dark: #{$dark-color};
+    --color-pf-primary-darker: #{$darker-color};
+    --color-pf-primary-light: #{$light-color};
+    --color-pf-alternate: #{$alt-color};
+    --color-pf-alternate-dark: #{$alt-dark};
     --color-pf-secondary: #{$secondary-color};
-    --color-pf-secondary-light: #{lighten($secondary-color, 10)};
     --color-pf-secondary-dark: #{darken($secondary-color, 10)};
+    --color-pf-secondary-light: #{lighten($secondary-color, 10)};
+    --color-pf-secondary-lighter: #{lighten($secondary-color, 20)};
+    --color-pf-tertiary: #{$tertiary-color};
+    --color-pf-tertiary-dark: #{darken($tertiary-color, 10)};
+    --color-pf-tertiary-darker: #{darken($tertiary-color, 20)};
+    --color-pf-tertiary-light: #{lighten($tertiary-color, 10)};
     --primary: var(--color-pf-primary);
     --secondary: var(--color-pf-secondary);
-    --tertiary: #{$tertiary-color};
+    --tertiary: var(--color-pf-tertiary);
 
-    --alt: #{$alt-color};
-    --alt-dark: #{$alt-dark};
-    --bg: #{$background-color};
-    --bg-dark: #{$background-dark};
+    --alt: var(--color-pf-alternate);
+    --alt-dark: var(--color-pf-alternate-dark);
+    --bg: #{$light-background-color};
+    --bg-dark: #{$less-light-background-color};
     --sub: #{$sub-color};
     --color-disabled: var(--color-text-dark-4);
 
@@ -74,10 +80,10 @@ $adjusted-lower: #cc3311;
     --blind-roll: #f5eaf5;
 
     /* Lighter / Darker */
-    --primary-dark: #{$dark-color};
-    --primary-darker: #{$darker-color};
-    --tertiary-dark: #{$tertiary-dark-color};
-    --tertiary-light: #{$tertiary-light-color};
+    --primary-dark: var(--color-pf-primary-dark);
+    --primary-darker: var(--color-pf-primary-darker);
+    --tertiary-dark: var(--color-pf-tertiary-dark);
+    --tertiary-light: var(--color-pf-tertiary-light);
 
     /* Text */
     --text-dark: var(--color-text-dark-primary);

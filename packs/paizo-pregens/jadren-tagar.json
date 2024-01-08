@@ -471,24 +471,6 @@
                     },
                     {
                         "key": "ActiveEffectLike",
-                        "mode": "upgrade",
-                        "path": "system.proficiencies.defenses.heavy.rank",
-                        "value": 1
-                    },
-                    {
-                        "key": "ActiveEffectLike",
-                        "mode": "upgrade",
-                        "path": "system.proficiencies.defenses.medium.rank",
-                        "value": 1
-                    },
-                    {
-                        "key": "ActiveEffectLike",
-                        "mode": "upgrade",
-                        "path": "system.proficiencies.defenses.light.rank",
-                        "value": 1
-                    },
-                    {
-                        "key": "ActiveEffectLike",
                         "mode": "add",
                         "path": "flags.pf2e.championDedicationCount",
                         "value": 1
@@ -523,6 +505,19 @@
                     }
                 ],
                 "slug": "champion-dedication",
+                "subfeatures": {
+                    "proficiencies": {
+                        "heavy": {
+                            "rank": 1
+                        },
+                        "light": {
+                            "rank": 1
+                        },
+                        "medium": {
+                            "rank": 1
+                        }
+                    }
+                },
                 "traits": {
                     "rarity": "common",
                     "value": [
@@ -2783,15 +2778,16 @@
                         ],
                         "selector": "will",
                         "type": "save"
-                    },
-                    {
-                        "key": "ActiveEffectLike",
-                        "mode": "upgrade",
-                        "path": "system.saves.will.rank",
-                        "value": 2
                     }
                 ],
                 "slug": "bravery",
+                "subfeatures": {
+                    "proficiencies": {
+                        "will": {
+                            "rank": 2
+                        }
+                    }
+                },
                 "traits": {
                     "rarity": "common",
                     "value": [
@@ -3069,9 +3065,6 @@
                 "temp": 0,
                 "value": 73
             },
-            "initiative": {
-                "statistic": "perception"
-            },
             "speed": {
                 "otherSpeeds": [],
                 "value": 25
@@ -3147,6 +3140,13 @@
             "keyability": {
                 "value": "str"
             },
+            "languages": {
+                "details": "",
+                "value": [
+                    "common",
+                    "halfling"
+                ]
+            },
             "level": {
                 "min": 1,
                 "value": 5
@@ -3165,6 +3165,9 @@
             }
         },
         "exploration": [],
+        "initiative": {
+            "statistic": "perception"
+        },
         "pfs": {
             "characterNumber": null,
             "currentFaction": "EA",
@@ -3253,22 +3256,6 @@
             "thi": {
                 "rank": 1
             }
-        },
-        "traits": {
-            "languages": {
-                "custom": "",
-                "selected": [],
-                "value": [
-                    "common",
-                    "halfling"
-                ]
-            },
-            "rarity": "common",
-            "senses": [],
-            "value": [
-                "good",
-                "lawful"
-            ]
         }
     },
     "type": "character"

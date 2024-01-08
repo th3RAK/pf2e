@@ -950,12 +950,6 @@
                     "type": "sickened"
                 }
             ],
-            "initiative": {
-                "statistic": "perception"
-            },
-            "perception": {
-                "value": 9
-            },
             "resistances": [
                 {
                     "doubleVs": [],
@@ -978,6 +972,14 @@
         },
         "details": {
             "blurb": "",
+            "languages": {
+                "details": "",
+                "value": [
+                    "aklo",
+                    "common",
+                    "necril"
+                ]
+            },
             "level": {
                 "value": 2
             },
@@ -988,6 +990,18 @@
                 "remaster": false,
                 "title": "Pathfinder #197: Let the Leaves Fall"
             }
+        },
+        "initiative": {
+            "statistic": "perception"
+        },
+        "perception": {
+            "details": "",
+            "mod": 9,
+            "senses": [
+                {
+                    "type": "darkvision"
+                }
+            ]
         },
         "resources": {},
         "saves": {
@@ -1005,18 +1019,7 @@
             }
         },
         "traits": {
-            "languages": {
-                "custom": "",
-                "value": [
-                    "aklo",
-                    "common",
-                    "necril"
-                ]
-            },
             "rarity": "rare",
-            "senses": {
-                "value": "darkvision"
-            },
             "size": {
                 "value": "med"
             },

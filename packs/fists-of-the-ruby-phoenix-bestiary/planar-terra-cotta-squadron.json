@@ -450,12 +450,6 @@
                 "value": 300
             },
             "immunities": [],
-            "initiative": {
-                "statistic": "perception"
-            },
-            "perception": {
-                "value": 24
-            },
             "speed": {
                 "otherSpeeds": [],
                 "value": 25
@@ -477,6 +471,12 @@
         },
         "details": {
             "blurb": "Variant terra-cotta soldier garrison",
+            "languages": {
+                "details": "(can't speak any language)",
+                "value": [
+                    "tien"
+                ]
+            },
             "level": {
                 "value": 15
             },
@@ -487,6 +487,14 @@
                 "remaster": false,
                 "title": "Pathfinder #166: Despair on Danger Island"
             }
+        },
+        "initiative": {
+            "statistic": "perception"
+        },
+        "perception": {
+            "details": "",
+            "mod": 24,
+            "senses": []
         },
         "resources": {},
         "saves": {
@@ -504,20 +512,7 @@
             }
         },
         "traits": {
-            "attitude": {
-                "value": "hostile"
-            },
-            "languages": {
-                "custom": "(Can't Speak Any Language)",
-                "selected": [],
-                "value": [
-                    "tien"
-                ]
-            },
             "rarity": "rare",
-            "senses": {
-                "value": ""
-            },
             "size": {
                 "value": "med"
             },

@@ -1724,9 +1724,6 @@
                 "temp": 0,
                 "value": 21
             },
-            "initiative": {
-                "statistic": "perception"
-            },
             "speed": {
                 "otherSpeeds": [],
                 "value": 25
@@ -1784,6 +1781,13 @@
             "keyability": {
                 "value": "str"
             },
+            "languages": {
+                "details": "",
+                "value": [
+                    "elven",
+                    "mwangi"
+                ]
+            },
             "level": {
                 "value": 1
             },
@@ -1801,6 +1805,9 @@
             }
         },
         "exploration": [],
+        "initiative": {
+            "statistic": "perception"
+        },
         "pfs": {
             "characterNumber": null,
             "currentFaction": "EA",
@@ -1873,20 +1880,6 @@
             "thi": {
                 "rank": 1
             }
-        },
-        "traits": {
-            "languages": {
-                "custom": "",
-                "selected": [],
-                "value": [
-                    "elven",
-                    "mwangi"
-                ]
-            },
-            "senses": [],
-            "value": [
-                "lawful"
-            ]
         }
     },
     "type": "character"
