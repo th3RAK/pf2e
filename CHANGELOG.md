@@ -1,3 +1,49 @@
+## 5.12.4
+
+### System Improvements
+
+-   (OmegaRogue) Add 500ms delay for drag-and-drop sort for touch devices
+
+### Bugfixes
+
+-   (jfn4th) Prevent erroneous triggering of sheet handlers
+-   (stwlam) Add temporary measure to handle skill data preparation for PCs older than ~2 years
+-   (stwlam) Add room to certain areas of spell collections on actor sheets to accommodate localized text
+
+### Data Updates
+
+-   (Dire Weasel) Add Darkwood and Mithral renames to Remaster Changes journal entry
+-   (Dire Weasel) Add effects for Cyclonic Ascent, Everlight, Deity's Protection, Resounding Finale
+-   (Dire Weasel) Add links to effects from Hymn Of Healing spell, Sairazul Blue potion
+-   (Dire Weasel) Add missing traits to Execute's vitality overlay
+-   (Dire Weasel) Fix description of Antimagic rune
+-   (Dire Weasel) Remove traits overrides from Malicious Shadow spell overlays
+-   (Dire Weasel) Update description for Light's spell effect to better match remaster
+-   (DocSchlock) Add armor effects for Saurian Spike
+-   (DocSchlock) Change Steam Knight Stance speed bonus type to status
+-   (DocSchlock) Update Call on Ancient Blood to Remaster text
+-   (rectulo) Fix description of swim action
+-   (Rigo) Add effect for Familiar of Restored Spirit, aura effect for heightened Silence
+-   (Rigo) Add Witch's Cauldron Crafting Entry
+
+## 5.12.3
+
+### Bugfixes
+
+-   (stwlam) Add Versatile Mental as weapon trait
+-   (stwlam) Fix display of free-action and reaction glyphs on spell-sheet header
+-   (stwlam) Fix rendering of notes in rerolled check messages
+-   (stwlam) Fix sidebar scrolling and skills editing on simple NPC sheet
+-   (stwlam) Fix Unprepare Formula listener on PC sheet
+-   (stwlam) Re-render PC sheet for all users viewing it upon resting for the night
+
+### Data Updates
+
+-   (CitySim) Fix transposed Dimension spells in remaster journal
+-   (Dire Weasel) Limit display of roll notes from Death Warden Dwarf heritage to certain outcomes
+-   (Dire Weasel) Add spell effect for Precious Metals
+-   (Rigo) Update Death Warden Dwarf's note to remaster text
+
 ## 5.12.2
 
 ### Bugfixes
@@ -13,8 +59,7 @@
 
 ### Data Updates
 
--   (Dharkus) Add effect for Forgive Foe
--   (Dharkus) Add effect for Defaced Nyad Queen's forgiveness
+-   (Dharkus) Add effect for Defaced Nyad Queen's forgiveness, Forgive Foe
 -   (Dharkus) Correct Phomandala's Focus Gaze DC
 -   (Dire Weasel) Fix several errors in Tiger Form effect
 -   (Dire Weasel) Fix Ghostly Weapon to apply only to selected weapon

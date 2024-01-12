@@ -792,28 +792,6 @@ class CharacterSheetPF2e<TActor extends CharacterPF2e> extends CreatureSheetPF2e
             });
         }
 
-        const $craftingTab = craftingTab ? $(craftingTab) : $html.find(".tab[data-tab=crafting]");
-        const $craftingOptions = $craftingTab.find(".crafting-options input:checkbox");
-        $craftingOptions.on("click", async (event) => {
-            const flags: string[] = [];
-            $craftingOptions.each((_index, element) => {
-                if (element !== event.target) {
-                    flags.push($(element).attr("flag") as string);
-                }
-            });
-            flags.forEach(async (flag) => {
-                await this.actor.setFlag("pf2e", flag, false);
-            });
-        });
-
-        const $formulas = $craftingTab.find(".crafting-entry-list");
-        $formulas.find(".infused-reagents").on("change", (event) => {
-            const change = Number($(event.target).val());
-            const infusedReagents = this.actor.system.resources.crafting.infusedReagents;
-            const value = Math.clamped(change, 0, infusedReagents?.max ?? 0);
-            this.actor.update({ "system.resources.crafting.infusedReagents.value": value });
-        });
-
         for (const spellcastingCollectionEl of htmlQueryAll(castingPanel, ".spellcasting-entry[data-item-id]")) {
             const entry = this.actor.spellcasting.get(spellcastingCollectionEl.dataset.itemId ?? "");
             htmlQuery(spellcastingCollectionEl, "[data-action=spell-attack]")?.addEventListener("click", (event) => {
@@ -920,8 +898,8 @@ class CharacterSheetPF2e<TActor extends CharacterPF2e> extends CreatureSheetPF2e
 
         // PROFICIENCIES
 
-        handlers["add-attack-proficiency"] = (event) => {
-            return ManageAttackProficiencies.add(this.actor, event);
+        handlers["add-attack-proficiency"] = () => {
+            return ManageAttackProficiencies.add(this.actor);
         };
         handlers["delete-attack-proficiency"] = (event) => {
             return ManageAttackProficiencies.remove(this.actor, event);
@@ -1072,12 +1050,13 @@ class CharacterSheetPF2e<TActor extends CharacterPF2e> extends CreatureSheetPF2e
             }
         };
 
-        handlers["unprepare-formula"] = async (event, anchor) => {
-            const uuid = htmlClosest(event.target, "li")?.dataset.itemUuid;
-            if (!UUIDUtils.isItemUUID(uuid)) throw ErrorPF2e(`Invalid UUID: ${uuid}`);
-            const index = anchor.dataset.itemIndex;
-            const entrySelector = anchor.dataset.entrySelector;
-            if (!uuid || !index || !entrySelector) return;
+        handlers["unprepare-formula"] = async (event) => {
+            const itemEl = htmlClosest(event.target, "li");
+            const uuid = itemEl?.dataset.itemUuid;
+            if (!itemEl || !UUIDUtils.isItemUUID(uuid)) throw ErrorPF2e(`Invalid UUID: ${uuid}`);
+            const index = itemEl.dataset.itemIndex;
+            const entrySelector = itemEl.dataset.entrySelector;
+            if (!index || !entrySelector) return;
 
             const craftingEntry = await this.actor.getCraftingEntry(entrySelector);
             if (!craftingEntry) throw ErrorPF2e("Crafting entry not found");
@@ -1143,27 +1122,27 @@ class CharacterSheetPF2e<TActor extends CharacterPF2e> extends CreatureSheetPF2e
         // BIOGRAPHY
 
         // Section visibility toggles
-        handlers["toggle-bio-visibility"] = async (event) => {
+        handlers["toggle-bio-visibility"] = (event): Promise<unknown> | void => {
             const anchor = htmlClosest(event.target, "a[data-action=toggle-bio-visibility");
             const section = anchor?.dataset.section;
             if (tupleHasValue(["appearance", "backstory", "personality", "campaign"], section)) {
                 const { biography } = this.actor.system.details;
                 const path = `system.details.biography.visibility.${section}`;
-                await this.actor.update({ [path]: !biography.visibility[section] });
+                return this.actor.update({ [path]: !biography.visibility[section] });
             }
         };
 
         // Edicts and anathema
-        handlers["add-edict-anathema"] = async (_, anchor) => {
+        handlers["add-edict-anathema"] = (_, anchor) => {
             anchor.style.pointerEvents = "none";
             const field = htmlClosest(anchor, "[data-field]")?.dataset.field;
             if (!tupleHasValue(["edicts", "anathema"], field)) {
                 throw ErrorPF2e("Unexpected error adding edicts or anathema");
             }
             const list = this.actor._source.system.details.biography[field];
-            await this.actor.update({ [`system.details.biography.${field}`]: [...list, ""] });
+            return this.actor.update({ [`system.details.biography.${field}`]: [...list, ""] });
         };
-        handlers["delete-edict-anathema"] = async (_, anchor) => {
+        handlers["delete-edict-anathema"] = (_, anchor) => {
             anchor.style.pointerEvents = "none";
             const field = htmlClosest(anchor, "[data-field]")?.dataset.field;
             const index = anchor.dataset.index ?? "";
@@ -1172,7 +1151,7 @@ class CharacterSheetPF2e<TActor extends CharacterPF2e> extends CreatureSheetPF2e
             }
             const list = [...this.actor._source.system.details.biography[field]];
             list.splice(Number(index), 1);
-            await this.actor.update({ [`system.details.biography.${field}`]: list });
+            return this.actor.update({ [`system.details.biography.${field}`]: list });
         };
 
         return handlers;

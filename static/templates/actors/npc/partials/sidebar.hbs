@@ -211,6 +211,13 @@
 
 {{!--SAVES --}}
 <div class="subsection saves">
+    <header>
+        <label>
+            <i class="fa-solid fa-fw fa-heart-pulse"></i>
+            <span>{{localize "PF2E.SavesHeader"}}</span>
+        </label>
+    </header>
+
     <ul>
         {{#each data.saves as |save saveType|}}
             <li>
@@ -232,15 +239,13 @@
             </li>
         {{/each}}
     </ul>
-
-    <div class="side-bar-section-content">
-        <input
-            type="text"
-            name="system.attributes.allSaves.value"
-            value="{{data.attributes.allSaves.value}}"
-            placeholder="{{localize "PF2E.NPC.SavesExtraInfoLabelPlaceholder"}}"
-        />
-    </div>
+    <input
+        type="text"
+        name="system.attributes.allSaves.value"
+        class="details"
+        value="{{data.attributes.allSaves.value}}"
+        placeholder="{{localize "PF2E.NPC.SavesExtraInfoLabelPlaceholder"}}"
+    />
 </div>
 
 {{!-- SPEEDS --}}

@@ -1,8 +1,11 @@
 import type { ActorPF2e } from "@actor";
-import { StrikeData } from "@actor/data/base.ts";
-import { AbstractEffectPF2e, ItemPF2e, ItemProxyPF2e, PhysicalItemPF2e, SpellPF2e } from "@item";
+import type { StrikeData } from "@actor/data/base.ts";
+import type { InitiativeRollResult } from "@actor/initiative.ts";
+import type { PhysicalItemPF2e } from "@item";
+import { AbstractEffectPF2e, ItemPF2e, ItemProxyPF2e, SpellPF2e } from "@item";
 import type { ActionCategory, ActionTrait } from "@item/ability/types.ts";
-import { ItemSourcePF2e, isPhysicalData, type ActionType } from "@item/base/data/index.ts";
+import { isPhysicalData } from "@item/base/data/helpers.ts";
+import type { ActionType, ItemSourcePF2e } from "@item/base/data/index.ts";
 import { createConsumableFromSpell } from "@item/consumable/spell-consumables.ts";
 import { isContainerCycle } from "@item/container/helpers.ts";
 import { itemIsOfType } from "@item/helpers.ts";
@@ -266,12 +269,18 @@ abstract class ActorSheetPF2e<TActor extends ActorPF2e> extends ActorSheet<TActo
             "select[data-property],input[data-property]",
         );
         for (const input of manualPropertyInputs) {
+            // Whether the value is a modifier and to be displayed with a sign
+            const isModifier = input.classList.contains("modifier") || input.dataset.modifier !== undefined;
+            // Whether the value is nullable: if so, allow the value to be cleared instead of coercing to a number
+            const isNullable = input.dataset.nullable !== undefined;
+
             input.addEventListener("focus", () => {
                 const propertyPath = input.dataset.property ?? "";
                 input.name = propertyPath;
                 if (input instanceof HTMLInputElement) {
-                    const baseValue = Math.trunc(Number(fu.getProperty(this.actor._source, propertyPath)) || 0);
-                    input.value = baseValue.toString();
+                    const savedValue = fu.getProperty(this.actor._source, propertyPath);
+                    const baseValue = isNullable && savedValue === null ? null : Math.trunc(Number(savedValue) || 0);
+                    input.value = (baseValue ?? "").toString();
                     if (input.type === "text" && input.dataset.dtype === "Number") {
                         input.type = "number";
                     }
@@ -281,17 +290,22 @@ abstract class ActorSheetPF2e<TActor extends ActorPF2e> extends ActorSheet<TActo
             input.addEventListener("blur", () => {
                 input.removeAttribute("name");
                 const propertyPath = input.dataset.property ?? "";
-                const preparedValue = Number(fu.getProperty(this.actor, propertyPath)) || 0;
+                const preparedValue = fu.getProperty(this.actor, propertyPath);
+                const currentValue = preparedValue === null && isNullable ? preparedValue : Number(preparedValue) || 0;
                 const baseValue = Math.trunc(Number(fu.getProperty(this.actor._source, propertyPath)) || 0);
-                const newValue = Math.trunc(Number(input.value));
+                const newValue = isNullable && input.value === "" ? null : Math.trunc(Number(input.value));
                 if (input instanceof HTMLInputElement) {
                     if (input.type === "number" && input.dataset.dtype === "Number") {
                         input.type = "text";
                     }
+
                     if (baseValue === newValue) {
-                        input.value = input.classList.contains("modifier")
-                            ? signedInteger(preparedValue)
-                            : String(preparedValue);
+                        input.value =
+                            newValue === null
+                                ? ""
+                                : isModifier
+                                  ? signedInteger(currentValue || 0)
+                                  : String(currentValue || 0);
                     }
                 }
             });
@@ -403,7 +417,7 @@ abstract class ActorSheetPF2e<TActor extends ActorPF2e> extends ActorSheet<TActo
                 this.#onClickBrowseAbilities(anchor);
             },
             "browse-equipment": (_, anchor) => {
-                this.#onClickBrowseEquipment(anchor);
+                return this.#onClickBrowseEquipment(anchor);
             },
             "create-item": (_, anchor) => {
                 this.#onClickCreateItem(anchor);
@@ -411,33 +425,33 @@ abstract class ActorSheetPF2e<TActor extends ActorPF2e> extends ActorSheet<TActo
             "edit-item": (event) => {
                 const itemId = htmlClosest(event.target, "[data-item-id]")?.dataset.itemId;
                 const item = this.actor.items.get(itemId, { strict: true });
-                item.sheet.render(true, { focus: true });
+                return item.sheet.render(true);
             },
-            "effect-toggle-unidentified": async (event) => {
+            "effect-toggle-unidentified": (event): Promise<unknown> | void => {
                 const effectId = htmlClosest(event.target, "[data-item-id]")?.dataset.itemId;
                 const effect = this.actor.items.get(effectId, { strict: true });
                 if (effect.isOfType("effect")) {
                     const isUnidentified = effect.system.unidentified;
-                    await effect.update({ "system.unidentified": !isUnidentified });
+                    return effect.update({ "system.unidentified": !isUnidentified });
                 }
             },
             "delete-item": (event) => {
                 const itemId = htmlClosest(event.target, "[data-item-id]")?.dataset.itemId;
                 const item = this.actor.items.get(itemId, { strict: true });
-                this.deleteItem(item, event);
+                return this.deleteItem(item, event);
             },
-            "item-to-chat": async (event, anchor) => {
+            "item-to-chat": (event, anchor): Promise<unknown> | void => {
                 const itemEl = htmlClosest(anchor, "[data-item-id]");
                 const itemId = itemEl?.dataset.itemId;
                 const item = this.actor.items.get(itemId, { strict: true });
                 if (item.isOfType("spell")) {
                     const castRank = Number(itemEl?.dataset.castRank ?? NaN);
-                    await item.toMessage(event, { create: true, data: { castRank } });
+                    return item.toMessage(event, { create: true, data: { castRank } });
                 } else if (!item.isOfType("physical") || item.isIdentified) {
-                    await item.toMessage(event, { create: true });
+                    return item.toMessage(event, { create: true });
                 }
             },
-            "roll-check": async (event, anchor) => {
+            "roll-check": (event, anchor) => {
                 const statisticSlug = htmlClosest(anchor, "[data-statistic]")?.dataset.statistic ?? "";
                 const statistic = this.actor.getStatistic(statisticSlug);
                 // Currently only used on NPC sheets for skill variants
@@ -449,23 +463,23 @@ abstract class ActorSheetPF2e<TActor extends ActorPF2e> extends ActorSheet<TActo
                 if (anchor.dataset.secret !== undefined) {
                     args.rollMode = game.user.isGM ? "gmroll" : "blindroll";
                 }
-                await statistic?.roll(args);
+                return statistic?.roll(args);
             },
-            "roll-initiative": async (_, element): Promise<void> => {
+            "roll-initiative": (_, element): Promise<InitiativeRollResult | null> | void => {
                 if (!element.classList.contains("disabled") && this.actor.initiative) {
-                    await this.actor.initiative.roll(eventToRollParams(event, { type: "check" }));
+                    return this.actor.initiative.roll(eventToRollParams(event, { type: "check" }));
                 }
             },
-            "show-image": async () => {
+            "show-image": () => {
                 const actor = this.actor;
                 const title = actor.token?.name ?? actor.prototypeToken?.name ?? actor.name;
-                await new ImagePopout(actor.img, { title, uuid: actor.uuid }).render(true);
+                return new ImagePopout(actor.img, { title, uuid: actor.uuid }).render(true);
             },
             "toggle-summary": (_, anchor): Promise<void> | void => {
                 const element = htmlClosest(anchor, "[data-item-id], [data-action-index]") ?? htmlClosest(anchor, "li");
                 if (element) return this.itemRenderer.toggleSummary(element);
             },
-            "use-action": async (event, anchor) => {
+            "use-action": (event, anchor) => {
                 const actionSlug = htmlClosest(anchor, "[data-action-slug]")?.dataset.actionSlug;
                 if (actionSlug) {
                     const action = game.pf2e.actions[actionSlug ?? ""];
@@ -478,7 +492,7 @@ abstract class ActorSheetPF2e<TActor extends ActorPF2e> extends ActorSheet<TActo
                 const itemId = htmlClosest(anchor, "[data-item-id]")?.dataset.itemId;
                 const item = this.actor.items.get(itemId, { strict: true });
                 if (item.isOfType("action", "feat")) {
-                    await createSelfEffectMessage(item, eventToRollMode(event));
+                    return createSelfEffectMessage(item, eventToRollMode(event));
                 }
             },
         };
@@ -486,7 +500,7 @@ abstract class ActorSheetPF2e<TActor extends ActorPF2e> extends ActorSheet<TActo
         // IWR
         for (const listName of ["immunities", "weaknesses", "resistances"] as const) {
             handlers[`edit-${listName}`] = () => {
-                new IWREditor(this.actor, { category: listName }).render(true);
+                return new IWREditor(this.actor, { category: listName }).render(true);
             };
         }
 
@@ -1296,7 +1310,7 @@ interface ActorSheetPF2e<TActor extends ActorPF2e> extends ActorSheet<TActor, It
 
 type SheetClickActionHandlers = Record<
     string,
-    ((event: MouseEvent, actionTarget: HTMLElement) => void | Promise<void>) | undefined
+    ((event: MouseEvent, actionTarget: HTMLElement) => Promise<void | unknown> | void | unknown) | undefined
 >;
 
 export { ActorSheetPF2e, type SheetClickActionHandlers };

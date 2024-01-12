@@ -116,80 +116,55 @@ abstract class CreatureSheetPF2e<TActor extends CreaturePF2e> extends ActorSheet
 
         // General handler for embedded item updates
         const selectors = "input[data-item-id][data-item-property], select[data-item-id][data-item-property]";
-        $html.find(selectors).on("change", (event) => {
-            const $target = $(event.target);
+        for (const element of htmlQueryAll<HTMLInputElement | HTMLSelectElement>(html, selectors)) {
+            element.addEventListener("change", (event) => {
+                event.stopPropagation();
+                const { itemId, itemProperty } = element.dataset;
+                if (!itemId || !itemProperty) return;
 
-            const { itemId, itemProperty } = event.target.dataset;
-            if (!itemId || !itemProperty) return;
+                const value = (() => {
+                    const value =
+                        element instanceof HTMLInputElement && element.type === "checbox"
+                            ? element.checked
+                            : element.value;
+                    if (typeof value === "boolean") return value;
+                    const dataType =
+                        element.dataset.dtype ?? (["number", "range"].includes(element.type) ? "Number" : "String");
 
-            const value = (() => {
-                const value = $(event.target).val();
-                if (typeof value === "undefined" || value === null) {
-                    return value;
-                }
+                    return dataType === "Number" ? Number(value) || 0 : value.trim();
+                })();
 
-                const dataType =
-                    $target.attr("data-dtype") ??
-                    ($target.attr("type") === "checkbox"
-                        ? "Boolean"
-                        : ["number", "range"].includes($target.attr("type") ?? "")
-                          ? "Number"
-                          : "String");
+                this.actor.updateEmbeddedDocuments("Item", [{ _id: itemId, [itemProperty]: value }]);
+            });
+        }
 
-                switch (dataType) {
-                    case "Boolean":
-                        return typeof value === "boolean" ? value : value === "true";
-                    case "Number":
-                        return Number(value);
-                    case "String":
-                        return String(value);
-                    default:
-                        return value;
-                }
-            })();
-
-            this.actor.updateEmbeddedDocuments("Item", [{ _id: itemId, [itemProperty]: value }]);
-        });
-
-        // Toggle Dying or Wounded
-        $html.find(".dots.dying, .dots.wounded").on("click contextmenu", (event) => {
-            type ConditionName = "dying" | "wounded";
-            const condition = Array.from(event.delegateTarget.classList).find((className): className is ConditionName =>
-                ["dying", "wounded"].includes(className),
-            );
-            if (condition) {
-                const currentMax = this.actor.system.attributes[condition]?.max;
-                if (event.type === "click" && currentMax) {
-                    this.actor.increaseCondition(condition, { max: currentMax });
-                } else if (event.type === "contextmenu") {
-                    this.actor.decreaseCondition(condition);
-                }
-            }
-        });
-
-        // We can't use form submission for these updates since duplicates force array updates.
-        // We'll have to move focus points to the top of the sheet to remove this
-        $html.find(".focus-pool").on("change", (event) => {
-            this.actor.update({ "system.resources.focus.max": $(event.target).val() });
-        });
+        // Increase/decrease Dying/Wounded value
+        for (const pips of htmlQueryAll(html, "a[data-action=adjust-condition-value]")) {
+            const slug = pips.dataset.condition === "dying" ? "dying" : "wounded";
+            pips.addEventListener("click", () => {
+                const currentMax = this.actor.system.attributes[slug]?.max;
+                return this.actor.increaseCondition(slug, { max: currentMax });
+            });
+            pips.addEventListener("contextmenu", () => {
+                return this.actor.decreaseCondition(slug);
+            });
+        }
     }
 
     protected override activateClickListener(html: HTMLElement): SheetClickActionHandlers {
         const handlers = super.activateClickListener(html);
 
-        handlers["perception-check"] = async (event, anchor) => {
+        handlers["perception-check"] = (event, anchor) => {
             const extraRollOptions = anchor.dataset.secret ? ["secret"] : [];
-            await this.actor.perception.roll({ ...eventToRollParams(event, { type: "check" }), extraRollOptions });
+            return this.actor.perception.roll({ ...eventToRollParams(event, { type: "check" }), extraRollOptions });
         };
 
-        handlers["recovery-check"] = async (event) => {
-            await this.actor.rollRecovery(event);
-        };
+        handlers["recovery-check"] = (event) => this.actor.rollRecovery(event);
 
         // SPELLCASTING
 
         // Casting spells and consuming slots or focus points
-        handlers["cast-spell"] = async (event) => {
+        handlers["cast-spell"] = (event): Promise<void> | void => {
             const spellRow = htmlClosest(event.target, "[data-item-id]");
             const { itemId, entryId, slotId } = spellRow?.dataset ?? {};
             const collection = this.actor.spellcasting.collections.get(entryId, { strict: true });
@@ -220,7 +195,7 @@ abstract class CreatureSheetPF2e<TActor extends CreaturePF2e> extends ActorSheet
             const slotId = Number(row?.dataset.slotId) || 0;
             const entryId = row?.dataset.entryId ?? "";
             const collection = this.actor.spellcasting.collections.get(entryId);
-            collection?.unprepareSpell(groupId, slotId);
+            return collection?.unprepareSpell(groupId, slotId);
         };
 
         // Set expended state of a spell slot
@@ -234,29 +209,29 @@ abstract class CreatureSheetPF2e<TActor extends CreaturePF2e> extends ActorSheet
             const expend = row?.dataset.slotExpended === undefined;
             const collection = this.actor.spellcasting.collections.get(entryId);
 
-            collection?.setSlotExpendedState(groupId, slotId, expend);
+            return collection?.setSlotExpendedState(groupId, slotId, expend);
         };
 
-        handlers["toggle-signature-spell"] = async (event) => {
+        handlers["toggle-signature-spell"] = (event) => {
             const itemId = htmlClosest(event.target, "[data-item-id]")?.dataset.itemId;
             const spell = this.actor.items.get(itemId, { strict: true });
             if (!spell?.isOfType("spell")) return;
-            spell.update({ "system.location.signature": !spell.system.location.signature });
+            return spell.update({ "system.location.signature": !spell.system.location.signature });
         };
 
-        handlers["toggle-show-slotless-ranks"] = async (event) => {
+        handlers["toggle-show-slotless-ranks"] = (event) => {
             const collectionId = htmlClosest(event.target, "[data-container-id]")?.dataset.containerId;
             const spellcastingEntry = this.actor.items.get(collectionId, { strict: true });
             if (!spellcastingEntry.isOfType("spellcastingEntry")) {
                 throw ErrorPF2e("Tried to toggle visibility of slotless ranks on a non-spellcasting entry");
             }
-            await spellcastingEntry.update({
+            return spellcastingEntry.update({
                 "system.showSlotlessLevels.value": !spellcastingEntry.showSlotlessRanks,
             });
         };
 
         // Regenerating spell slots and spell uses
-        handlers["reset-spell-slots"] = async (event) => {
+        handlers["reset-spell-slots"] = (event): Promise<unknown> | void => {
             const actor = this.actor;
             const row = htmlClosest(event.target, "[data-item-id]");
             const itemId = row?.dataset.itemId;
@@ -268,28 +243,28 @@ abstract class CreatureSheetPF2e<TActor extends CreaturePF2e> extends ActorSheet
                 const groupNumber = spellSlotGroupIdToNumber(row?.dataset.groupId) || 0;
                 const propertyKey = goesToEleven(groupNumber) ? (`slot${groupNumber}` as const) : "slot0";
                 system.slots[propertyKey].value = system.slots[propertyKey].max;
-                await item.update({ system });
+                return item.update({ system });
             } else if (item.isOfType("spell")) {
                 const max = item.system.location.uses?.max;
                 if (!max) return;
-                await item.update({ "system.location.uses.value": max });
+                return item.update({ "system.location.uses.value": max });
             }
         };
 
         // Spellcasting entries
 
         // Add, edit, and remove spellcasting entries
-        handlers["spellcasting-create"] = async (event) => {
-            await createSpellcastingDialog(event, this.actor);
+        handlers["spellcasting-create"] = (event) => {
+            return createSpellcastingDialog(event, this.actor);
         };
-        handlers["spellcasting-edit"] = async (event) => {
+        handlers["spellcasting-edit"] = (event): Promise<unknown> | void => {
             const containerId = htmlClosest(event.target, "[data-item-id]")?.dataset.itemId;
             const entry = this.actor.items.get(containerId, { strict: true });
             if (entry.isOfType("spellcastingEntry")) {
-                await createSpellcastingDialog(event, entry);
+                return createSpellcastingDialog(event, entry);
             }
         };
-        handlers["spellcasting-remove"] = async (event) => {
+        handlers["spellcasting-remove"] = async (event): Promise<ItemPF2e<TActor> | void> => {
             const itemId = htmlClosest(event.target, "[data-item-id]")?.dataset.itemId;
             const item = this.actor.items.get(itemId, { strict: true });
             const title = game.i18n.localize("PF2E.DeleteSpellcastEntryTitle");
@@ -297,7 +272,7 @@ abstract class CreatureSheetPF2e<TActor extends CreaturePF2e> extends ActorSheet
 
             // Render confirmation modal dialog
             if (await Dialog.confirm({ title, content })) {
-                await item.delete();
+                return item.delete();
             }
         };
 
