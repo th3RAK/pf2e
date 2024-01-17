@@ -5,11 +5,19 @@
         {{!-- BODY --}}
         <section class="content">
             {{#if (or hasStealth editing)}}
-                <div class="section-container">
+                <div class="section-container stealth">
                     <div class="section-header">
                         <h4>
-                            {{localize "PF2E.Check.DC.Specific.stealth"}}
-                            <input type="text" value="{{stealthDC}}" data-value="{{stealthDC}}" data-property="system.attributes.stealth.value" data-dtype="Number" placeholder="N/A" />
+                            <span
+                                {{#if (ne data.attributes.stealth.value null)}}data-tooltip="{{data.attributes.stealth.breakdown}}"{{/if}}
+                            >{{localize "PF2E.Check.DC.Specific.stealth"}}</span>
+                            <input
+                                type="number"
+                                value="{{data.attributes.stealth.dc}}"
+                                data-property="system.attributes.stealth.value"
+                                data-nullable
+                                placeholder="N/A"
+                            />
                         </h4>
                         <div class="controls">
                             {{#if editing}}

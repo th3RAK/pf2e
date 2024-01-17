@@ -5,6 +5,7 @@
 
 :root {
     --space-1: 0.0625rem;
+    --space-neg-1: -0.0625rem;
     --space-2: 0.125rem;
     --space-3: 0.1875rem;
     --space-4: 0.25rem;
@@ -64,6 +65,7 @@ p.compact-text {
     align-self: center;
     display: inline;
     font-family: "Pathfinder2eActions", sans-serif;
+    font-weight: normal;
     letter-spacing: 0;
     margin: 0;
     padding: 0;
@@ -310,7 +312,8 @@ i[data-pf2-repost] {
     padding: var(--space-1);
 
     &.message-sender {
-        line-height: normal;
+        align-self: center;
+        margin-bottom: var(--space-4);
         max-width: fit-content;
     }
 

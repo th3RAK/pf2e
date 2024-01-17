@@ -30,7 +30,7 @@ import { step } from "./basic/step.ts";
 import { stride } from "./basic/stride.ts";
 import { takeCover } from "./basic/take-cover.ts";
 import { tamper } from "./class/inventor/tamper.ts";
-import { craft, repair } from "./crafting/index.ts";
+import { craft, identifyAlchemy, repair } from "./crafting/index.ts";
 import * as createADiversion from "./deception/create-a-diversion.ts";
 import * as feint from "./deception/feint.ts";
 import * as impersonate from "./deception/impersonate.ts";
@@ -43,6 +43,7 @@ import * as avoidNotice from "./exploration/avoid-notice.ts";
 import * as senseDirection from "./exploration/sense-direction.ts";
 import * as track from "./exploration/track.ts";
 import * as decipherWriting from "./general/decipher-writing.ts";
+import { identifyMagic } from "./general/identify-magic.ts";
 import * as subsist from "./general/subsist.ts";
 import * as coerce from "./intimidation/coerce.ts";
 import * as demoralize from "./intimidation/demoralize.ts";
@@ -189,6 +190,8 @@ export const SystemActions: Action[] = [
     grapple.action,
     hide.action,
     highJump.action,
+    identifyAlchemy,
+    identifyMagic,
     impersonate.action,
     interact,
     leap,

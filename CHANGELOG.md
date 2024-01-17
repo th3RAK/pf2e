@@ -1,3 +1,65 @@
+## 5.12.7
+
+### Bugfixes
+
+-   (jfn4th) Restore heightened signature spell background color
+-   (stwlam) Hide speaker in encounter participant conditions message if applicable metagame setting is enabled
+-   (stwlam) Fix issue causing crafting entries to prevent opening token configurations, with feeling this time
+
+### Data Updates
+
+-   (Dire Weasel) Add automation for Discordant Voice
+-   (Dire Weasel) Add link to lower-level effect to Corpse-Killer's Defiance
+-   (Dire Weasel) Remove one-time heal from Hymn of Healing
+-   (Dire Weasel) Replace Facetbound Cascader's Aeon Stone (Orange Prism) effect links with Aeon Stone Resonance (Amplifying)
+-   (DocSchlock) Add rule elements to Charming Liar and Eldritch Researcher Dedication
+-   (DocSchlock) Improve Automation of Blood Ward
+-   (nikolaj-a) Correct text of Identify Alchemy action object outcome notes
+-   (Rigo) Restrict Basic Finisher to require Finishing Precision archetype feat
+-   (rectulo) Fix description in Coerce and Earn Income actions
+
+## 5.12.6
+
+### System Improvements
+
+-   (nikolaj-a) Add Identify Alchemy and Identify Magic action macros
+-   (stwlam) Improve various aspects of GM vision
+
+### Bugfixes
+
+-   (Chromatic Penguin) Fix Browse Downtime Actions button on PC sheet
+-   (stwlam) Fix display of stealth DCs on simple hazards
+-   (stwlam) Fix default batch sizes created by most advanced alchemy features
+-   (stwlam) Fix issue causing crafting entries to prevent opening token configurations
+
+### Data Updates
+
+-   (Abaddon) Restore note to Pugwampi senses
+-   (Dire Weasel) Remove links to Earplugs effects in favor of REs on items themselves
+-   (DocSchlock) Localize note on Strong-Blooded Dwarf Heritage
+-   (j-bs) Update various text to use "counteract rank" terminology from Player/GM Core
+-   (j-bs) Update Witch and Wizard class summary text to match Player Core
+-   (rectulo) Fix level of Dig Up Secrets feat
+
+## 5.12.5
+
+### Bugfixes
+
+-   (stwlam) Prevent long IWR lists on NPC sheets from overlapping
+-   (stwlam) Fix restoring display value of hazard stealth DC after editing
+-   (stwlam) Fix some types of ancestry features incorrectly giving darkvision
+-   (stwlam) Fix quantities crafted using daily crafting abilities with variable batch sizes
+
+### Data Updates
+
+-   (Dire Weasel) Add links to effects from Vitrifying Blast and some Kingmaker NPC abilities
+-   (Dire Weasel) Brush up Ghosts in the Storm, Polished Demon Horn
+-   (DocSchlock) Add effect for Darkened Sight and unify effects for Traveler's Transit
+-   (j-bs) Update Counteract page in GM Screen journal
+-   (rectulo) Fix formatting in descriptions of Command an Animal and Maneuver in Flight actions
+-   (Rigo) Add effect for Familiar of Keen Senses
+-   (Rigo) Cap item level of Cauldron's crafting entry to character level
+
 ## 5.12.4
 
 ### System Improvements
