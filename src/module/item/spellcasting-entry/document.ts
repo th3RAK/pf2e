@@ -10,18 +10,13 @@ import { Statistic } from "@system/statistic/index.ts";
 import { ErrorPF2e, ordinalString, setHasElement, sluggify } from "@util";
 import { SpellCollection, type SpellSlotGroupId } from "./collection.ts";
 import { SpellcastingEntrySource, SpellcastingEntrySystemData } from "./data.ts";
-import {
-    SpellcastingCategory,
-    SpellcastingEntry,
-    SpellcastingEntryPF2eCastOptions,
-    SpellcastingSheetData,
-} from "./types.ts";
+import { CastOptions, SpellcastingCategory, SpellcastingEntry, SpellcastingSheetData } from "./types.ts";
 
 class SpellcastingEntryPF2e<TParent extends ActorPF2e | null = ActorPF2e | null>
     extends ItemPF2e<TParent>
     implements SpellcastingEntry<TParent>
 {
-    declare spells: SpellCollection<NonNullable<TParent>, this> | null;
+    declare spells: SpellCollection<NonNullable<TParent>> | null;
 
     /** Spellcasting attack and dc data created during actor preparation */
     declare statistic: Statistic;
@@ -83,6 +78,10 @@ class SpellcastingEntryPF2e<TParent extends ActorPF2e | null = ActorPF2e | null>
         return false;
     }
 
+    get isEphemeral(): false {
+        return false;
+    }
+
     get highestRank(): ZeroToTen {
         return this.spells?.highestRank ?? 0;
     }
@@ -110,12 +109,14 @@ class SpellcastingEntryPF2e<TParent extends ActorPF2e | null = ActorPF2e | null>
         }
     }
 
-    override prepareSiblingData(this: SpellcastingEntryPF2e<ActorPF2e>): void {
-        if (!this.actor || this.system.prepared.value === "items") {
+    override prepareSiblingData(this: SpellcastingEntryPF2e<NonNullable<TParent>>): void {
+        if (!this.actor) {
             this.spells = null;
         } else {
             this.spells = new SpellCollection(this);
-            const spells = this.actor.itemTypes.spell.filter((i) => i.system.location.value === this.id);
+            const spells = this.actor.itemTypes.spell.filter(
+                (i): i is SpellPF2e<NonNullable<TParent>> => i.system.location.value === this.id,
+            );
             for (const spell of spells) {
                 this.spells.set(spell.id, spell);
             }
@@ -124,7 +125,7 @@ class SpellcastingEntryPF2e<TParent extends ActorPF2e | null = ActorPF2e | null>
         }
     }
 
-    override prepareActorData(this: SpellcastingEntryPF2e<ActorPF2e>): void {
+    override prepareActorData(this: SpellcastingEntryPF2e<NonNullable<TParent>>): void {
         const actor = this.parent;
         if (!this.system.proficiency.slug && !this.isInnate && actor.isOfType("character")) {
             const spellProficiency = actor.system.proficiencies.spellcasting;
@@ -133,6 +134,11 @@ class SpellcastingEntryPF2e<TParent extends ActorPF2e | null = ActorPF2e | null>
                 1,
                 4,
             ) as OneToFour;
+        }
+
+        if ((this.spells?.size ?? 0) > 0) {
+            actor.rollOptions.all["self:caster"] = true;
+            actor.rollOptions.all[`self:caster:tradition:${this.tradition}`] = true;
         }
     }
 
@@ -224,7 +230,7 @@ class SpellcastingEntryPF2e<TParent extends ActorPF2e | null = ActorPF2e | null>
         return this.actor?.itemTypes.spell.filter((i) => i.system.location.value === this.id) ?? [];
     }
 
-    /** Returns if the spell is valid to cast by this spellcasting entry */
+    /** Whether the spell is valid to cast by this spellcasting entry */
     canCast(spell: SpellPF2e, { origin }: { origin?: PhysicalItemPF2e } = {}): boolean {
         // For certain collection-less modes, the spell must come from an item
         if (this.system.prepared.value === "items") {
@@ -249,13 +255,14 @@ class SpellcastingEntryPF2e<TParent extends ActorPF2e | null = ActorPF2e | null>
         return matchesTradition || isInSpellList;
     }
 
-    /** Casts the given spell as if it was part of this spellcasting entry */
-    async cast(spell: SpellPF2e<ActorPF2e>, options: SpellcastingEntryPF2eCastOptions = {}): Promise<void> {
+    /** Cast the given spell as if it was part of this spellcasting entry. */
+    async cast(spell: SpellPF2e<ActorPF2e>, options: CastOptions = {}): Promise<void> {
         const consume = options.consume ?? true;
         const message = options.message ?? true;
         const rank = options.rank ?? spell.rank;
         const valid = !consume || spell.atWill || (await this.consume(spell, rank, options.slotId));
         if (message && valid) {
+            spell.system.location.value ??= this.id;
             const castRank = spell.computeCastRank(rank);
             await spell.toMessage(null, { rollMode: options.rollMode, data: { castRank } });
         }
@@ -267,13 +274,15 @@ class SpellcastingEntryPF2e<TParent extends ActorPF2e | null = ActorPF2e | null>
             throw ErrorPF2e("Spellcasting entries require an actor");
         }
         const fpCost = spell.system.cast.focusPoints;
-        if (this.isRitual || (spell.isCantrip && fpCost === 0)) return true;
+        if (this.isRitual || ((spell.isFocusSpell || spell.isCantrip) && fpCost === 0)) {
+            return true;
+        }
         spell = spell.original ? spell.original : spell;
 
         if (actor.isOfType("character", "npc") && fpCost > 0) {
             const currentPoints = actor.system.resources.focus?.value ?? 0;
             if (currentPoints >= fpCost) {
-                await actor.update({ "system.resources.focus.value": currentPoints - 1 });
+                await actor.update({ "system.resources.focus.value": currentPoints - fpCost });
                 return true;
             } else {
                 ui.notifications.warn(game.i18n.localize("PF2E.Focus.NotEnoughFocusPointsError"));
@@ -338,25 +347,29 @@ class SpellcastingEntryPF2e<TParent extends ActorPF2e | null = ActorPF2e | null>
      * or creating a new spell if its not.
      */
     async addSpell(
-        spell: SpellPF2e<TParent | null>,
+        spell: SpellPF2e<NonNullable<TParent>>,
         { groupId }: { groupId: Maybe<SpellSlotGroupId> },
     ): Promise<SpellPF2e<NonNullable<TParent>> | null> {
-        return this.spells?.addSpell(spell, { groupId }) ?? null;
+        const result = this.spells?.addSpell(spell, { groupId });
+        return result ? spell : null;
     }
 
     /** Saves the prepared spell slot data to the spellcasting entry  */
     async prepareSpell(spell: SpellPF2e, groupId: SpellSlotGroupId, spellSlot: number): Promise<Maybe<this>> {
-        return this.spells?.prepareSpell(spell, groupId, spellSlot) ?? null;
+        const result = this.spells?.prepareSpell(spell, groupId, spellSlot);
+        return result ? this : null;
     }
 
     /** Removes the spell slot and updates the spellcasting entry */
     async unprepareSpell(groupId: SpellSlotGroupId, slotId: number): Promise<Maybe<this>> {
-        return this.spells?.unprepareSpell(groupId, slotId) ?? null;
+        const result = this.spells?.unprepareSpell(groupId, slotId);
+        return result ? this : null;
     }
 
     /** Sets the expended state of a spell slot and updates the spellcasting entry */
     async setSlotExpendedState(groupId: SpellSlotGroupId, slotId: number, value: boolean): Promise<Maybe<this>> {
-        return this.spells?.setSlotExpendedState(groupId, slotId, value) ?? null;
+        const result = this.spells?.setSlotExpendedState(groupId, slotId, value);
+        return result ? this : null;
     }
 
     /** Returns rendering data to display the spellcasting entry in the sheet */
@@ -365,7 +378,9 @@ class SpellcastingEntryPF2e<TParent extends ActorPF2e | null = ActorPF2e | null>
             throw ErrorPF2e("Spellcasting entries can only exist on characters and npcs");
         }
 
-        const collectionData = (await this.spells?.getSpellData({ prepList })) ?? { groups: [], prepList: null };
+        const defaultData = { groups: [], prepList: null };
+        const collectionData =
+            this.category === "items" ? defaultData : (await this.spells?.getSpellData({ prepList })) ?? defaultData;
 
         return fu.mergeObject(collectionData, {
             id: this.id,
@@ -380,8 +395,9 @@ class SpellcastingEntryPF2e<TParent extends ActorPF2e | null = ActorPF2e | null>
             isFlexible: this.isFlexible,
             isInnate: this.isInnate,
             isFocusPool: this.isFocusPool,
-            isRitual: this.isRitual,
-            hasCollection: !!this.spells,
+            isRitual: false,
+            isEphemeral: false,
+            hasCollection: true,
             usesSpellProficiency: !this.system.proficiency.slug,
             showSlotlessRanks: this.showSlotlessRanks,
         });
@@ -390,8 +406,11 @@ class SpellcastingEntryPF2e<TParent extends ActorPF2e | null = ActorPF2e | null>
     override getRollOptions(prefix = "spellcasting"): string[] {
         return [
             `${prefix}:${this.attribute}`,
+            `${prefix}:attribute:${this.attribute}`,
+            `${prefix}:${this.category}`,
+            `${prefix}:category:${this.category}`,
             `${prefix}:${this.tradition}`,
-            `${prefix}:${this.system.prepared.value}`,
+            `${prefix}:tradition:${this.tradition}`,
         ];
     }
 

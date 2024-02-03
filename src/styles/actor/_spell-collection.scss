@@ -8,33 +8,20 @@ ol.spell-list {
     padding: 0;
 
     > li {
+        --range-uses-width: 4rem;
+        --cast-spell-width: min-content;
+        --controls-width: 3rem;
         align-items: center;
         display: grid;
-        gap: var(--space-8);
-        grid-template-columns: 52.5% auto fit-content(5rem) 3rem;
+        gap: var(--space-4);
+        grid-template-columns: 1fr 6rem var(--range-uses-width) var(--cast-spell-width) var(--controls-width);
         margin: 0;
 
         > * {
             align-items: center;
+            justify-self: center;
             display: flex;
             flex-wrap: nowrap;
-        }
-
-        &[data-slot-expended] {
-            h4 {
-                color: var(--color-disabled);
-                text-decoration: line-through;
-            }
-
-            button.cast-spell {
-                background: var(--color-disabled);
-                box-shadow: inset 0 0 0 1px rgba(white, 0.5);
-                cursor: not-allowed;
-
-                &:hover {
-                    text-shadow: none;
-                }
-            }
         }
 
         &:nth-child(odd) {
@@ -79,8 +66,8 @@ ol.spell-list {
                 }
             }
 
-            .range-uses {
-                grid-column: span 2;
+            .invisible {
+                visibility: hidden;
             }
 
             .item-controls {
@@ -89,19 +76,12 @@ ol.spell-list {
             }
         }
 
-        .uses {
-            align-items: center;
-            display: flex;
-            gap: 0.25em;
-            line-height: 1;
-        }
-
         &.header-row,
         .uses {
             input {
                 background: var(--color-pf-alternate);
-                border-radius: 3px;
                 border: 1px solid var(--sub);
+                border-radius: 3px;
                 color: var(--text-light);
                 font: var(--font-size-12) var(--sans-serif);
                 height: unset;
@@ -120,19 +100,34 @@ ol.spell-list {
             font-size: var(--font-size-13);
             padding: var(--space-3) var(--space-4);
 
+            &[data-slot-expended] {
+                h4 {
+                    color: var(--color-disabled);
+                    text-decoration: line-through;
+                }
+
+                button.cast-spell {
+                    background: var(--color-disabled);
+                    border-color: transparent;
+                    box-shadow: inset 0 0 0 1px rgba(white, 0.5);
+                    cursor: not-allowed;
+
+                    &:hover {
+                        text-shadow: none;
+                    }
+                }
+            }
+
             // The lighter background gives an illusion of larger padding: tweak slightly
             &:nth-child(even) {
                 padding: var(--space-2) var(--space-4);
             }
         }
 
-        .level-prepared-toggle {
-            flex: 0;
-            font-size: var(--space-12);
-            color: var(--color-pf-secondary);
-        }
-
         .item-name {
+            justify-self: start;
+            width: 100%;
+
             &.empty {
                 opacity: 0.75;
                 pointer-events: none;
@@ -186,9 +181,15 @@ ol.spell-list {
             }
 
             .action-glyph {
-                margin-left: 0.25em;
+                margin-left: var(--space-2);
                 font-size: small;
             }
+        }
+
+        .uses {
+            display: flex;
+            gap: 0.25em;
+            line-height: 1;
         }
 
         button.cast-spell {
@@ -202,6 +203,7 @@ ol.spell-list {
 
         .item-controls {
             justify-content: end;
+            justify-self: end;
         }
 
         .item-summary {
@@ -209,8 +211,17 @@ ol.spell-list {
             border-bottom: 1px solid var(--sub);
             border-top: 1px solid lighten($sub-color, 30);
             display: block;
-            grid-column: span 4;
+            grid-column: span 5;
             padding: var(--space-4) 0 var(--space-8);
+            width: 100%;
+        }
+    }
+
+    &[data-category="innate"] > li {
+        --range-uses-width: 5.5rem;
+
+        > .uses .unlimited {
+            font-size: var(--font-size-18);
         }
     }
 

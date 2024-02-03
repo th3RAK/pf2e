@@ -1,5 +1,5 @@
 {{#with entry as |entry|}}
-    <ol class="spell-list" data-category="{{entry.category}}" data-foundry-list>
+    <ol class="spell-list" data-category="{{entry.category}}"{{#unless (eq entry.category "items")}} data-foundry-list{{/unless}}>
         {{!-- Add section for each slot group --}}
         {{#each entry.groups as |group|}}
             {{#if (or (gt group.active.length 0) entry.showSlotlessRanks)}}
@@ -8,7 +8,6 @@
                     data-item-id="{{entry.id}}"
                     data-item-type="spell-slot-group"
                     data-group-id="{{group.id}}"
-                    data-tooltip-class="pf2e"
                 >
                     <div class="item-name">
                         <h3>{{localize group.label}}</h3>
@@ -50,7 +49,7 @@
                                         placeholder="0"
                                     />
                                 </span>
-                                <span class="slash"> / </span>
+                                <span class="slash">/</span>
                             {{/if}}
                             <span class="spell-max-input">
                                 <input
@@ -69,17 +68,20 @@
                         {{/if}}
                     </div>
 
-                    <div class="range-uses">
-                        {{~#if entry.isInnate~}}
-                            {{localize "PF2E.SpellUsesLabel"}}
-                        {{~else~}}
-                            {{localize "PF2E.SpellRangeLabel"}}
-                        {{~/if~}}
-                    </div>
+                    <div class="defense">{{localize "PF2E.Item.Spell.Defense.Label"}}</div>
+
+                    {{~#if entry.isInnate~}}
+                        <div class="uses">{{localize "PF2E.SpellUsesLabel"}}</div>
+                    {{~else~}}
+                        <div class="range">{{localize "PF2E.TraitRange"}}</div>
+                    {{~/if~}}
 
                     {{#if @root.editable}}
+                        {{!-- This button will get removed by the stylesheet, and only exists for sizing reasons (localization) --}}
+                        <button type="button" class="cast-spell blue invisible">{{localize "PF2E.Item.Spell.Cast"}}</button>
+
                         <div class="item-controls">
-                            {{#unless entry.isPrepared}}
+                            {{#unless (or (eq entry.category "prepared") (eq entry.category "items"))}}
                                 <a
                                     data-action="create-item"
                                     data-tooltip="PF2E.CreateSpellTitle"
@@ -124,12 +126,11 @@
                                 </h4>
                             </div>
 
-                            <div class="range-uses">
-                                {{!-- Innate spells replace range for uses --}}
-                                {{#if (not entry.isInnate)}}
-                                    {{spell.system.range.value}}
-                                {{else if slot.uses}}
-                                    <div class="uses">
+                            <div class="defense">{{spell.defense.label}}</div>
+
+                            {{#if entry.isInnate}}
+                                <div class="uses">
+                                    {{#if slot.uses}}
                                         <span class="spell-slots-input">
                                             <input
                                                 type="number"
@@ -152,17 +153,33 @@
                                         {{#if @root.editable}}
                                             <a data-action="reset-spell-slots"><i class="fa-solid fa-redo"></i></a>
                                         {{/if}}
-                                    </div>
-                                {{else}}
-                                    {{localize "PF2E.SpellUnlimitedLabel"}}
-                                {{/if}}
-                            </div>
+                                    {{else}}
+                                        <span class="unlimited">&infin;</span>
+                                    {{/if}}
+                                </div>
+                            {{else}}
+                                <div class="range">{{spell.system.range.value}}</div>
+                            {{/if}}
+
+                            {{#if (eq spell.parentItem.isEquipped false)}}
+                                <button
+                                    type="button"
+                                    class="cast-spell blue"
+                                    data-action="draw-item"
+                                    data-item-id="{{spell.parentItem.id}}"
+                                >{{localize "PF2E.Actions.Interact.Draw.Title"}}</button>
+                            {{else}}
+                                <button
+                                    type="button"
+                                    class="cast-spell blue"
+                                    data-action="cast-spell"
+                                >{{localize "PF2E.Item.Spell.Cast"}}</button>
+                            {{/if}}
 
                             {{#if @root.editable}}
-                                <button type="button" class="cast-spell blue" data-action="cast-spell">{{localize "PF2E.Item.Spell.Cast"}}</button>
-                                <div class="item-controls" data-tooltip-class="pf2e">
+                                <div class="item-controls">
                                     {{#if entry.isPrepared}}
-                                        {{#unless (eq group "cantrips")}}
+                                        {{#unless (eq group.id "cantrips")}}
                                             <a
                                                 data-action="toggle-slot-expended"
                                                 data-tooltip="{{#if slot.expended}}PF2E.RestoreSpellTitle{{else}}PF2E.ExpendSpellTitle{{/if}}"
@@ -172,8 +189,8 @@
                                             data-action="unprepare-spell"
                                             data-tooltip="PF2E.UnprepareItemTitle"
                                         ><i class="fa-solid fa-fw fa-trash"></i></a>
-                                    {{else}}
-                                        {{#if (and entry.isSpontaneous (ne group "cantrips"))}}
+                                    {{else if (ne entry.category "items")}}
+                                        {{#if (and entry.isSpontaneous (ne group.id "cantrips"))}}
                                             <a
                                                 data-action="toggle-signature-spell"
                                                 data-tooltip="PF2E.ToggleSignatureSpellTitle"
@@ -188,8 +205,9 @@
                                 <div class="item-summary" hidden="hidden"></div>
                             {{/if}}
                         </li>
-                    {{else}}
-                        <li class="spell"
+                    {{else if (ne entry.category "items")}}
+                        <li
+                            class="spell"
                             data-item-id="{{index}}"
                             data-group-id="{{group.id}}"
                             data-item-type="spell-slot"
@@ -206,7 +224,7 @@
             {{/if}}
         {{/each}}
 
-        {{#if (and (eq entry.groups.length 0) @root.editable)}}
+        {{#if (and (eq entry.groups.length 0) (not entry.isEphemeral) @root.editable)}}
             <li class="spell">
                 <div class="item-name empty">
                     <div class="item-image framed"></div>

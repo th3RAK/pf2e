@@ -14,7 +14,7 @@ interface CollectionDiff<T extends foundry.documents.ActiveEffectSource | ItemSo
 export class MigrationRunnerBase {
     migrations: MigrationBase[];
 
-    static LATEST_SCHEMA_VERSION = 0.915;
+    static LATEST_SCHEMA_VERSION = 0.917;
 
     static MINIMUM_SAFE_VERSION = 0.634;
 
@@ -80,8 +80,8 @@ export class MigrationRunnerBase {
                     await migration.preUpdateItem?.(currentItem.system.spell);
                 }
                 if (itemIsOfType(currentItem, "armor", "equipment", "shield", "weapon")) {
-                    for (const embed of currentItem.system.subitems) {
-                        migration.preUpdateItem?.(embed);
+                    for (const subitem of currentItem.system.subitems) {
+                        migration.preUpdateItem?.(subitem);
                     }
                 }
             }
@@ -97,8 +97,8 @@ export class MigrationRunnerBase {
                     await migration.updateItem?.(currentItem.system.spell, currentActor);
                 }
                 if (itemIsOfType(currentItem, "armor", "equipment", "shield", "weapon")) {
-                    for (const embed of currentItem.system.subitems) {
-                        migration.preUpdateItem?.(embed);
+                    for (const subitem of currentItem.system.subitems) {
+                        migration.updateItem?.(subitem);
                     }
                 }
             }
@@ -127,8 +127,8 @@ export class MigrationRunnerBase {
                 await migration.preUpdateItem?.(current.system.spell);
             }
             if (itemIsOfType(current, "armor", "equipment", "shield", "weapon")) {
-                for (const embed of current.system.subitems) {
-                    migration.preUpdateItem?.(embed);
+                for (const subitem of current.system.subitems) {
+                    migration.preUpdateItem?.(subitem);
                 }
             }
         }
@@ -138,6 +138,11 @@ export class MigrationRunnerBase {
             // Handle embedded spells
             if (current.type === "consumable" && current.system.spell) {
                 await migration.updateItem?.(current.system.spell);
+            }
+            if (itemIsOfType(current, "armor", "equipment", "shield", "weapon")) {
+                for (const subitem of current.system.subitems) {
+                    migration.updateItem?.(subitem);
+                }
             }
         }
 

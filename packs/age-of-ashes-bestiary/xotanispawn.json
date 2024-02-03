@@ -584,6 +584,11 @@
             "mod": 29,
             "senses": [
                 {
+                    "acuity": "imprecise",
+                    "range": 60,
+                    "type": "tremorsense"
+                },
+                {
                     "type": "darkvision"
                 }
             ]

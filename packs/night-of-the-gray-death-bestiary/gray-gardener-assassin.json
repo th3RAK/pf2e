@@ -255,7 +255,7 @@
                 "bulk": {
                     "value": 0
                 },
-                "containerId": "null",
+                "containerId": null,
                 "description": {
                     "value": ""
                 },
@@ -373,7 +373,7 @@
                     "sourceId": "Compendium.pf2e.equipment-srd.Item.Wjkw0lEUOhypYvzo"
                 }
             },
-            "img": "systems/pf2e/icons/equipment/alchemical-items/alchemical-poisons/shadow-essence.webp",
+            "img": "icons/consumables/potions/bottle-bulb-empty-glass.webp",
             "name": "Shadow Essence",
             "sort": 600000,
             "system": {

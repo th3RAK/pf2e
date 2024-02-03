@@ -1,6 +1,7 @@
 /// <reference types="vite/client" />
 
 import type { ActorPF2e } from "@actor";
+import type { Action } from "@actor/actions/index.ts";
 import type { AutomaticBonusProgression } from "@actor/character/automatic-bonus-progression.ts";
 import type { ElementalBlast } from "@actor/character/elemental-blast.ts";
 import type { FeatGroupOptions } from "@actor/character/feats.ts";
@@ -80,7 +81,7 @@ interface GamePF2e
         UserPF2e
     > {
     pf2e: {
-        actions: Record<string, Function>;
+        actions: Record<string, Function> & Collection<Action>;
         compendiumBrowser: CompendiumBrowser;
         licenseViewer: LicenseViewer;
         worldClock: WorldClock;
@@ -121,6 +122,10 @@ interface GamePF2e
         TextEditor: typeof TextEditorPF2e;
         /** Cached values of frequently-checked settings */
         settings: {
+            automation: {
+                /** Flanking detection */
+                flanking: boolean;
+            };
             /** Campaign feat slots */
             campaign: {
                 enabled: boolean;
@@ -224,7 +229,8 @@ declare global {
             ItemDirectory<ItemPF2e<null>>,
             ChatLogPF2e,
             CompendiumDirectoryPF2e,
-            EncounterTrackerPF2e<EncounterPF2e | null>
+            EncounterTrackerPF2e<EncounterPF2e | null>,
+            HotbarPF2e
         >;
 
         // Add functions to the `Math` namespace for use in `Roll` formulas

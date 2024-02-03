@@ -1129,93 +1129,6 @@
             "type": "consumable"
         },
         {
-            "_id": "cPrXYJlkNY22Yq1b",
-            "flags": {
-                "core": {
-                    "sourceId": "Compendium.pf2e.equipment-srd.Item.dfum7DpOEkwxwTsT"
-                }
-            },
-            "img": "systems/pf2e/icons/equipment/weapons/shield-boss.webp",
-            "name": "Shield Boss",
-            "sort": 0,
-            "system": {
-                "baseItem": "shield-boss",
-                "bonus": {
-                    "value": "0"
-                },
-                "bonusDamage": {
-                    "value": 0
-                },
-                "bulk": {
-                    "value": 0
-                },
-                "category": "martial",
-                "containerId": null,
-                "damage": {
-                    "damageType": "bludgeoning",
-                    "dice": 1,
-                    "die": "d6"
-                },
-                "description": {
-                    "value": "<p>Typically a round, convex, or conical piece of thick metal attached to the center of a shield, a shield boss increases the bludgeoning damage of a shield bash.</p>"
-                },
-                "equipped": {
-                    "carryType": "held",
-                    "handsHeld": 1,
-                    "invested": null
-                },
-                "group": "shield",
-                "hardness": 0,
-                "hp": {
-                    "max": 0,
-                    "value": 0
-                },
-                "level": {
-                    "value": 0
-                },
-                "material": {
-                    "grade": null,
-                    "type": null
-                },
-                "price": {
-                    "value": {
-                        "sp": 5
-                    }
-                },
-                "publication": {
-                    "license": "ORC",
-                    "remaster": true,
-                    "title": "Pathfinder Player Core"
-                },
-                "quantity": 1,
-                "range": null,
-                "reload": {
-                    "value": ""
-                },
-                "rules": [],
-                "runes": {
-                    "potency": 1,
-                    "property": [],
-                    "striking": 1
-                },
-                "size": "med",
-                "slug": "shield-boss",
-                "splashDamage": {
-                    "value": 0
-                },
-                "traits": {
-                    "rarity": "common",
-                    "value": [
-                        "attached-to-shield"
-                    ]
-                },
-                "usage": {
-                    "value": "held-in-one-hand"
-                }
-            },
-            "type": "weapon"
-        },
-        {
             "_id": "VEX4oCE9RC9WuwKc",
             "flags": {
                 "core": {
@@ -1501,7 +1414,7 @@
                     "sourceId": "Compendium.pf2e.equipment-srd.Item.Yr9yCuJiAlFh3QEB"
                 }
             },
-            "img": "icons/equipment/shield/heater-steel-worn.webp",
+            "img": "systems/pf2e/icons/equipment/shields/steel-shield.webp",
             "name": "Steel Shield",
             "sort": 0,
             "system": {
@@ -1549,6 +1462,94 @@
                 "size": "med",
                 "slug": "steel-shield",
                 "speedPenalty": 0,
+                "subitems": [
+                    {
+                        "_id": "GwmZp11qcPxBpMMt",
+                        "flags": {
+                            "core": {
+                                "sourceId": "Compendium.pf2e.equipment-srd.Item.dfum7DpOEkwxwTsT"
+                            }
+                        },
+                        "img": "systems/pf2e/icons/equipment/weapons/shield-boss.webp",
+                        "name": "Shield Boss",
+                        "sort": 0,
+                        "system": {
+                            "baseItem": "shield-boss",
+                            "bonus": {
+                                "value": 0
+                            },
+                            "bonusDamage": {
+                                "value": 0
+                            },
+                            "bulk": {
+                                "value": 0
+                            },
+                            "category": "martial",
+                            "containerId": null,
+                            "damage": {
+                                "damageType": "bludgeoning",
+                                "dice": 1,
+                                "die": "d6"
+                            },
+                            "description": {
+                                "value": "<p>Typically a round, convex, or conical piece of thick metal attached to the center of a shield, a shield boss increases the bludgeoning damage of a shield bash.</p>"
+                            },
+                            "equipped": {
+                                "carryType": "attached",
+                                "handsHeld": 0
+                            },
+                            "group": "shield",
+                            "hardness": 0,
+                            "hp": {
+                                "max": 0,
+                                "value": 0
+                            },
+                            "level": {
+                                "value": 0
+                            },
+                            "material": {
+                                "grade": null,
+                                "type": null
+                            },
+                            "price": {
+                                "value": {
+                                    "sp": 5
+                                }
+                            },
+                            "publication": {
+                                "license": "ORC",
+                                "remaster": true,
+                                "title": "Pathfinder Player Core"
+                            },
+                            "quantity": 1,
+                            "range": null,
+                            "reload": {
+                                "value": ""
+                            },
+                            "rules": [],
+                            "runes": {
+                                "potency": 1,
+                                "property": [],
+                                "striking": 1
+                            },
+                            "size": "med",
+                            "slug": "shield-boss",
+                            "splashDamage": {
+                                "value": 0
+                            },
+                            "traits": {
+                                "rarity": "common",
+                                "value": [
+                                    "attached-to-shield"
+                                ]
+                            },
+                            "usage": {
+                                "value": "held-in-one-hand"
+                            }
+                        },
+                        "type": "weapon"
+                    }
+                ],
                 "traits": {
                     "integrated": null,
                     "rarity": "common",
@@ -1923,7 +1924,7 @@
                 },
                 "containerId": null,
                 "description": {
-                    "value": "<p>This amulet is hollow and shaped in the form of an unblinking eye. Its cavity typically holds some fragment of occult text. While wearing the pendant, you gain a +1 item bonus to Occultism checks, and you can cast the <em>@UUID[Compendium.pf2e.spells-srd.Item.Guidance]</em> cantrip as an occult innate spell.</p>"
+                    "value": "<p>This amulet is hollow and shaped in the form of an unblinking eye. Its cavity typically holds some fragment of occult text. While wearing the pendant, you gain a +1 item bonus to Occultism checks, and you can cast the @UUID[Compendium.pf2e.spells-srd.Item.Guidance] cantrip as an occult innate spell.</p>"
                 },
                 "equipped": {
                     "carryType": "worn",
@@ -1993,7 +1994,7 @@
                 },
                 "containerId": null,
                 "description": {
-                    "value": "<p><strong>Access</strong> member of the Pathfinder Society</p>\n<hr />\n<p>This compact compass repurposes ancient technology to draw fantastic powers from the mysterious magical items called <em>aeon stones</em>. It serves as a badge of office for agents of the Pathfinder Society and as a status symbol among adventurers of any stripe. A <em>wayfinder</em> functions as a compass.</p>\n<p>An indentation in the middle of the <em>wayfinder</em> can hold a single <em>aeon stone</em>. Placing an <em>aeon stone</em> in this indentation provides you all the benefits of having the <em>aeon stone</em> orbiting your head, but it protects the stone from being noticed or stolen as easily. You invest a <em>wayfinder</em> and the <em>aeon stone</em> within it simultaneously, and they count as only one item toward your investiture limit. An invested <em>aeon stone</em> slotted in a <em>wayfinder</em> also grants its resonant power.</p>\n<p>If you have more than one <em>wayfinder</em> with an invested <em>aeon stone</em> on your person at a given time, destructive interference from their resonance prevents you from gaining benefits from any of them. You can still benefit from additional <em>aeon stones</em> orbiting your head, just not in <em>wayfinders</em>.</p>\n<p><strong>Activate—Light</strong> <span class=\"action-glyph\">A</span> (concentrate)</p>\n<hr />\n<p><strong>Effect</strong> The <em>wayfinder</em> is targeted by a 1st-rank <em>@UUID[Compendium.pf2e.spells-srd.Item.Light]</em> spell.</p>"
+                    "value": "<p><strong>Access</strong> member of the Pathfinder Society</p>\n<hr />\n<p>This compact compass repurposes ancient technology to draw fantastic powers from the mysterious magical items called <em>aeon stones</em>. It serves as a badge of office for agents of the Pathfinder Society and as a status symbol among adventurers of any stripe. A <em>wayfinder</em> functions as a compass.</p>\n<p>An indentation in the middle of the <em>wayfinder</em> can hold a single <em>aeon stone</em>. Placing an <em>aeon stone</em> in this indentation provides you all the benefits of having the <em>aeon stone</em> orbiting your head, but it protects the stone from being noticed or stolen as easily. You invest a <em>wayfinder</em> and the <em>aeon stone</em> within it simultaneously, and they count as only one item toward your investiture limit. An invested <em>aeon stone</em> slotted in a <em>wayfinder</em> also grants its resonant power.</p>\n<p>If you have more than one <em>wayfinder</em> with an invested <em>aeon stone</em> on your person at a given time, destructive interference from their resonance prevents you from gaining benefits from any of them. You can still benefit from additional <em>aeon stones</em> orbiting your head, just not in <em>wayfinders</em>.</p>\n<p><strong>Activate—Light</strong> <span class=\"action-glyph\">A</span> (concentrate)</p>\n<hr />\n<p><strong>Effect</strong> The <em>wayfinder</em> is targeted by a 1st-rank @UUID[Compendium.pf2e.spells-srd.Item.Light] spell.</p>"
                 },
                 "equipped": {
                     "carryType": "worn",

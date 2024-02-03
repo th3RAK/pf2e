@@ -1,4 +1,7 @@
+import type { ActionTrait } from "@item/ability/index.ts";
+import type { ProficiencyRank } from "@item/base/data/index.ts";
 import { ChatMessagePF2e } from "@module/chat-message/document.ts";
+import { PROFICIENCY_RANKS } from "@module/data.ts";
 import { getActionGlyph, sluggify } from "@util";
 import {
     Action,
@@ -9,15 +12,13 @@ import {
     ActionVariant,
     ActionVariantUseOptions,
 } from "./types.ts";
-import type { ProficiencyRank } from "@item/base/data/index.ts";
-import { PROFICIENCY_RANKS } from "@module/data.ts";
 
 interface BaseActionVariantData {
     cost?: ActionCost;
     description?: string;
     name?: string;
     slug?: string;
-    traits?: string[];
+    traits?: ActionTrait[];
 }
 
 interface BaseActionData<ActionVariantDataType extends BaseActionVariantData = BaseActionVariantData> {
@@ -28,7 +29,7 @@ interface BaseActionData<ActionVariantDataType extends BaseActionVariantData = B
     sampleTasks?: Partial<Record<ProficiencyRank, string>>;
     section?: ActionSection;
     slug?: string | null;
-    traits?: string[];
+    traits?: ActionTrait[];
     variants?: ActionVariantDataType | ActionVariantDataType[];
 }
 
@@ -48,7 +49,7 @@ abstract class BaseActionVariant implements ActionVariant {
     readonly #description?: string;
     readonly name?: string;
     readonly #slug?: string;
-    readonly #traits?: string[];
+    readonly #traits?: ActionTrait[];
 
     protected constructor(action: BaseAction<BaseActionVariantData, BaseActionVariant>, data?: BaseActionVariantData) {
         this.#action = action;
@@ -77,7 +78,7 @@ abstract class BaseActionVariant implements ActionVariant {
         return this.#slug || sluggify(this.name ?? "") || this.#action.slug;
     }
 
-    get traits(): string[] {
+    get traits(): ActionTrait[] {
         return this.#traits ?? this.#action.traits;
     }
 
@@ -119,7 +120,7 @@ abstract class BaseAction<TData extends BaseActionVariantData, TAction extends B
     readonly sampleTasks?: Partial<Record<ProficiencyRank, string>>;
     readonly section?: ActionSection;
     readonly slug: string;
-    readonly traits: string[];
+    readonly traits: ActionTrait[];
     readonly #variants: TAction[];
 
     protected constructor(data: BaseActionData<TData>) {
@@ -186,20 +187,11 @@ abstract class BaseAction<TData extends BaseActionVariantData, TAction extends B
     }
 
     async toMessage(options?: Partial<ActionMessageOptions>): Promise<ChatMessagePF2e | undefined> {
-        // use the data from the action to construct the message if no variant is specified
-        const variant = options?.variant
-            ? new Promise((resolve: (variant: TAction) => void) => resolve(this.getDefaultVariant(options)))
-            : Promise.resolve(undefined);
-        return variant
-            .then((variant) => variant ?? this.toActionVariant())
-            .catch((reason) => Promise.reject(reason))
-            .then((variant) => variant.toMessage(options));
+        return this.getDefaultVariant(options).toMessage(options);
     }
 
     async use(options?: Partial<ActionUseOptions>): Promise<unknown> {
-        return new Promise((resolve: (variant: TAction) => void) => resolve(this.getDefaultVariant(options)))
-            .catch((reason) => Promise.reject(reason))
-            .then((variant) => variant.use(options));
+        return this.getDefaultVariant(options).use(options);
     }
 
     protected abstract toActionVariant(data?: TData): TAction;

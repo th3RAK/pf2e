@@ -22,18 +22,19 @@ class ItemAlteration extends foundry.abstract.DataModel<RuleElementPF2e, ItemAlt
         "bulk",
         "category",
         "check-penalty",
+        "defense-passive",
         "description",
         "dex-cap",
         "focus-point-cost",
+        "frequency-max",
+        "frequency-per",
         "hardness",
         "hp-max",
         "material-type",
+        "other-tags",
         "pd-recovery-dc",
         "persistent-damage",
         "rarity",
-        "frequency-max",
-        "frequency-per",
-        "other-tags",
         "speed-penalty",
         "strength",
         "traits",
@@ -54,6 +55,10 @@ class ItemAlteration extends foundry.abstract.DataModel<RuleElementPF2e, ItemAlt
             }),
             value: new ResolvableValueField(),
         };
+    }
+
+    get rule(): RuleElementPF2e {
+        return this.parent;
     }
 
     get actor(): ActorPF2e {
@@ -78,7 +83,7 @@ class ItemAlteration extends foundry.abstract.DataModel<RuleElementPF2e, ItemAlt
             alteration: {
                 mode: this.mode,
                 itemType: item.type,
-                value: (this.value = this.parent.resolveValue(this.value)),
+                value: (this.value = this.resolveValue(this.value)),
             },
         };
         const { DataModelValidationFailure } = foundry.data.validation;
@@ -153,11 +158,23 @@ class ItemAlteration extends foundry.abstract.DataModel<RuleElementPF2e, ItemAlt
                 data.item.system.checkPenalty = Math.min(newValue, 0);
                 return;
             }
+            case "defense-passive": {
+                const validator = ITEM_ALTERATION_VALIDATORS[this.property];
+                if (validator.isValid(data) && data.item instanceof ItemPF2e && data.item.system.defense?.passive) {
+                    data.item.system.defense.passive.statistic = data.alteration.value;
+                }
+                return;
+            }
             case "description": {
                 const validator = ITEM_ALTERATION_VALIDATORS[this.property];
                 if (!validator.isValid(data)) return;
                 if (!(data.item instanceof ItemPF2e)) return;
-                data.item.system.description.addenda.push(data.alteration.value);
+                const contents = validator.initialize(validator.clean(data.alteration)).value;
+                if (this.mode === "override") {
+                    data.item.system.description.override = contents;
+                } else {
+                    data.item.system.description.addenda.push({ label: this.rule.label, contents });
+                }
                 return;
             }
             case "dex-cap": {
@@ -317,10 +334,11 @@ class ItemAlteration extends foundry.abstract.DataModel<RuleElementPF2e, ItemAlt
                     data.item.system.traits.value,
                     data.alteration.value,
                 );
+                if (!newValue) return;
                 if (newValue instanceof DataModelValidationFailure) {
                     throw newValue.asError();
                 }
-                const traits = data.item.system.traits.value;
+                const traits: string[] = data.item.system.traits.value ?? [];
                 if (this.mode === "add") {
                     if (!traits.includes(newValue)) traits.push(newValue);
                 } else if (["subtract", "remove"].includes(this.mode)) {

@@ -5,22 +5,22 @@ import { ErrorPF2e, groupBy, localizer, ordinalString } from "@util";
 import * as R from "remeda";
 import { SlotKey } from "./data.ts";
 import { spellSlotGroupIdToNumber } from "./helpers.ts";
-import { RitualSpellcasting } from "./rituals.ts";
 import { ActiveSpell, BaseSpellcastingEntry, SpellPrepEntry, SpellcastingSlotGroup } from "./types.ts";
 
-class SpellCollection<TActor extends ActorPF2e, TEntry extends BaseSpellcastingEntry<TActor | null>> extends Collection<
-    SpellPF2e<TActor>
-> {
-    readonly entry: TEntry;
+class SpellCollection<TActor extends ActorPF2e> extends Collection<SpellPF2e<TActor>> {
+    readonly entry: BaseSpellcastingEntry<TActor>;
 
     readonly actor: TActor;
 
-    constructor(entry: TEntry) {
+    readonly name: string;
+
+    constructor(entry: BaseSpellcastingEntry<TActor>, name = entry.name) {
         if (!entry.actor) throw ErrorPF2e("a spell collection must have an associated actor");
         super();
 
         this.entry = entry;
         this.actor = entry.actor;
+        this.name = name;
     }
 
     get id(): string {
@@ -49,7 +49,7 @@ class SpellCollection<TActor extends ActorPF2e, TEntry extends BaseSpellcastingE
         spell: SpellPF2e,
         options?: { groupId?: Maybe<SpellSlotGroupId> },
     ): Promise<SpellPF2e<TActor> | null> {
-        const { actor } = this;
+        const actor = this.actor;
         if (!actor.isOfType("creature")) {
             throw ErrorPF2e("Spellcasting entries can only exist on creatures");
         }
@@ -89,23 +89,23 @@ class SpellCollection<TActor extends ActorPF2e, TEntry extends BaseSpellcastingE
                 ...heightenedUpdate,
             }) as Promise<SpellPF2e<TActor> | null>;
         } else {
-            const source = spell.clone({ "system.location.value": this.id, ...heightenedUpdate }).toObject();
+            const source = spell.clone({ sort: 0, "system.location.value": this.id, ...heightenedUpdate }).toObject();
             const created = (await actor.createEmbeddedDocuments("Item", [source])).shift();
 
             return created instanceof SpellPF2e ? created : null;
         }
     }
 
-    /** Saves the prepared spell slot data to the spellcasting entry  */
-    async prepareSpell(spell: SpellPF2e, groupId: SpellSlotGroupId, slotId: number): Promise<TEntry | undefined> {
+    /** Save the prepared spell slot data to the spellcasting entry  */
+    async prepareSpell(spell: SpellPF2e, groupId: SpellSlotGroupId, slotId: number): Promise<this | null> {
         this.#assertEntryIsDocument(this.entry);
 
         if ((groupId === "cantrips") !== spell.isCantrip) {
             this.#warnInvalidDrop("cantrip-mismatch", { spell });
-            return;
+            return null;
         } else if (groupId !== "cantrips" && spell.baseRank > groupId) {
             this.#warnInvalidDrop("invalid-rank", { spell, groupId });
-            return;
+            return null;
         }
 
         if (CONFIG.debug.hooks) {
@@ -128,11 +128,12 @@ class SpellCollection<TActor extends ActorPF2e, TEntry extends BaseSpellcastingE
             }
         }
 
-        return this.entry.update(updates);
+        const result = await this.entry.update(updates);
+        return result ? this : null;
     }
 
-    /** Clears the spell slot and updates the spellcasting entry */
-    unprepareSpell(groupId: SpellSlotGroupId, slotId: number): Promise<TEntry | undefined> {
+    /** Clear the spell slot and updates the spellcasting entry */
+    async unprepareSpell(groupId: SpellSlotGroupId, slotId: number): Promise<this | null> {
         this.#assertEntryIsDocument(this.entry);
         const groupNumber = spellSlotGroupIdToNumber(groupId);
 
@@ -143,7 +144,7 @@ class SpellCollection<TActor extends ActorPF2e, TEntry extends BaseSpellcastingE
         }
 
         const key = `system.slots.slot${groupNumber}.prepared.${slotId}`;
-        return this.entry.update({
+        const result = await this.entry.update({
             [key]: {
                 name: game.i18n.localize("PF2E.SpellSlotEmpty"),
                 id: null,
@@ -151,10 +152,16 @@ class SpellCollection<TActor extends ActorPF2e, TEntry extends BaseSpellcastingE
                 expended: false,
             },
         });
+
+        return result ? this : null;
     }
 
     /** Sets the expended state of a spell slot and updates the spellcasting entry */
-    setSlotExpendedState(groupId: SpellSlotGroupId, slotId: number, value: boolean): Promise<TEntry | undefined> {
+    setSlotExpendedState(
+        groupId: SpellSlotGroupId,
+        slotId: number,
+        value: boolean,
+    ): Promise<BaseSpellcastingEntry<TActor> | undefined> {
         this.#assertEntryIsDocument(this.entry);
 
         const groupNumber = spellSlotGroupIdToNumber(groupId);
@@ -168,15 +175,14 @@ class SpellCollection<TActor extends ActorPF2e, TEntry extends BaseSpellcastingE
             throw ErrorPF2e("Spellcasting entries can only exist on characters and npcs");
         }
 
-        if (this.entry instanceof RitualSpellcasting) {
-            return this.#getRitualData();
+        if (!(this.entry instanceof SpellcastingEntryPF2e)) {
+            return this.#getEphemeralData();
         }
 
-        // Anything past this point must be a `SpellcastingEntryPF2e`
-        this.#assertEntryIsDocument(this.entry);
-
         const groups: SpellcastingSlotGroup[] = [];
-        const spells = this.contents.sort((s1, s2) => (s1.sort || 0) - (s2.sort || 0));
+        const spells = this.contents
+            .sort((a, b) => a.name.localeCompare(b.name, game.i18n.lang))
+            .sort((a, b) => a.sort - b.sort);
         const isFlexible = this.entry.isFlexible;
         const maxCantripRank = Math.max(1, Math.ceil(actor.level / 2)) as OneToTen;
 
@@ -328,7 +334,7 @@ class SpellCollection<TActor extends ActorPF2e, TEntry extends BaseSpellcastingE
         });
     }
 
-    async #getRitualData(): Promise<SpellCollectionData> {
+    #getEphemeralData(): SpellCollectionData {
         const groupedByRank = R.groupBy.strict(Array.from(this.values()), (s) => s.rank);
         const groups = R.toPairs
             .strict(groupedByRank)
@@ -338,7 +344,7 @@ class SpellCollection<TActor extends ActorPF2e, TEntry extends BaseSpellcastingE
                     id: rank,
                     label: game.i18n.format("PF2E.Item.Spell.Rank.Ordinal", { rank: ordinalString(rank) }),
                     maxRank: 10,
-                    active: spells.map((spell) => ({ spell })),
+                    active: spells.map((spell) => ({ spell, expended: spell.parentItem?.uses.value === 0 })),
                 }),
             );
 

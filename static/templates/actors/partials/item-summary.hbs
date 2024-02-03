@@ -19,13 +19,13 @@
 
     {{#if item.price}}
         <section>
-            <div>{{localize "PF2E.LevelN" level=item.level}}</div>
+            <div>{{localize "PF2E.Item.Physical.LevelLabel" level=item.level}}</div>
             <div>{{localize "PF2E.Item.Physical.PriceLabel" price=item.price.value}}</div>
         </section>
     {{/if}}
 {{/if}}
 
-<div class="item-description" data-tooltip-class="">
+<div class="description" data-tooltip-class="">
     {{{description}}}
     {{#if selfEffect}}<p>{{{selfEffect}}}</p>{{/if}}
 </div>

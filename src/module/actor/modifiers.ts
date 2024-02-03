@@ -532,7 +532,8 @@ class StatisticModifier {
 
 function adjustModifiers(modifiers: ModifierPF2e[], rollOptions: Set<string>): void {
     for (const modifier of [...modifiers].sort((a, b) => Math.abs(b.value) - Math.abs(a.value))) {
-        const adjustments = modifier.adjustments.filter((a) => a.test([...rollOptions, ...modifier.getRollOptions()]));
+        const allRollOptions = [...rollOptions, ...modifier.getRollOptions()];
+        const adjustments = modifier.adjustments.filter((a) => a.test(allRollOptions));
         if (adjustments.some((a) => a.suppress)) {
             modifier.ignored = true;
             continue;
@@ -639,6 +640,7 @@ class DamageDicePF2e {
     enabled: boolean;
     custom: boolean;
     predicate: PredicatePF2e;
+    hideIfDisabled: boolean;
 
     constructor(params: DamageDiceParameters) {
         if (params.selector) {
@@ -672,6 +674,7 @@ class DamageDicePF2e {
 
         this.enabled = params.enabled ?? this.predicate.test([]);
         this.ignored = params.ignored ?? !this.enabled;
+        this.hideIfDisabled = params.hideIfDisabled ?? false;
     }
 
     /** Test the `predicate` against a set of roll options */

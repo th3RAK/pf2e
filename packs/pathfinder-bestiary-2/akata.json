@@ -388,7 +388,16 @@
             },
             "immunities": [
                 {
+                    "exceptions": [],
                     "type": "disease"
+                },
+                {
+                    "exceptions": [],
+                    "type": "auditory"
+                },
+                {
+                    "exceptions": [],
+                    "type": "inhaled"
                 }
             ],
             "resistances": [

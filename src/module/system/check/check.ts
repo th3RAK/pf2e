@@ -163,7 +163,7 @@ class CheckPF2e {
         // Combine all degree of success adjustments into a single record. Some may be overridden, but that should be
         // rare--and there are no rules for selecting among multiple adjustments.
         const dosAdjustments = ((): DegreeAdjustmentsRecord => {
-            if (R.isNil(context.dc)) return {};
+            if (!context.dc) return {};
 
             const naturalTotal = R.compact(
                 roll.dice.map((d) => d.results.find((r) => r.active && !r.discarded)?.result ?? null),
@@ -174,6 +174,7 @@ class CheckPF2e {
                 ...rollOptions,
                 `check:total:${roll.total}`,
                 `check:total:natural:${naturalTotal}`,
+                `check:total:delta:${roll.total - context.dc.value}`,
             ]);
 
             return (
@@ -399,25 +400,33 @@ class CheckPF2e {
             return;
         }
 
-        const actor = game.actors.get(message.speaker.actor ?? "");
+        const actor = message.actor;
         let rerollFlavor = game.i18n.localize(`PF2E.RerollMenu.MessageKeep.${keep}`);
         if (heroPoint) {
+            const rerollingActor = actor?.isOfType("familiar") ? actor.master : actor;
+
             // If the reroll costs a hero point, first check if the actor has one to spare and spend it
-            if (actor?.isOfType("character")) {
-                const heroPointCount = actor.heroPoints.value;
+            if (rerollingActor?.isOfType("character")) {
+                const heroPointCount = rerollingActor.heroPoints.value;
                 if (heroPointCount) {
-                    await actor.update({
-                        "system.resources.heroPoints.value": Math.clamped(heroPointCount - 1, 0, actor.heroPoints.max),
+                    await rerollingActor.update({
+                        "system.resources.heroPoints.value": Math.clamped(
+                            heroPointCount - 1,
+                            0,
+                            rerollingActor.heroPoints.max,
+                        ),
                     });
-                    rerollFlavor = game.i18n.format("PF2E.RerollMenu.MessageHeroPoint", { name: actor.name });
+                    rerollFlavor = game.i18n.format("PF2E.RerollMenu.MessageHeroPoint", { name: rerollingActor.name });
                 } else {
-                    ui.notifications.warn(game.i18n.format("PF2E.RerollMenu.WarnNoHeroPoint", { name: actor.name }));
+                    ui.notifications.warn(
+                        game.i18n.format("PF2E.RerollMenu.WarnNoHeroPoint", { name: rerollingActor.name }),
+                    );
                     return;
                 }
-            } else {
-                ui.notifications.error("PF2E.RerollMenu.ErrorNoActor", { localize: true });
-                return;
             }
+        } else {
+            ui.notifications.error("PF2E.RerollMenu.ErrorNoActor", { localize: true });
+            return;
         }
 
         const systemFlags = fu.deepClone(message.flags.pf2e);
@@ -463,7 +472,7 @@ class CheckPF2e {
         const degree = ((): DegreeOfSuccess | null => {
             const dc = context.dc;
             if (!dc) return null;
-            if (dc.slug === "armor") {
+            if (["ac", "armor"].includes(dc.slug ?? "")) {
                 const targetActor = ((): ActorPF2e | null => {
                     const target = context.target;
                     if (!target?.actor) return null;
@@ -616,8 +625,11 @@ class CheckPF2e {
 
         // DC, circumstance adjustments, and the target's name
         const dcData = ((): ResultFlavorTemplateData["dc"] => {
-            const dcSlug =
-                dc.slug ?? (dc.statistic instanceof StatisticDifficultyClass ? dc.statistic.parent.slug : null);
+            const dcSlug = ((): string | null => {
+                const fromParams =
+                    dc.slug ?? (dc.statistic instanceof StatisticDifficultyClass ? dc.statistic.parent.slug : null);
+                return fromParams === "ac" ? "armor" : fromParams?.replace(/-dc$/, "") ?? null;
+            })();
             const dcType = game.i18n.localize(
                 dc.label?.trim() ||
                     game.i18n.localize(

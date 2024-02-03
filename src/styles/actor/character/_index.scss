@@ -18,7 +18,7 @@ nav.sheet-navigation {
             position: relative;
             stroke-linejoin: round;
             stroke-miterlimit: 2;
-            top: -1px;
+            top: calc(-1 * var(--space-1));
 
             path {
                 fill-rule: nonzero;
@@ -41,14 +41,14 @@ nav.sheet-navigation {
 
     & > .tab:not(.inventory, .actions),
     .tab-content {
-        overflow: hidden scroll;
         flex-grow: 1;
         min-height: 0;
-        overflow: hidden scroll;
+        overflow: hidden auto;
+        scrollbar-gutter: stable;
     }
 
     nav + .tab-content {
-        padding-top: 0.75rem;
+        padding-top: var(--space-12);
     }
 
     .name a:hover {
@@ -92,13 +92,10 @@ nav.sheet-navigation {
     }
 
     .directory-list {
-        @include p-reset;
         display: flex;
         flex-flow: column nowrap;
+        margin: 0;
+        padding: 0;
         width: 100%;
-
-        h4 {
-            @include p-reset;
-        }
     }
 }

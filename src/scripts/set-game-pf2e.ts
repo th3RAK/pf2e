@@ -40,8 +40,8 @@ import { sluggify } from "@util";
 /** Expose public game.pf2e interface */
 export const SetGamePF2e = {
     onInit: (): void => {
-        type ActionCollection = Record<string, Function> & Map<string, Action>;
-        const actions = new Map<string, Action>(
+        type ActionCollection = Record<string, Function> & Collection<Action>;
+        const actions = new Collection<Action>(
             SystemActions.map((action) => [action.slug, action]),
         ) as ActionCollection;
         // keep the old action functions around until everything has been converted
@@ -103,6 +103,9 @@ export const SetGamePF2e = {
         game.pf2e = fu.mergeObject(game.pf2e ?? {}, initSafe);
         game.pf2e.ConditionManager.initialize();
         game.pf2e.settings = {
+            automation: {
+                flanking: game.settings.get("pf2e", "automation.flankingDetection"),
+            },
             campaign: {
                 enabled: game.settings.get("pf2e", "campaignFeats"),
                 sections: game.settings.get("pf2e", "campaignFeatSections"),

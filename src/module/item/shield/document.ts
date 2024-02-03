@@ -1,6 +1,6 @@
 import type { ActorPF2e } from "@actor";
 import { ItemProxyPF2e, type WeaponPF2e } from "@item";
-import { ItemSummaryData } from "@item/base/data/index.ts";
+import { RawItemChatData } from "@item/base/data/index.ts";
 import { PhysicalItemPF2e, RUNE_DATA, getMaterialValuationData } from "@item/physical/index.ts";
 import { MAGIC_TRADITIONS } from "@item/spell/values.ts";
 import { WeaponMaterialSource, WeaponSource, WeaponSystemSource, WeaponTraitsSource } from "@item/weapon/data.ts";
@@ -14,9 +14,8 @@ import { setActorShieldData } from "./helpers.ts";
 import { BaseShieldType, ShieldTrait } from "./types.ts";
 
 class ShieldPF2e<TParent extends ActorPF2e | null = ActorPF2e | null> extends PhysicalItemPF2e<TParent> {
-    override isStackableWith(item: PhysicalItemPF2e<TParent>): boolean {
-        if (this.isEquipped || item.isEquipped) return false;
-        return super.isStackableWith(item);
+    static override get validTraits(): Record<ShieldTrait, string> {
+        return CONFIG.PF2E.shieldTraits;
     }
 
     get baseType(): BaseShieldType | null {
@@ -51,6 +50,20 @@ class ShieldPF2e<TParent extends ActorPF2e | null = ActorPF2e | null> extends Ph
             !!this.actor?.isOfType("character", "npc") &&
             this.id === this.actor.attributes.shield.itemId &&
             this.actor.attributes.shield.raised
+        );
+    }
+
+    override isStackableWith(item: PhysicalItemPF2e<TParent>): boolean {
+        if (this.isEquipped || item.isEquipped) return false;
+        return super.isStackableWith(item);
+    }
+
+    override acceptsSubitem(candidate: PhysicalItemPF2e): boolean {
+        return (
+            candidate.isOfType("weapon") &&
+            candidate.system.traits.value.some((t) => t === "attached-to-shield") &&
+            !this.system.traits.integrated &&
+            !this.subitems.some((i) => i.isOfType("weapon"))
         );
     }
 
@@ -178,11 +191,11 @@ class ShieldPF2e<TParent extends ActorPF2e | null = ActorPF2e | null> extends Ph
     override async getChatData(
         this: ShieldPF2e<ActorPF2e>,
         htmlOptions: EnrichmentOptions = {},
-    ): Promise<ItemSummaryData> {
-        const properties = [
+    ): Promise<RawItemChatData> {
+        const properties = R.compact([
             `${signedInteger(this.acBonus)} ${game.i18n.localize("PF2E.ArmorArmorLabel")}`,
             this.speedPenalty ? `${this.system.speedPenalty} ${game.i18n.localize("PF2E.ArmorSpeedLabel")}` : null,
-        ];
+        ]);
 
         return this.processChatData(htmlOptions, {
             ...(await super.getChatData()),

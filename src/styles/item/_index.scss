@@ -1,6 +1,10 @@
 .pf2e.item.sheet {
     @import "../reset";
 
+    .window-content {
+        padding: var(--space-8);
+    }
+
     form {
         display: flex;
         flex-flow: column nowrap;
@@ -127,8 +131,9 @@
 
             > section.sidebar,
             > .sheet-body {
-                height: calc(100% - 10px);
+                height: calc(100% - var(--space-10));
                 overflow-y: auto;
+                scrollbar-gutter: stable;
             }
 
             @import "sidebar";
@@ -142,8 +147,9 @@
             flex-wrap: nowrap;
 
             .tab.active {
-                overflow: hidden scroll;
+                overflow: hidden auto;
                 padding-left: var(--space-8);
+                scrollbar-gutter: stable;
 
                 // DESCRIPTION
                 &.description {
@@ -301,6 +307,10 @@
 
             .form-group > label:first-of-type {
                 flex-basis: 11em;
+            }
+
+            &.material-runes .form-group {
+                flex-wrap: nowrap;
             }
         }
 
@@ -567,6 +577,10 @@
         @import "melee-sheet";
     }
 
+    &.physical form .sidebar {
+        @import "physical-sidebar";
+    }
+
     &.spell form {
         @import "spell-sheet";
     }
@@ -576,4 +590,4 @@
     }
 }
 
-@import "persistent-damage-dialog";
+@import "item-attacher", "persistent-damage-dialog";

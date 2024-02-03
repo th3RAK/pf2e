@@ -1,7 +1,7 @@
 import type { ActorPF2e, CreaturePF2e } from "@actor";
 import { ActorSheetDataPF2e } from "@actor/sheet/data-types.ts";
 import { createSpellcastingDialog } from "@actor/sheet/spellcasting-dialog.ts";
-import { SpellcastingEntryPF2e, type ItemPF2e, type SpellPF2e } from "@item";
+import type { ItemPF2e, SpellPF2e } from "@item";
 import { ItemSourcePF2e } from "@item/base/data/index.ts";
 import { ITEM_CARRY_TYPES } from "@item/base/data/values.ts";
 import { coerceToSpellGroupId, spellSlotGroupIdToNumber } from "@item/spellcasting-entry/helpers.ts";
@@ -9,7 +9,7 @@ import { SpellcastingSheetData } from "@item/spellcasting-entry/index.ts";
 import { DropCanvasItemDataPF2e } from "@module/canvas/drop-canvas-data.ts";
 import { OneToTen, ZeroToFour, goesToEleven } from "@module/data.ts";
 import { eventToRollParams } from "@scripts/sheet-util.ts";
-import { ErrorPF2e, fontAwesomeIcon, htmlClosest, htmlQueryAll, setHasElement, tupleHasValue } from "@util";
+import { ErrorPF2e, createHTMLElement, fontAwesomeIcon, htmlClosest, htmlQueryAll, tupleHasValue } from "@util";
 import { ActorSheetPF2e, SheetClickActionHandlers } from "../sheet/base.ts";
 import { CreatureConfig } from "./config.ts";
 import { Language } from "./index.ts";
@@ -24,14 +24,14 @@ abstract class CreatureSheetPF2e<TActor extends CreaturePF2e> extends ActorSheet
     protected abstract readonly actorConfigClass: ConstructorOf<CreatureConfig<CreaturePF2e>> | null;
 
     override async getData(options?: Partial<ActorSheetOptions>): Promise<CreatureSheetData<TActor>> {
-        const sheetData = (await super.getData(options)) as CreatureSheetData<TActor>;
+        const sheetData = await super.getData(options);
         const actor = this.actor;
 
-        // Languages for PCs are handled in the PC sheet subclass
+        const unavailableLanguages: Set<string> = game.settings.get("pf2e", "homebrew.languageRarities").unavailable;
         const languages = actor.isOfType("character")
-            ? []
+            ? [] // Languages for PCs are handled in the PC sheet subclass
             : actor.system.details.languages.value
-                  .filter((l) => l in CONFIG.PF2E.languages)
+                  .filter((l) => l in CONFIG.PF2E.languages && !unavailableLanguages.has(l))
                   .map((slug) => ({ slug, label: game.i18n.localize(CONFIG.PF2E.languages[slug] ?? slug) }))
                   .sort((a, b) => a.label.localeCompare(b.label, game.i18n.lang));
 
@@ -63,7 +63,9 @@ abstract class CreatureSheetPF2e<TActor extends CreaturePF2e> extends ActorSheet
     }
 
     protected async prepareSpellcasting(): Promise<SpellcastingSheetData[]> {
-        const entries = await Promise.all(this.actor.spellcasting.map(async (entry) => entry.getSheetData()));
+        const entries = await Promise.all(
+            this.actor.spellcasting.collections.map((spells) => spells.entry.getSheetData({ spells })),
+        );
         return entries.sort((a, b) => a.sort - b.sort);
     }
 
@@ -75,44 +77,6 @@ abstract class CreatureSheetPF2e<TActor extends CreaturePF2e> extends ActorSheet
     override activateListeners($html: JQuery): void {
         super.activateListeners($html);
         const html = $html[0];
-
-        // Change carry type
-        const carryMenuListener = (event: MouseEvent) => {
-            if (!(event.currentTarget instanceof HTMLElement)) {
-                throw ErrorPF2e("Unexpected error retrieving carry-type link");
-            }
-            const menu = event.currentTarget;
-            const toggle = menu.nextElementSibling;
-            if (toggle?.classList.contains("carry-type-hover")) {
-                $(toggle).tooltipster("close");
-            }
-
-            const carryType = menu.dataset.carryType;
-            if (!setHasElement(ITEM_CARRY_TYPES, carryType)) {
-                throw ErrorPF2e("Unexpected error retrieving requested carry type");
-            }
-
-            const itemId = htmlClosest(menu, "[data-item-id]")?.dataset.itemId;
-            const item = this.actor.inventory.get(itemId, { strict: true });
-
-            const handsHeld = Number(menu.dataset.handsHeld) || 0;
-            if (!tupleHasValue([0, 1, 2], handsHeld)) {
-                throw ErrorPF2e("Invalid number of hands specified");
-            }
-
-            const inSlot = menu.dataset.inSlot === "true";
-            const current = item.system.equipped;
-            if (
-                carryType !== current.carryType ||
-                inSlot !== current.inSlot ||
-                (carryType === "held" && handsHeld !== current.handsHeld)
-            ) {
-                this.actor.adjustCarryType(item, { carryType, handsHeld, inSlot });
-            }
-        };
-        for (const carryTypeMenu of htmlQueryAll(html, ".tab.inventory a[data-carry-type]")) {
-            carryTypeMenu.addEventListener("click", carryMenuListener);
-        }
 
         // General handler for embedded item updates
         const selectors = "input[data-item-id][data-item-property], select[data-item-id][data-item-property]";
@@ -153,13 +117,22 @@ abstract class CreatureSheetPF2e<TActor extends CreaturePF2e> extends ActorSheet
 
     protected override activateClickListener(html: HTMLElement): SheetClickActionHandlers {
         const handlers = super.activateClickListener(html);
+        const actor = this.actor;
 
         handlers["perception-check"] = (event, anchor) => {
             const extraRollOptions = anchor.dataset.secret ? ["secret"] : [];
-            return this.actor.perception.roll({ ...eventToRollParams(event, { type: "check" }), extraRollOptions });
+            return actor.perception.roll({ ...eventToRollParams(event, { type: "check" }), extraRollOptions });
         };
 
-        handlers["recovery-check"] = (event) => this.actor.rollRecovery(event);
+        handlers["draw-item"] = (event) => {
+            const itemId = htmlClosest(event.target, "[data-item-id")?.dataset.itemId;
+            const item = actor.inventory.get(itemId, { strict: true });
+            return actor.changeCarryType(item, { carryType: "held", handsHeld: 1 });
+        };
+
+        handlers["recovery-check"] = (event) => actor.rollRecovery(event);
+
+        handlers["open-carry-type-menu"] = (_, anchor) => this.#openCarryTypeMenu(anchor);
 
         // SPELLCASTING
 
@@ -167,12 +140,12 @@ abstract class CreatureSheetPF2e<TActor extends CreaturePF2e> extends ActorSheet
         handlers["cast-spell"] = (event): Promise<void> | void => {
             const spellRow = htmlClosest(event.target, "[data-item-id]");
             const { itemId, entryId, slotId } = spellRow?.dataset ?? {};
-            const collection = this.actor.spellcasting.collections.get(entryId, { strict: true });
+            const collection = actor.spellcasting.collections.get(entryId, { strict: true });
             const spell = collection.get(itemId, { strict: true });
             const maybeCastRank = Number(spellRow?.dataset.castRank) || NaN;
             if (Number.isInteger(maybeCastRank) && maybeCastRank.between(1, 10)) {
                 const rank = maybeCastRank as OneToTen;
-                return collection.entry.cast(spell, { rank, slotId: Number(slotId) });
+                return spell.parentItem?.consume() ?? collection.entry.cast(spell, { rank, slotId: Number(slotId) });
             }
         };
 
@@ -194,7 +167,7 @@ abstract class CreatureSheetPF2e<TActor extends CreaturePF2e> extends ActorSheet
 
             const slotId = Number(row?.dataset.slotId) || 0;
             const entryId = row?.dataset.entryId ?? "";
-            const collection = this.actor.spellcasting.collections.get(entryId);
+            const collection = actor.spellcasting.collections.get(entryId);
             return collection?.unprepareSpell(groupId, slotId);
         };
 
@@ -207,21 +180,21 @@ abstract class CreatureSheetPF2e<TActor extends CreaturePF2e> extends ActorSheet
             const slotId = Number(row?.dataset.slotId) || 0;
             const entryId = row?.dataset.entryId ?? "";
             const expend = row?.dataset.slotExpended === undefined;
-            const collection = this.actor.spellcasting.collections.get(entryId);
+            const collection = actor.spellcasting.collections.get(entryId);
 
             return collection?.setSlotExpendedState(groupId, slotId, expend);
         };
 
         handlers["toggle-signature-spell"] = (event) => {
             const itemId = htmlClosest(event.target, "[data-item-id]")?.dataset.itemId;
-            const spell = this.actor.items.get(itemId, { strict: true });
+            const spell = actor.items.get(itemId, { strict: true });
             if (!spell?.isOfType("spell")) return;
             return spell.update({ "system.location.signature": !spell.system.location.signature });
         };
 
         handlers["toggle-show-slotless-ranks"] = (event) => {
             const collectionId = htmlClosest(event.target, "[data-container-id]")?.dataset.containerId;
-            const spellcastingEntry = this.actor.items.get(collectionId, { strict: true });
+            const spellcastingEntry = actor.items.get(collectionId, { strict: true });
             if (!spellcastingEntry.isOfType("spellcastingEntry")) {
                 throw ErrorPF2e("Tried to toggle visibility of slotless ranks on a non-spellcasting entry");
             }
@@ -232,7 +205,6 @@ abstract class CreatureSheetPF2e<TActor extends CreaturePF2e> extends ActorSheet
 
         // Regenerating spell slots and spell uses
         handlers["reset-spell-slots"] = (event): Promise<unknown> | void => {
-            const actor = this.actor;
             const row = htmlClosest(event.target, "[data-item-id]");
             const itemId = row?.dataset.itemId;
             const item = actor.items.get(itemId, { strict: true });
@@ -254,19 +226,19 @@ abstract class CreatureSheetPF2e<TActor extends CreaturePF2e> extends ActorSheet
         // Spellcasting entries
 
         // Add, edit, and remove spellcasting entries
-        handlers["spellcasting-create"] = (event) => {
-            return createSpellcastingDialog(event, this.actor);
+        handlers["spellcasting-create"] = () => {
+            return createSpellcastingDialog(actor);
         };
         handlers["spellcasting-edit"] = (event): Promise<unknown> | void => {
             const containerId = htmlClosest(event.target, "[data-item-id]")?.dataset.itemId;
-            const entry = this.actor.items.get(containerId, { strict: true });
+            const entry = actor.items.get(containerId, { strict: true });
             if (entry.isOfType("spellcastingEntry")) {
-                return createSpellcastingDialog(event, entry);
+                return createSpellcastingDialog(entry);
             }
         };
         handlers["spellcasting-remove"] = async (event): Promise<ItemPF2e<TActor> | void> => {
             const itemId = htmlClosest(event.target, "[data-item-id]")?.dataset.itemId;
-            const item = this.actor.items.get(itemId, { strict: true });
+            const item = actor.items.get(itemId, { strict: true });
             const title = game.i18n.localize("PF2E.DeleteSpellcastEntryTitle");
             const content = await renderTemplate("systems/pf2e/templates/actors/delete-spellcasting-dialog.hbs");
 
@@ -277,6 +249,48 @@ abstract class CreatureSheetPF2e<TActor extends CreaturePF2e> extends ActorSheet
         };
 
         return handlers;
+    }
+
+    // Change carry type
+    async #openCarryTypeMenu(anchor: HTMLElement): Promise<void> {
+        // Close the menu and return early if any carry-type menu is already open
+        const menuOpen = !!document.body.querySelector("aside.locked-tooltip.carry-type-menu");
+        if (menuOpen) return game.tooltip.dismissLockedTooltips();
+
+        const itemId = htmlClosest(anchor, "[data-item-id]")?.dataset.itemId;
+        const item = this.actor.inventory.get(itemId, { strict: true });
+        const hasStowingContainers = this.actor.itemTypes.backpack.some((i) => i.system.stowing && !i.isInContainer);
+        const templateArgs = { item, hasStowingContainers };
+        const template = await renderTemplate("systems/pf2e/templates/actors/partials/carry-type.hbs", templateArgs);
+        const content = createHTMLElement("ul", { innerHTML: template });
+
+        content.addEventListener("click", (event) => {
+            const menuOption = htmlClosest(event.target, "a[data-carry-type]");
+            if (!menuOption) return;
+
+            const carryType = menuOption.dataset.carryType;
+            if (!tupleHasValue(ITEM_CARRY_TYPES, carryType)) {
+                throw ErrorPF2e("Unexpected error retrieving requested carry type");
+            }
+
+            const handsHeld = Number(menuOption.dataset.handsHeld) || 0;
+            if (!tupleHasValue([0, 1, 2], handsHeld)) {
+                throw ErrorPF2e("Invalid number of hands specified");
+            }
+
+            const inSlot = "inSlot" in menuOption.dataset;
+            const current = item.system.equipped;
+            if (
+                carryType !== current.carryType ||
+                inSlot !== current.inSlot ||
+                (carryType === "held" && handsHeld !== current.handsHeld)
+            ) {
+                this.actor.changeCarryType(item, { carryType, handsHeld, inSlot });
+                game.tooltip.dismissLockedTooltips();
+            }
+        });
+
+        game.tooltip.activate(anchor, { cssClass: "pf2e carry-type-menu", content, locked: true });
     }
 
     /** Adds support for moving spells between spell levels, spell collections, and spell preparation */
@@ -296,18 +310,15 @@ abstract class CreatureSheetPF2e<TActor extends CreaturePF2e> extends ActorSheet
             const entryId = dropContainerEl.dataset.containerId;
             const collection = this.actor.spellcasting.collections.get(entryId, { strict: true });
             const groupId = coerceToSpellGroupId(dropItemEl.dataset.groupId);
+            const slotId = Number(dropItemEl.dataset.slotId);
 
             if (dropSlotType === "spell-slot-group") {
                 const spell = await collection.addSpell(item, { groupId });
                 this.#openSpellPreparation(collection.id);
                 return [spell ?? []].flat();
-            } else if (dropItemEl.dataset.slotId) {
-                const slotId = Number(dropItemEl.dataset.slotId ?? NaN);
-
-                if (groupId && Number.isInteger(slotId)) {
-                    const allocated = await collection.prepareSpell(item, groupId, slotId);
-                    if (allocated instanceof SpellcastingEntryPF2e) return [allocated];
-                }
+            } else if (groupId && Number.isInteger(slotId)) {
+                const result = await collection.prepareSpell(item, groupId, slotId);
+                return result ? [item] : [];
             } else if (dropSlotType === "spell") {
                 const dropId = dropItemEl.dataset.itemId ?? "";
                 const target = this.actor.items.get(dropId);

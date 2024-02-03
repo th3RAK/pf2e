@@ -1,20 +1,25 @@
 import type { ActorPF2e } from "@actor";
 import { TrickMagicItemPopup } from "@actor/sheet/trick-magic-item-popup.ts";
-import type { WeaponPF2e } from "@item";
-import { PhysicalItemPF2e, SpellcastingEntryPF2e, SpellPF2e } from "@item";
-import { ItemSummaryData } from "@item/base/data/index.ts";
+import type { SpellPF2e, WeaponPF2e } from "@item";
+import { ItemProxyPF2e, PhysicalItemPF2e } from "@item";
+import { RawItemChatData } from "@item/base/data/index.ts";
 import { TrickMagicItemEntry } from "@item/spellcasting-entry/trick.ts";
-import { ValueAndMax } from "@module/data.ts";
+import type { SpellcastingEntry } from "@item/spellcasting-entry/types.ts";
+import type { ValueAndMax } from "@module/data.ts";
 import type { RuleElementPF2e } from "@module/rules/index.ts";
 import type { UserPF2e } from "@module/user/document.ts";
 import { DamageRoll } from "@system/damage/roll.ts";
 import { ErrorPF2e, setHasElement } from "@util";
 import * as R from "remeda";
-import { ConsumableSource, ConsumableSystemData } from "./data.ts";
-import { ConsumableCategory, OtherConsumableTag } from "./types.ts";
+import type { ConsumableSource, ConsumableSystemData } from "./data.ts";
+import type { ConsumableCategory, ConsumableTrait, OtherConsumableTag } from "./types.ts";
 import { DAMAGE_ONLY_CONSUMABLE_CATEGORIES, DAMAGE_OR_HEALING_CONSUMABLE_CATEGORIES } from "./values.ts";
 
 class ConsumablePF2e<TParent extends ActorPF2e | null = ActorPF2e | null> extends PhysicalItemPF2e<TParent> {
+    static override get validTraits(): Record<ConsumableTrait, string> {
+        return CONFIG.PF2E.consumableTraits;
+    }
+
     get otherTags(): Set<OtherConsumableTag> {
         return new Set(this.system.traits.otherTags);
     }
@@ -31,14 +36,12 @@ class ConsumablePF2e<TParent extends ActorPF2e | null = ActorPF2e | null> extend
         return R.pick(this.system.uses, ["value", "max"]);
     }
 
-    get embeddedSpell(): SpellPF2e<ActorPF2e> | null {
+    get embeddedSpell(): SpellPF2e<NonNullable<TParent>> | null {
         if (!this.actor) throw ErrorPF2e(`No owning actor found for "${this.name}" (${this.id})`);
         if (!this.system.spell) return null;
 
-        return new SpellPF2e(fu.deepClone(this.system.spell), {
-            parent: this.actor,
-            fromConsumable: true,
-        }) as SpellPF2e<ActorPF2e>;
+        const context = { parent: this.actor, parentItem: this };
+        return new ItemProxyPF2e(fu.deepClone(this.system.spell), context) as SpellPF2e<NonNullable<TParent>>;
     }
 
     override prepareBaseData(): void {
@@ -75,7 +78,7 @@ class ConsumablePF2e<TParent extends ActorPF2e | null = ActorPF2e | null> extend
         this: ConsumablePF2e<ActorPF2e>,
         htmlOptions: EnrichmentOptions = {},
         rollOptions: Record<string, unknown> = {},
-    ): Promise<ItemSummaryData> {
+    ): Promise<RawItemChatData> {
         const traits = this.traitChatData(CONFIG.PF2E.consumableTraits);
         const [category, isUsable] = this.isIdentified
             ? [game.i18n.localize(CONFIG.PF2E.consumableCategories[this.category]), true]
@@ -205,33 +208,19 @@ class ConsumablePF2e<TParent extends ActorPF2e | null = ActorPF2e | null> extend
     }
 
     async castEmbeddedSpell(trickMagicItemData?: TrickMagicItemEntry): Promise<void> {
-        const { actor } = this;
+        const actor = this.actor;
         const spell = this.embeddedSpell;
         if (!actor || !spell) return;
 
         // Find the best spellcasting entry to cast this consumable
-        const entry = (() => {
+        const entry = ((): SpellcastingEntry<ActorPF2e> | null => {
             if (trickMagicItemData) return trickMagicItemData;
             return actor.spellcasting
-                .filter(
-                    (e): e is SpellcastingEntryPF2e<ActorPF2e> =>
-                        e instanceof SpellcastingEntryPF2e && e.canCast(spell, { origin: this }),
-                )
-                .reduce((previous, current) => {
-                    const previousDC = previous.statistic.dc.value;
-                    const currentDC = current.statistic.dc.value;
-                    return currentDC > previousDC ? current : previous;
-                });
+                .filter((e): e is SpellcastingEntry<ActorPF2e> => !!e.statistic && e.canCast(spell, { origin: this }))
+                .reduce((best, e) => (e.statistic.dc.value > best.statistic.dc.value ? e : best));
         })();
 
-        if (entry) {
-            const systemData = spell.system;
-            if (entry instanceof SpellcastingEntryPF2e) {
-                systemData.location.value = entry.id;
-            }
-
-            entry.cast(spell, { consume: false });
-        }
+        return entry?.cast(spell, { consume: false });
     }
 
     protected override _preUpdate(

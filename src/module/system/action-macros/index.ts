@@ -39,11 +39,13 @@ import { bonMot } from "./diplomacy/bon-mot.ts";
 import * as gatherInformation from "./diplomacy/gather-information.ts";
 import * as makeAnImpression from "./diplomacy/make-an-impression.ts";
 import * as request from "./diplomacy/request.ts";
+import { affixATalisman } from "./exploration/affix-a-talisman.ts";
 import * as avoidNotice from "./exploration/avoid-notice.ts";
 import * as senseDirection from "./exploration/sense-direction.ts";
 import * as track from "./exploration/track.ts";
 import * as decipherWriting from "./general/decipher-writing.ts";
 import { identifyMagic } from "./general/identify-magic.ts";
+import { learnASpell } from "./general/learn-a-spell.ts";
 import * as subsist from "./general/subsist.ts";
 import * as coerce from "./intimidation/coerce.ts";
 import * as demoralize from "./intimidation/demoralize.ts";
@@ -161,6 +163,7 @@ export const ActionMacros = {
 
 export const SystemActions: Action[] = [
     administerFirstAid.action,
+    affixATalisman,
     aid,
     arrestAFall,
     avertGaze,
@@ -195,6 +198,7 @@ export const SystemActions: Action[] = [
     impersonate.action,
     interact,
     leap,
+    learnASpell,
     lie.action,
     longJump.action,
     makeAnImpression.action,

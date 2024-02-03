@@ -7,6 +7,7 @@ import { calculateDC } from "@module/dc.ts";
 import { eventToRollParams } from "@scripts/sheet-util.ts";
 import { CheckDC } from "@system/degree-of-success.ts";
 import { Statistic, StatisticRollParameters } from "@system/statistic/index.ts";
+import { TextEditorPF2e } from "@system/text-editor.ts";
 import { ErrorPF2e, getActionGlyph, htmlClosest, htmlQueryAll, objectHasKey, sluggify, tupleHasValue } from "@util";
 import { getSelectedActors } from "@util/token-actor-utils.ts";
 import * as R from "remeda";
@@ -63,25 +64,45 @@ export const InlineRollLinks = {
         for (const link of links.filter((l) => l.dataset.pf2Action)) {
             const { pf2Action, pf2Glyph, pf2Variant, pf2Dc, pf2ShowDc, pf2Skill } = link.dataset;
             link.addEventListener("click", (event) => {
-                const action = game.pf2e.actions[pf2Action ? sluggify(pf2Action, { camel: "dromedary" }) : ""];
+                const slug = sluggify(pf2Action ?? "");
                 const visibility = pf2ShowDc ?? "all";
-                if (pf2Action && action) {
-                    action({
-                        event,
-                        glyph: pf2Glyph,
-                        variant: pf2Variant,
-                        difficultyClass: pf2Dc ? { scope: "check", value: Number(pf2Dc) || 0, visibility } : undefined,
-                        skill: pf2Skill,
-                    });
+                const difficultyClass = Number.isNumeric(pf2Dc)
+                    ? { scope: "check", value: Number(pf2Dc) || 0, visibility }
+                    : pf2Dc;
+                if (slug && game.pf2e.actions.has(slug)) {
+                    game.pf2e.actions
+                        .get(slug)
+                        ?.use({ event, variant: pf2Variant, difficultyClass, statistic: pf2Skill })
+                        .catch((reason: string) => ui.notifications.warn(reason));
                 } else {
-                    console.warn(`PF2e System | Skip executing unknown action '${pf2Action}'`);
+                    const action = game.pf2e.actions[pf2Action ? sluggify(pf2Action, { camel: "dromedary" }) : ""];
+                    if (pf2Action && action) {
+                        action({
+                            event,
+                            glyph: pf2Glyph,
+                            variant: pf2Variant,
+                            difficultyClass,
+                            skill: pf2Skill,
+                        });
+                    } else {
+                        console.warn(`PF2e System | Skip executing unknown action '${pf2Action}'`);
+                    }
                 }
             });
         }
 
         for (const link of links.filter((l) => l.dataset.pf2Check && !l.dataset.invalid)) {
-            const { pf2Check, pf2Dc, pf2Traits, pf2Label, pf2Defense, pf2Adjustment, pf2Roller, pf2RollOptions } =
-                link.dataset;
+            const {
+                pf2Check,
+                pf2Dc,
+                pf2Traits,
+                pf2Label,
+                pf2Defense,
+                pf2Adjustment,
+                pf2Roller,
+                pf2RollOptions,
+                overrideTraits,
+            } = link.dataset;
 
             if (!pf2Check) return;
 
@@ -116,6 +137,7 @@ export const InlineRollLinks = {
                     ...(pf2RollOptions?.split(",").map((o) => o.trim()) ?? []),
                 ];
                 const eventRollParams = eventToRollParams(event, { type: "check" });
+                const checkSlug = link.dataset.slug ? sluggify(link.dataset.slug) : null;
 
                 switch (pf2Check) {
                     case "flat": {
@@ -129,7 +151,7 @@ export const InlineRollLinks = {
                             const dc = Number.isInteger(Number(pf2Dc))
                                 ? { label: pf2Label, value: Number(pf2Dc) }
                                 : null;
-                            flatCheck.roll({ ...eventRollParams, extraRollOptions, dc });
+                            flatCheck.roll({ ...eventRollParams, slug: checkSlug, extraRollOptions, dc });
                         }
                         break;
                     }
@@ -216,6 +238,7 @@ export const InlineRollLinks = {
 
                             // Use a special header for checks against defenses
                             const itemIsEncounterAction =
+                                !overrideTraits &&
                                 !!(item?.isOfType("action", "feat") && item.actionCost) &&
                                 !["flat-check", "saving-throw"].includes(statistic.check.type);
                             if (itemIsEncounterAction) {
@@ -230,6 +253,7 @@ export const InlineRollLinks = {
                                     subtitle: game.i18n.format(subtitleLocKey, { type: statistic.label }),
                                     title: item.name,
                                 });
+                                extraRollOptions.push(...TextEditorPF2e.createActionOptions(item));
                             }
 
                             statistic.roll(args);
@@ -324,8 +348,8 @@ export const InlineRollLinks = {
     },
 
     makeRepostHtml: (target: HTMLElement, defaultVisibility: string): string => {
-        const flavor = target.attributes.getNamedItem("data-pf2-repost-flavor")?.value ?? "";
-        const showDC = target.attributes.getNamedItem("data-pf2-show-dc")?.value ?? defaultVisibility;
+        const flavor = game.i18n.localize(target.dataset.pf2RepostFlavor ?? "");
+        const showDC = target.dataset.pf2ShowDc ?? defaultVisibility;
         return `<span data-visibility="${showDC}">${flavor}</span> ${target.outerHTML}`.trim();
     },
 
