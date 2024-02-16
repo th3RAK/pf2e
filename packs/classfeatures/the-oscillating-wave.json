@@ -58,14 +58,14 @@
                     },
                     {
                         "predicate": [
-                            "amp-spell"
+                            "item:tag:amped"
                         ],
                         "text": "PF2E.SpecificRule.Psychic.Amp.Frostbite.Base",
                         "title": "PF2E.TraitAmp"
                     },
                     {
                         "predicate": [
-                            "amp-spell"
+                            "item:tag:amped"
                         ],
                         "text": "PF2E.SpecificRule.Psychic.Amp.Frostbite.Heightened",
                         "title": "PF2E.SpecificRule.Psychic.Amp.AmpHeightenedLabel.AmpHeightenedPlusOne"
@@ -87,14 +87,14 @@
                     },
                     {
                         "predicate": [
-                            "amp-spell"
+                            "item:tag:amped"
                         ],
                         "text": "PF2E.SpecificRule.Psychic.Amp.Ignition.Base",
                         "title": "PF2E.TraitAmp"
                     },
                     {
                         "predicate": [
-                            "amp-spell"
+                            "item:tag:amped"
                         ],
                         "text": "PF2E.SpecificRule.Psychic.Amp.Ignition.Heightened",
                         "title": "PF2E.SpecificRule.Psychic.Amp.AmpHeightenedLabel.AmpHeightenedPlusOne"
@@ -106,9 +106,8 @@
                 "key": "ItemAlteration",
                 "mode": "add",
                 "predicate": [
-                    "amp-spell",
                     "item:slug:thermal-stasis",
-                    "item:tag:psi-cantrip"
+                    "item:tag:amped"
                 ],
                 "property": "description",
                 "value": [
@@ -123,8 +122,8 @@
                 "key": "ItemAlteration",
                 "mode": "add",
                 "predicate": [
-                    "amp-spell",
-                    "item:slug:entropic-wheel"
+                    "item:slug:entropic-wheel",
+                    "item:tag:amped"
                 ],
                 "property": "description",
                 "value": [
@@ -139,8 +138,8 @@
                 "key": "ItemAlteration",
                 "mode": "add",
                 "predicate": [
-                    "amp-spell",
-                    "item:slug:redistribute-potential"
+                    "item:slug:redistribute-potential",
+                    "item:tag:amped"
                 ],
                 "property": "description",
                 "value": [
@@ -153,6 +152,97 @@
                         "title": "PF2E.SpecificRule.Psychic.Amp.AmpHeightenedLabel.AmpHeightenedPlusOne"
                     }
                 ]
+            },
+            {
+                "key": "DamageDice",
+                "override": {
+                    "diceNumber": "@spell.rank",
+                    "dieSize": "d10"
+                },
+                "predicate": [
+                    "item:slug:ignition",
+                    "item:tag:amped",
+                    {
+                        "not": "item:melee"
+                    }
+                ],
+                "selector": "spell-damage"
+            },
+            {
+                "key": "DamageDice",
+                "override": {
+                    "diceNumber": "@spell.rank",
+                    "dieSize": "d12"
+                },
+                "predicate": [
+                    "item:melee",
+                    "item:slug:ignition",
+                    "item:tag:amped"
+                ],
+                "selector": "spell-damage"
+            },
+            {
+                "damageCategory": "splash",
+                "key": "FlatModifier",
+                "predicate": [
+                    "item:slug:ignition",
+                    "item:tag:amped"
+                ],
+                "selector": "spell-damage",
+                "value": "@spell.rank"
+            },
+            {
+                "diceNumber": "@spell.rank",
+                "dieSize": "d4",
+                "key": "DamageDice",
+                "predicate": [
+                    "item:slug:frostbite",
+                    "item:tag:amped"
+                ],
+                "selector": "spell-damage"
+            },
+            {
+                "alwaysActive": true,
+                "key": "RollOption",
+                "label": "PF2E.SpecificRule.Psychic.OscillatingWave.ConservationOfEnergyLabel",
+                "option": "conservation-of-energy",
+                "placement": "spellcasting",
+                "suboptions": [
+                    {
+                        "label": "PF2E.SpecificRule.Psychic.OscillatingWave.AddEnergy",
+                        "value": "fire"
+                    },
+                    {
+                        "label": "PF2E.SpecificRule.Psychic.OscillatingWave.RemoveEnergy",
+                        "selected": false,
+                        "value": "cold"
+                    }
+                ],
+                "toggleable": true,
+                "value": true
+            },
+            {
+                "key": "DamageDice",
+                "override": {
+                    "damageType": "{item|flags.pf2e.rulesSelections.conservationOfEnergy}"
+                },
+                "predicate": [
+                    {
+                        "or": [
+                            "item:slug:breath-fire",
+                            "item:slug:cone-of-cold",
+                            "item:slug:fireball",
+                            "item:slug:fiery-body",
+                            "item:slug:fire-shield",
+                            "item:slug:flame-vortex",
+                            "item:slug:frostbite",
+                            "item:slug:heat-metal",
+                            "item:slug:ignition",
+                            "item:slug:polar-ray"
+                        ]
+                    }
+                ],
+                "selector": "spell-damage"
             }
         ],
         "traits": {

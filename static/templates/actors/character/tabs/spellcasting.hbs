@@ -17,7 +17,7 @@
 </div>
 
 {{#*inline "collectionGroup"}}
-    <ol class="spellcastingEntry-list directory-list">
+    <ol class="spellcastingEntry-list directory-list"{{#unless (eq tab "activations")}} data-foundry-list{{/unless}}>
         {{#each collections as |entry|}}
             <li class="item item-container spellcasting-entry" data-item-id="{{entry.id}}" {{#if entry.hasCollection}}data-container-type="spellcastingEntry" data-container-id="{{entry.id}}"{{/if}}>
                 <div class="action-header">
@@ -28,9 +28,10 @@
                     <h3 class="item-name">
                         <input type="text" data-item-id="{{entry.id}}" data-item-property="name" class="item-name-input" value="{{entry.name}}"{{#if entry.isEphemeral}} readonly{{/if}} />
                     </h3>
+
                     {{#if @root.editable}}
                         <div class="item-controls">
-                            {{#if entry.isFocusPool}}
+                            {{#if (or entry.isFocusPool entry.isRitual)}}
                                 <a
                                     data-action="browse-spells"
                                     data-tooltip="PF2E.OpenSpellBrowserTitle"
@@ -94,20 +95,7 @@
                         <section class="spell-ability">
                             <span class="spell-tradition">{{localize entry.statistic.label}}</span>
                             <div class="spellcasting-prof button-group">
-                                <select
-                                    {{#if entry.isEphemeral}}
-                                        class="skill-proficiency pf-rank readonly"
-                                    {{else if entry.usesSpellProficiency}}
-                                        class="skill-proficiency pf-rank"
-                                        data-action="{{#if entry.usesSpellProficiency}}update-spellcasting-rank{{/if}}"
-                                    {{else}}
-                                        class="skill-proficiency pf-rank adjust-item-stat-select"
-                                        data-item-property="system.proficiency.value"
-                                    {{/if}}
-                                    data-rank="{{entry.statistic.rank}}"
-                                >
-                                    {{> "systems/pf2e/templates/actors/character/partials/proficiencylevels-dropdown.hbs" excludeUntrained=true proflevel=entry.statistic.rank}}
-                                </select>
+                                <span class="pf-rank" data-rank="{{entry.statistic.rank}}">{{lookup @root.numberToRank entry.statistic.rank}}</span>
                             </div>
                         </section>
                     </div>

@@ -276,7 +276,7 @@
                 },
                 "items": {
                     "ab9pz": {
-                        "img": "systems/pf2e/icons/features/feats/feats.webp",
+                        "img": "icons/sundries/books/book-red-exclamation.webp",
                         "level": 1,
                         "name": "Hefty Hauler",
                         "uuid": "Compendium.pf2e.feats-srd.Item.Hefty Hauler"
@@ -2113,7 +2113,7 @@
                         "key": "Note",
                         "selector": "initiative",
                         "text": "{item|system.description.value}",
-                        "title": "<span class=\"pf2-icon\">F</span> {item|name}"
+                        "title": "<span class=\"action-glyph\">F</span> {item|name}"
                     }
                 ],
                 "slug": "living-fortification",

@@ -1,3 +1,104 @@
+## 5.13.6
+
+### Bugfixes
+
+-   (DocSchlock) Fix non-hero point rerolls
+
+### Data Updates
+
+-   (Abaddon) Fix reference to actor level in Thoughtform Summoning feat
+-   (Dire Weasel) Add roll links to Hide and Sneak actions
+-   (Simon Ward) Clean up formatting in Pitax Horde description
+-   (stwlam) Fix inclusion of crossbows in Singular Expertise
+
+## 5.13.5
+
+### Bugfixes
+
+-   (Drental) Fix handling of check DCs tied to inline roll links added directly to actor sheets
+-   (Jesse) Fix variable-cost action glyphs in Spell Compendium
+-   (stwlam) Fix processing of precision resistance
+-   (Supe) Fix rank of base spellcasting proficiency and innate spells
+
+### Data Updates
+
+-   (Dire Weasel) Clean up formatting in Luck Blades, Shatter Mind, and Splinter Faith
+-   (Dire Weasel) Fix bonus type for Nourishing Gate
+-   (Dire Weasel) Remove prerequisites from Rallying Anthem
+-   (kromko) Add missing area to Safe Passage description
+-   (putty) Fix Kingmaker skirmisher army level
+-   (stwlam) Fix sticky bomb applying when not toggled, account for expanded splash
+-   (Tikael) Automate Parallel Breakthrough feat
+-   (Tikael) Fix sources of Season of Ghosts rituals
+-   (TMun) Add Kingmaker Appendix armies along with unique tactics
+
+## 5.13.4
+
+### Bugfixes
+
+-   (stwlam) Restore ability to create any combination of qualifying alchemical items using field discoveries
+-   (stwlam) Fix resolving damage dice number overrides that reference spells and weapons
+
+### Data Updates
+
+-   (Dire Weasel) Fix missing versatile piercing for Bestial Manifestation claw attack
+-   (Tikael) Add missing amp automation for Daze and fix Ignition's amp scaling
+-   (Wonton) Fix publication data and move spoiler text to GM notes for several rituals
+
+## 5.13.3
+
+### System Improvements
+
+-   (stwlam) Allow Sense rule elements to apply to NPCs
+-   (stwlam) Automate addition of swarm condition immunities, update construct immunities to reflect GM Core
+-   (stwlam) Make passive spell defenses editable
+-   (stwlam) Attempt to parse out whether spells are melee/ranged and set roll options
+-   (Supe) Add create bonus feat button to kingdom sheet
+-   (Supe) Move kingdom ability modifier computation to later step so as to targetable by rule elements
+
+### Bugfixes
+
+-   (Grambles) Correct precision damage getting halved by critical success
+-   (nikolaj-a) Fix identification of mystified mundane items
+
+### Data Updates
+
+-   (bryanconrad) Correct duration for Soothing Words to match Player Core
+-   (Dire Weasel) Add effect for Hallowed Ground
+-   (Dire Weasel) Add ingested point immunity to Smog Giant
+-   (Dire Weasel) Add light automation and effect for Ghost Lantern
+-   (Dire Weasel) Add link to Invisibility from Mislead
+-   (Dire Weasel) Add note to Serpent Dagger
+-   (Dire Weasel) Brush up Darkside Mirrors, Elysian Dew descriptions
+-   (Dire Weasel) Fix automation for Man-Feller
+-   (Dire Weasel) Fix Celestial Staff and Hell Staff to be specific items
+-   (Dire Weasel) Fix Delay Affliction to deliver healing
+-   (Dire Weasel) Fix malformed links to Marvelous Mount in Staff of Summoning
+-   (Dire Weasel) Fix Occultism choice set option in Weight of Experience
+-   (Dire Weasel) Fix price of Bravery Baldric (Haste)
+-   (Dire Weasel) Fix rank of Life's Flowing River
+-   (Dire Weasel) Fix Shredskin immunity to critical hits (except slashing)
+-   (Dire Weasel) Fix Summon Healing Servitor to be both damage and healing and add effect
+-   (Dire Weasel) Refresh Shobhad Sniper's copy of Shobhad Longrifle
+-   (Dire Weasel) Remove damage partial from Life's Flowing River and add inline damage links
+-   (Dire Weasel) Standardize selector for Jabali's Dice
+-   (DocSchlock) Add Faerie Fire to Remaster Changes journal entry
+-   (DocSchlock) Add Magical Trait to Strikes granted by Morph spell effects
+-   (kromko) Change Nature's Bounty damage kind to healing
+-   (kromko) Update Geas description
+-   (mullr) Fix Wind Touch damage in Unshadowed Haibram
+-   (rectulo) Replace spell level with rank several spells and localized strings
+-   (Rigo) Add upgrade notes and predicated bonuses to Nanite Surge
+-   (stwlam) Change Overdrive damage choice set to toggle
+-   (stwlam) Correct passive defense of attack spells targeting fortitude DC
+-   (stwlam) Extend archer archetype feat support to weapons in crossbow group
+-   (stwlam) Move overdrive fire damage to weapon innovation class feature
+-   (stwlam) Remove class kits
+-   (stwlam) Replace note on Sticky Bomb feat with flat modifier
+-   (Tikael) Finish Psychic amp and spell modifications
+-   (Tikael) Grant Deadly Simplicity with Warpriest's First Doctrine
+-   (Tikael) Brush up automation of Enlarged Chassis and Scion Transformation
+
 ## 5.13.2
 
 ### Bugfixes

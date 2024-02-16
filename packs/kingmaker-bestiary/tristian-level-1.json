@@ -81,7 +81,7 @@
                 },
                 "items": {
                     "dbply": {
-                        "img": "systems/pf2e/icons/features/feats/feats.webp",
+                        "img": "icons/sundries/books/book-red-exclamation.webp",
                         "level": 1,
                         "name": "Assurance (Survival)",
                         "uuid": "Compendium.pf2e.feats-srd.Item.Assurance"
@@ -2246,7 +2246,7 @@
                         "uuid": "Compendium.pf2e.classfeatures.Item.Third Doctrine"
                     },
                     "vmpzh": {
-                        "img": "systems/pf2e/icons/features/classes/miraculous-spell.webp",
+                        "img": "icons/magic/symbols/star-rising-purple.webp",
                         "level": 19,
                         "name": "Miraculous Spell",
                         "uuid": "Compendium.pf2e.classfeatures.Item.Miraculous Spell"

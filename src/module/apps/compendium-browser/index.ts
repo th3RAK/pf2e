@@ -240,7 +240,7 @@ class CompendiumBrowser extends Application {
     async openSpellTab(entry: BaseSpellcastingEntry, maxRank = 10, category: string | null = null): Promise<void> {
         const spellTab = this.tabs.spell;
         const filter = await spellTab.getFilterData();
-        const { traditions } = filter.checkboxes;
+        const traditions = filter.checkboxes.traditions;
 
         if (category && filter.checkboxes.category.options[category]) {
             filter.checkboxes.category.options[category].selected = true;
@@ -464,7 +464,7 @@ class CompendiumBrowser extends Application {
 
         // Add to Roll Table button
         htmlQuery(html, "[data-action=add-to-roll-table]")?.addEventListener("click", async () => {
-            if (!game.tables.contents.length) return;
+            if (game.tables.contents.length === 0) return;
             currentTab.addToRollTable();
         });
 

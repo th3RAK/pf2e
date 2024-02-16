@@ -263,11 +263,6 @@ class Kingdom extends DataModel<PartyPF2e, KingdomSchema> implements PartyCampai
             }
         }
 
-        // Assign Ability modifiers base on values
-        for (const ability of KINGDOM_ABILITIES) {
-            this.abilities[ability].mod = (this.abilities[ability].value);
-        }
-
         // Bless raw custom modifiers as `ModifierPF2e`s
         const customModifiers = (this.customModifiers ??= {});
         for (const selector of Object.keys(customModifiers)) {
@@ -560,6 +555,11 @@ class Kingdom extends DataModel<PartyPF2e, KingdomSchema> implements PartyCampai
     prepareDerivedData(): void {
         const { synthetics } = this.actor;
         const { consumption} = this;
+
+        // Assign Ability modifiers base on values
+        for (const ability of KINGDOM_ABILITIES) {
+            this.abilities[ability].mod = (this.abilities[ability].value);
+        }
 
         const modifiersCon = (synthetics.modifiers["consumption"] ??= []);
         modifiersCon.push(

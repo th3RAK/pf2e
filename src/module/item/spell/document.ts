@@ -47,6 +47,7 @@ import {
     htmlClosest,
     localizer,
     ordinalString,
+    sluggify,
     tupleHasValue,
 } from "@util";
 import * as R from "remeda";
@@ -158,10 +159,10 @@ class SpellPF2e<TParent extends ActorPF2e | null = ActorPF2e | null> extends Ite
     }
 
     get spellcasting(): BaseSpellcastingEntry<NonNullable<TParent>> | null {
+        const actor = this.actor;
         const spellcastingId = this.system.location.value;
-        return (this.actor?.spellcasting.get(spellcastingId ?? "") ?? null) as BaseSpellcastingEntry<
-            NonNullable<TParent>
-        > | null;
+        const ability = actor?.spellcasting?.get(spellcastingId ?? "") ?? null;
+        return ability as BaseSpellcastingEntry<NonNullable<TParent>> | null;
     }
 
     get isAttack(): boolean {
@@ -208,6 +209,30 @@ class SpellPF2e<TParent extends ActorPF2e | null = ActorPF2e | null> extends Ite
         return this.overlays.size > 0;
     }
 
+    /**
+     * Attempt to parse out range data.
+     * @todo Migrate me.
+     */
+    get range(): RangeData | null {
+        const actor = this.actor;
+        if (this.isMelee) {
+            const reach = actor?.isOfType("creature") ? actor.system.attributes.reach.base : 5;
+            return { increment: null, max: reach };
+        }
+
+        const text = sluggify(this.system.range.value);
+        const rangeFeet = Math.floor(Math.abs(Number(/^(\d+)-f(?:t|eet)\b/.exec(text)?.at(1))));
+        return Number.isInteger(rangeFeet) ? { increment: null, max: rangeFeet } : null;
+    }
+
+    get isMelee(): boolean {
+        return sluggify(this.system.range.value) === "touch";
+    }
+
+    get isRanged(): boolean {
+        return !this.isMelee && !!this.range?.max;
+    }
+
     get area(): (SpellArea & { label: string }) | null {
         if (!this.system.area) return null;
 
@@ -216,11 +241,6 @@ class SpellPF2e<TParent extends ActorPF2e | null = ActorPF2e | null> extends Ite
         const shape = game.i18n.localize(CONFIG.PF2E.areaTypes[this.system.area.type]);
         const label = game.i18n.format("PF2E.Item.Spell.Area", { size, unit, shape });
         return { ...this.system.area, label };
-    }
-
-    /** Dummy getter for interface alignment with weapons and actions */
-    get range(): RangeData | null {
-        return null;
     }
 
     /** Whether the "damage" roll of this spell deals damage or heals (or both, depending on the target) */
@@ -263,8 +283,8 @@ class SpellPF2e<TParent extends ActorPF2e | null = ActorPF2e | null> extends Ite
 
     async getDamage(params: SpellDamageOptions = { skipDialog: true }): Promise<SpellDamage | null> {
         // Return early if the spell doesn't deal damage
-        const { spellcasting } = this;
-        if (!Object.keys(this.system.damage).length || !this.actor || !spellcasting?.statistic) {
+        const spellcasting = this.spellcasting;
+        if (Object.keys(this.system.damage).length === 0 || !this.actor || !spellcasting?.statistic) {
             return null;
         }
 
@@ -295,7 +315,8 @@ class SpellPF2e<TParent extends ActorPF2e | null = ActorPF2e | null> extends Ite
             }
 
             // Increase or decrease the first instance of damage by 2 or 4 if elite or weak
-            if (terms.length > 0 && !base.length && this.actor.isOfType("npc") && this.actor.attributes.adjustment) {
+            const adjustment = this.actor.isOfType("npc") && this.actor.system.attributes.adjustment;
+            if (terms.length > 0 && base.length === 0 && adjustment) {
                 const value = this.atWill ? 2 : 4;
                 terms.push({ dice: null, modifier: this.actor.isElite ? value : -value });
             }
@@ -306,9 +327,7 @@ class SpellPF2e<TParent extends ActorPF2e | null = ActorPF2e | null> extends Ite
             base.push({ terms: combinePartialTerms(terms), damageType, category, materials });
         }
 
-        if (!base.length) {
-            return null;
-        }
+        if (base.length === 0) return null;
 
         const { attribute, isAttack } = this;
         const checkStatistic = spellcasting.statistic;
@@ -434,7 +453,7 @@ class SpellPF2e<TParent extends ActorPF2e | null = ActorPF2e | null> extends Ite
 
         const overrides = (() => {
             // If there are no overlays, return an override if this is a simple heighten or if its a different entry id
-            if (!overlays.length && !heightenOverlays.length) {
+            if (overlays.length === 0 && heightenOverlays.length === 0) {
                 if (castRank !== this.rank) {
                     return fu.mergeObject(this.toObject(), { system: { location: { heightenedLevel: castRank } } });
                 } else if (!options.entryId || options.entryId === this.system.location.value) {
@@ -493,7 +512,8 @@ class SpellPF2e<TParent extends ActorPF2e | null = ActorPF2e | null> extends Ite
 
         // Run some additional preparation since this spell exists outside the normal data-preparation cycle
         const rules = actor?.rules ?? [];
-        for (const alteration of rules.filter((r): r is ItemAlterationRuleElement => r.key === "ItemAlteration")) {
+        const alterations = rules.filter((r): r is ItemAlterationRuleElement => r.key === "ItemAlteration");
+        for (const alteration of alterations) {
             alteration.applyAlteration({ singleItem: variant as SpellPF2e<NonNullable<TParent>> });
         }
 
@@ -591,10 +611,9 @@ class SpellPF2e<TParent extends ActorPF2e | null = ActorPF2e | null> extends Ite
         }
 
         if (traits.value.includes("attack")) {
-            this.system.defense = fu.mergeObject(this.system.defense ?? {}, {
-                passive: { statistic: "ac" as const },
-                save: this.system.defense?.save ?? null,
-            });
+            const passive = { statistic: this.system.defense?.passive?.statistic ?? "ac" } as const;
+            const save = this.system.defense?.save ?? null;
+            this.system.defense = fu.mergeObject(this.system.defense ?? {}, { passive, save });
         }
 
         this.system.cast = {
@@ -663,7 +682,7 @@ class SpellPF2e<TParent extends ActorPF2e | null = ActorPF2e | null> extends Ite
     }
 
     override getRollOptions(prefix = this.type, options: { includeVariants?: boolean } = {}): string[] {
-        const { spellcasting } = this;
+        const spellcasting = this.spellcasting;
         const spellOptions = new Set(["magical", `${prefix}:rank:${this.rank}`, ...this.traits]);
 
         if (spellcasting?.tradition) {
@@ -673,6 +692,12 @@ class SpellPF2e<TParent extends ActorPF2e | null = ActorPF2e | null> extends Ite
         const entryHasSlots = !!(spellcasting?.isPrepared || spellcasting?.isSpontaneous);
         if (entryHasSlots && !this.isCantrip && !this.parentItem) {
             spellOptions.add(`${prefix}:spell-slot`);
+        }
+
+        if (this.isMelee) {
+            spellOptions.add(`${prefix}:melee`);
+        } else if (this.isRanged) {
+            spellOptions.add(`${prefix}:ranged`);
         }
 
         if (!this.system.duration.value) {
@@ -930,25 +955,25 @@ class SpellPF2e<TParent extends ActorPF2e | null = ActorPF2e | null> extends Ite
         event: MouseEvent | JQuery.ClickEvent,
         attackNumber = 1,
         context: StatisticRollParameters = {},
-    ): Promise<void> {
-        const spellcasting = this.spellcasting;
-        const statistic = spellcasting?.statistic;
-        if (statistic) {
-            context.extraRollOptions = R.uniq(
-                R.compact(["action:cast-a-spell", "self:action:slug:cast-a-spell", context.extraRollOptions].flat()),
-            );
-            await statistic.check.roll({
-                ...eventToRollParams(event, { type: "check" }),
-                ...context,
-                action: "cast-a-spell",
-                item: this,
-                traits: R.uniq(R.compact([...this.traits, spellcasting.tradition])),
-                attackNumber,
-                dc: { slug: this.system.defense?.passive?.statistic ?? "ac" },
-            });
-        } else {
+    ): Promise<Rolled<CheckRoll> | null> {
+        const { statistic, tradition } = this.spellcasting ?? {};
+        if (!statistic) {
             throw ErrorPF2e("Spell points to location that is not a spellcasting type");
         }
+
+        context.extraRollOptions = R.uniq(
+            R.compact(["action:cast-a-spell", "self:action:slug:cast-a-spell", context.extraRollOptions].flat()),
+        );
+
+        return statistic.check.roll({
+            ...eventToRollParams(event, { type: "check" }),
+            ...context,
+            action: "cast-a-spell",
+            item: this,
+            traits: R.uniq(R.compact([...this.traits, tradition])),
+            attackNumber,
+            dc: { slug: this.system.defense?.passive?.statistic ?? "ac" },
+        });
     }
 
     async rollDamage(
@@ -1049,6 +1074,9 @@ class SpellPF2e<TParent extends ActorPF2e | null = ActorPF2e | null> extends Ite
         if (this.isVariant && this.appliedOverlays) {
             flag.variant = { overlays: [...this.appliedOverlays.values()] };
         }
+        flag.rollOptions = R.compact(
+            [this.actor?.getSelfRollOptions("origin"), this.getRollOptions("origin:item")].flat(),
+        );
 
         return flag;
     }
@@ -1126,9 +1154,19 @@ class SpellPF2e<TParent extends ActorPF2e | null = ActorPF2e | null> extends Ite
             ...Object.values(changed.system.overlays ?? {}).map((o) => o?.system),
         ]);
         for (const system of systemChanges) {
-            // Wipe defense data if `defense.save.statistic` is set to empty string
-            const save: { statistic?: string; basic?: boolean } = system.defense?.save ?? {};
-            if (save.statistic === "") {
+            // Normalize defense data; wipe if both defenses are `null`
+            for (const defenseType of ["passive", "save"] as const) {
+                const newValue = system.defense?.[defenseType];
+                if (system.defense && newValue?.statistic !== undefined && !newValue.statistic) {
+                    system.defense[defenseType] = null;
+                }
+            }
+            const newDefenses = fu.mergeObject(
+                this._source.system.defense ?? { passive: null, save: null },
+                system.defense ?? {},
+                { inplace: false },
+            );
+            if (!newDefenses.passive && !newDefenses.save) {
                 system.defense = null;
             }
 

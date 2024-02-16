@@ -71,7 +71,7 @@
                 },
                 "items": {
                     "d4ikn": {
-                        "img": "systems/pf2e/icons/features/feats/feats.webp",
+                        "img": "icons/sundries/books/book-red-exclamation.webp",
                         "level": 1,
                         "name": "Group Impression",
                         "uuid": "Compendium.pf2e.feats-srd.Item.Group Impression"
@@ -1502,7 +1502,7 @@
                         "uuid": "Compendium.pf2e.classfeatures.Item.Skillful Lessons"
                     },
                     "vxchn": {
-                        "img": "systems/pf2e/icons/features/classes/light-armor-expertise.webp",
+                        "img": "icons/equipment/back/mantle-collared-green.webp",
                         "level": 13,
                         "name": "Light Armor Expertise",
                         "uuid": "Compendium.pf2e.classfeatures.Item.Light Armor Expertise"

@@ -23,37 +23,36 @@ import type { ConditionKey, ConditionSlug, ConditionSource } from "@item/conditi
 import { PersistentDialog } from "@item/condition/persistent-damage-dialog.ts";
 import { CONDITION_SLUGS } from "@item/condition/values.ts";
 import { isContainerCycle } from "@item/container/helpers.ts";
-import { EffectFlags, EffectSource } from "@item/effect/data.ts";
+import type { EffectFlags, EffectSource } from "@item/effect/data.ts";
 import { createDisintegrateEffect } from "@item/effect/helpers.ts";
 import { itemIsOfType } from "@item/helpers.ts";
 import { getPropertyRuneStrikeAdjustments } from "@item/physical/runes.ts";
 import { MAGIC_TRADITIONS } from "@item/spell/values.ts";
-import { RitualSpellcasting } from "@item/spellcasting-entry/rituals.ts";
 import type { ActiveEffectPF2e } from "@module/active-effect.ts";
 import type { TokenPF2e } from "@module/canvas/index.ts";
 import { ChatMessagePF2e } from "@module/chat-message/document.ts";
-import { AppliedDamageFlag } from "@module/chat-message/index.ts";
-import { Size } from "@module/data.ts";
+import type { AppliedDamageFlag } from "@module/chat-message/index.ts";
+import type { Size } from "@module/data.ts";
 import { preImportJSON } from "@module/doc-helpers.ts";
 import { CombatantPF2e, EncounterPF2e } from "@module/encounter/index.ts";
 import { RollNotePF2e } from "@module/notes.ts";
 import { extractEphemeralEffects, processPreUpdateActorHooks } from "@module/rules/helpers.ts";
-import { RuleElementSynthetics } from "@module/rules/index.ts";
-import { RuleElementPF2e } from "@module/rules/rule-element/base.ts";
-import { RollOptionRuleElement } from "@module/rules/rule-element/roll-option.ts";
+import type { RuleElementSynthetics } from "@module/rules/index.ts";
+import type { RuleElementPF2e } from "@module/rules/rule-element/base.ts";
+import type { RollOptionRuleElement } from "@module/rules/rule-element/roll-option.ts";
 import type { UserPF2e } from "@module/user/document.ts";
 import type { ScenePF2e } from "@scene/document.ts";
 import { TokenDocumentPF2e } from "@scene/token-document/document.ts";
 import { IWRApplicationData, applyIWR } from "@system/damage/iwr.ts";
-import { DamageType } from "@system/damage/types.ts";
-import { CheckDC } from "@system/degree-of-success.ts";
+import type { DamageType } from "@system/damage/types.ts";
+import type { CheckDC } from "@system/degree-of-success.ts";
 import type {
     ArmorStatistic,
     PerceptionStatistic,
+    Statistic,
     StatisticCheck,
     StatisticDifficultyClass,
 } from "@system/statistic/index.ts";
-import { Statistic } from "@system/statistic/index.ts";
 import { EnrichmentOptionsPF2e, TextEditorPF2e } from "@system/text-editor.ts";
 import { ErrorPF2e, localizer, objectHasKey, setHasElement, sluggify, tupleHasValue } from "@util";
 import * as R from "remeda";
@@ -69,7 +68,7 @@ import {
     RollOptionFlags,
     StrikeData,
 } from "./data/base.ts";
-import { ActorSourcePF2e } from "./data/index.ts";
+import type { ActorSourcePF2e } from "./data/index.ts";
 import { Immunity, Resistance, Weakness } from "./data/iwr.ts";
 import { ActorSizePF2e } from "./data/size.ts";
 import {
@@ -87,10 +86,10 @@ import type { ActorInitiative } from "./initiative.ts";
 import { ActorInventory } from "./inventory/index.ts";
 import { ItemTransfer } from "./item-transfer.ts";
 import { StatisticModifier } from "./modifiers.ts";
-import { ActorSheetPF2e } from "./sheet/base.ts";
-import { ActorSpellcasting } from "./spellcasting.ts";
+import type { ActorSheetPF2e } from "./sheet/base.ts";
+import type { ActorSpellcasting } from "./spellcasting.ts";
 import { TokenEffect } from "./token-effect.ts";
-import { ActorType } from "./types.ts";
+import type { ActorType } from "./types.ts";
 import { CREATURE_ACTOR_TYPES, SAVE_TYPES, SIZE_LINKABLE_ACTOR_TYPES, UNAFFECTED_TYPES } from "./values.ts";
 
 /**
@@ -113,7 +112,7 @@ class ActorPF2e<TParent extends TokenDocumentPF2e | null = TokenDocumentPF2e | n
     declare armorClass: StatisticDifficultyClass<ArmorStatistic> | null;
 
     /** A separate collection of owned spellcasting entries for convenience */
-    declare spellcasting: ActorSpellcasting<this>;
+    declare spellcasting: ActorSpellcasting<this> | null;
 
     /** Rule elements drawn from owned items */
     declare rules: RuleElementPF2e[];
@@ -498,6 +497,7 @@ class ActorPF2e<TParent extends TokenDocumentPF2e | null = TokenDocumentPF2e | n
                         token: origin.token.uuid,
                         item: null,
                         spellcasting: null,
+                        rollOptions: [],
                     },
                     roll: null,
                 };
@@ -661,12 +661,14 @@ class ActorPF2e<TParent extends TokenDocumentPF2e | null = TokenDocumentPF2e | n
 
     protected override _initialize(options?: Record<string, unknown>): void {
         this.initialized = false;
+
         this._itemTypes = null;
-        this.rules = [];
-        this.initiative = null;
         this.armorClass = null;
-        this.conditions = new ActorConditions();
         this.auras = new Map();
+        this.conditions = new ActorConditions();
+        this.initiative = null;
+        this.rules = [];
+        this.spellcasting = null;
 
         const preparationWarnings: Set<string> = new Set();
         this.synthetics = {
@@ -800,16 +802,6 @@ class ActorPF2e<TParent extends TokenDocumentPF2e | null = TokenDocumentPF2e | n
         const physicalItems = this.items.filter((i): i is PhysicalItemPF2e<this> => i.isOfType("physical"));
         this.inventory = new ActorInventory(this, physicalItems);
 
-        this.spellcasting = ((): ActorSpellcasting<this> => {
-            const rituals = this.itemTypes.spell.filter((s) => s.isRitual).sort((a, b) => a.sort - b.sort);
-            const spellcastingEntries = [
-                this.itemTypes.spellcastingEntry,
-                rituals.length > 0 ? new RitualSpellcasting(this, rituals) : [],
-            ].flat();
-
-            return new ActorSpellcasting(this, spellcastingEntries);
-        })();
-
         // Track all effects on this actor
         for (const effect of this.itemTypes.effect) {
             game.pf2e.effectTracker.register(effect);
@@ -860,19 +852,10 @@ class ActorPF2e<TParent extends TokenDocumentPF2e | null = TokenDocumentPF2e | n
 
     /** Set traits as roll options */
     override prepareDerivedData(): void {
-        const { rollOptions } = this;
+        const rollOptions = this.flags.pf2e.rollOptions;
         for (const trait of this.traits) {
             rollOptions.all[`self:trait:${trait}`] = true;
         }
-
-        // Base spellcasting proficiency (later extended to add attribute modifiers)
-        this.spellcasting.base = new Statistic(this, {
-            slug: "base-spellcasting",
-            label: "PF2E.Actor.Creature.Spellcasting.Label",
-            rank: this.isOfType("character") ? this.system.proficiencies.spellcasting.rank : 0,
-            domains: ["all", "spell-attack-dc"],
-            check: { type: "attack-roll" },
-        });
     }
 
     /** Set defaults for this actor's prototype token */
@@ -903,7 +886,7 @@ class ActorPF2e<TParent extends TokenDocumentPF2e | null = TokenDocumentPF2e | n
                 : [null, null];
 
         const isAttackAction = ["attack", "attack-roll", "attack-damage"].some((d) => params.domains.includes(d));
-        const isMelee = !!(params.melee || (params.item?.isOfType("weapon", "melee") && params.item.isMelee));
+        const isMelee = !!(params.melee || (params.item?.isOfType("melee", "spell", "weapon") && params.item.isMelee));
         const reach =
             isMelee && params.item?.isOfType("action", "weapon", "melee")
                 ? this.getReach({ action: "attack", weapon: params.item })
@@ -1160,19 +1143,20 @@ class ActorPF2e<TParent extends TokenDocumentPF2e | null = TokenDocumentPF2e | n
         // Backward compatibility
         value = typeof itemId === "boolean" ? itemId : value ?? !this.rollOptions[domain]?.[option];
 
+        type MaybeRollOption = { key: string; domain?: unknown; option?: unknown };
         if (typeof itemId === "string") {
             // An item ID is provided: find the rule on the item
             const item = this.items.get(itemId, { strict: true });
             const rule = item.rules.find(
-                (r): r is RollOptionRuleElement =>
-                    r instanceof RollOptionRuleElement && r.domain === domain && r.option === option,
+                (r: MaybeRollOption): r is RollOptionRuleElement =>
+                    r.key === "RollOption" && r.domain === domain && r.option === option,
             );
             return rule?.toggle(value, suboption) ?? null;
         } else {
             // Less precise: no item ID is provided, so find the rule on the actor
             const rule = this.rules.find(
-                (r): r is RollOptionRuleElement =>
-                    r instanceof RollOptionRuleElement && r.domain === domain && r.option === option,
+                (r: MaybeRollOption): r is RollOptionRuleElement =>
+                    r.key === "RollOption" && r.domain === domain && r.option === option,
             );
             return rule?.toggle(value, suboption) ?? null;
         }
@@ -1225,7 +1209,7 @@ class ActorPF2e<TParent extends TokenDocumentPF2e | null = TokenDocumentPF2e | n
         breakdown = [],
         notes = [],
     }: ApplyDamageParams): Promise<this> {
-        const { hitPoints } = this;
+        const hitPoints = this.hitPoints;
         if (!hitPoints) return this;
 
         // Round damage and healing (negative values) toward zero
@@ -1236,7 +1220,7 @@ class ActorPF2e<TParent extends TokenDocumentPF2e | null = TokenDocumentPF2e | n
                   ? { finalDamage: damage.total, applications: [], persistent: [] }
                   : applyIWR(this, damage, rollOptions);
 
-        const { finalDamage } = result;
+        const finalDamage = result.finalDamage;
 
         // Calculate damage to hit points and shield
         const localize = localizer("PF2E.Actor.ApplyDamage");
@@ -1424,16 +1408,14 @@ class ActorPF2e<TParent extends TokenDocumentPF2e | null = TokenDocumentPF2e | n
             return tempElem.innerHTML;
         })();
 
-        const deparenthesize = (formula: string) => formula.replace(/^\(([^)]+)\)$/, "$1");
-
         // Apply persistent damage as conditions
         const persistentDamage = result.persistent.map((instance) => {
             const condition = game.pf2e.ConditionManager.getCondition("persistent-damage").toObject();
             condition.system.persistent = {
-                // Remove enclosing parentheses if present since it's no longer part of the original expression
-                formula: deparenthesize(instance.head.expression),
+                formula: instance.head.expression,
                 damageType: instance.type,
                 dc: 15,
+                criticalHit: damage instanceof Roll ? damage.options.degreeOfSuccess === 3 : false,
             };
             condition.system.traits = {
                 value: R.uniq(Array.from(rollOptions).map((o) => o.replace(/^origin:action:trait:/, ""))).filter(
