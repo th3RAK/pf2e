@@ -38,6 +38,12 @@ class ItemPF2e<TParent extends ActorPF2e | null = ActorPF2e | null> extends Item
     /** Has this document completed `DataModel` initialization? */
     declare initialized: boolean;
 
+    /** Additional item roll options set by rule elements */
+    declare rollOptions: Set<string>;
+
+    /** The item that granted this item, if any */
+    declare grantedBy: ItemPF2e<ActorPF2e> | null;
+
     static override getDefaultArtwork(itemData: foundry.documents.ItemSource): { img: ImageFilePath } {
         return { img: `systems/pf2e/icons/default-icons/${itemData.type}.svg` as const };
     }
@@ -67,11 +73,6 @@ class ItemPF2e<TParent extends ActorPF2e | null = ActorPF2e | null> extends Item
 
     get description(): string {
         return this.system.description.value.trim();
-    }
-
-    /** The item that granted this item, if any */
-    get grantedBy(): ItemPF2e<ActorPF2e> | null {
-        return this.actor?.items.get(this.flags.pf2e.grantedBy?.id ?? "") ?? null;
     }
 
     /** Check whether this item is in-memory-only on an actor rather than being a world item or embedded and stored */
@@ -133,12 +134,10 @@ class ItemPF2e<TParent extends ActorPF2e | null = ActorPF2e | null> extends Item
     }
 
     /** Generate a list of strings for use in predication */
-    getRollOptions(prefix = this.type): string[] {
+    getRollOptions(prefix = this.type, { includeGranter = true } = {}): string[] {
         if (prefix.length === 0) throw ErrorPF2e("`prefix` must be at least one character long");
 
-        const slug = this.slug ?? sluggify(this.name);
-
-        const { value: traits = [], otherTags } = this.system.traits;
+        const { value: traits = [], rarity = null, otherTags } = this.system.traits;
         const traitOptions = ((): string[] => {
             // Additionally include annotated traits without their annotations
             const damageType = Object.keys(CONFIG.PF2E.damageTypes).join("|");
@@ -150,30 +149,41 @@ class ItemPF2e<TParent extends ActorPF2e | null = ActorPF2e | null> extends Item
             return [traits, deannotated].flat().map((t) => `trait:${t}`);
         })();
 
-        const options = [
+        const slug = this.slug ?? sluggify(this.name);
+        const granterOptions = includeGranter
+            ? this.grantedBy?.getRollOptions("granter", { includeGranter: false }).map((o) => `${prefix}:${o}`) ?? []
+            : [];
+
+        const rollOptions = [
             `${prefix}:id:${this.id}`,
             `${prefix}:${slug}`,
             `${prefix}:slug:${slug}`,
+            ...granterOptions,
+            ...Array.from(this.rollOptions).map((o) => `${prefix}:${o}`),
             ...traitOptions.map((t) => `${prefix}:${t}`),
             ...otherTags.map((t) => `${prefix}:tag:${t}`),
         ];
 
+        if (rarity) {
+            rollOptions.push(`${prefix}:rarity:${rarity}`);
+        }
+
         if (this.isOfType("spell") || traits.some((t) => ["magical", ...MAGIC_TRADITIONS].includes(t))) {
-            options.push(`${prefix}:magical`);
+            rollOptions.push(`${prefix}:magical`);
         }
 
         // The heightened level of a spell is retrievable from its getter but not prepared level data
         const level = this.isOfType("spell") ? this.rank : this.system.level?.value ?? null;
         if (typeof level === "number") {
-            options.push(`${prefix}:level:${level}`);
+            rollOptions.push(`${prefix}:level:${level}`);
         }
 
         const itemType = this.isOfType("feat") && this.isFeature ? "feature" : this.type;
         if (prefix !== itemType) {
-            options.unshift(`${prefix}:type:${itemType}`);
+            rollOptions.unshift(`${prefix}:type:${itemType}`);
         }
 
-        return options;
+        return rollOptions;
     }
 
     override getRollData(): NonNullable<EnrichmentOptionsPF2e["rollData"]> {
@@ -186,7 +196,7 @@ class ItemPF2e<TParent extends ActorPF2e | null = ActorPF2e | null> extends Item
      * follow-up options for attack rolls, effect application, etc.
      */
     async toMessage(
-        event?: Maybe<MouseEvent | JQuery.TriggeredEvent>,
+        event?: Maybe<Event | JQuery.TriggeredEvent>,
         options: { rollMode?: RollMode | "roll"; create?: boolean; data?: Record<string, unknown> } = {},
     ): Promise<ChatMessagePF2e | undefined> {
         if (!this.actor) throw ErrorPF2e(`Cannot create message for unowned item ${this.name}`);
@@ -204,7 +214,7 @@ class ItemPF2e<TParent extends ActorPF2e | null = ActorPF2e | null> extends Item
         };
 
         // Basic chat message data
-        const originalEvent = event instanceof MouseEvent ? event : event?.originalEvent;
+        const originalEvent = event instanceof Event ? event : event?.originalEvent;
         const rollMode = options.rollMode ?? eventToRollMode(originalEvent);
         const chatData = ChatMessagePF2e.applyRollMode(
             {
@@ -233,6 +243,8 @@ class ItemPF2e<TParent extends ActorPF2e | null = ActorPF2e | null> extends Item
     protected override _initialize(options?: Record<string, unknown>): void {
         this.initialized = false;
         this.rules = [];
+        this.rollOptions = new Set();
+
         super._initialize(options);
     }
 
@@ -274,6 +286,8 @@ class ItemPF2e<TParent extends ActorPF2e | null = ActorPF2e | null> extends Item
                 grant.onDelete ??= "detach";
             }
         }
+
+        this.grantedBy = this.actor?.items.get(this.flags.pf2e.grantedBy?.id ?? "") ?? null;
     }
 
     prepareRuleElements(options: Omit<RuleElementOptions, "parent"> = {}): RuleElementPF2e[] {
@@ -399,7 +413,14 @@ class ItemPF2e<TParent extends ActorPF2e | null = ActorPF2e | null> extends Item
     }
 
     getOriginData(): ItemOriginFlag {
-        return { actor: this.actor?.uuid, uuid: this.uuid, type: this.type as ItemType };
+        return {
+            actor: this.actor?.uuid,
+            uuid: this.uuid,
+            type: this.type as ItemType,
+            rollOptions: R.compact(
+                [this.actor?.getSelfRollOptions("origin"), this.getRollOptions("origin:item")].flat(),
+            ),
+        };
     }
 
     /* -------------------------------------------- */
@@ -427,7 +448,7 @@ class ItemPF2e<TParent extends ActorPF2e | null = ActorPF2e | null> extends Item
     }
 
     protected traitChatData(
-        dictionary: Record<string, string | undefined> = {},
+        dictionary: Record<string, string | undefined> = this.constructor.validTraits,
         traits = this.system.traits.value ?? [],
     ): TraitChatData[] {
         const traitChatLabels = traits
@@ -482,7 +503,7 @@ class ItemPF2e<TParent extends ActorPF2e | null = ActorPF2e | null> extends Item
 
     /** Assess and pre-process this JSON data, ensuring it's importable and fully migrated */
     override async importFromJSON(json: string): Promise<this> {
-        const processed = await preImportJSON(this, json);
+        const processed = await preImportJSON(json);
         return processed ? super.importFromJSON(processed) : this;
     }
 

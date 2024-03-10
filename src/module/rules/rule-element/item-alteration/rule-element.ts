@@ -11,7 +11,7 @@ import { ItemAlteration, ItemAlterationSchema } from "./alteration.ts";
 
 class ItemAlterationRuleElement extends RuleElementPF2e<ItemAlterationRuleSchema> {
     static override defineSchema(): ItemAlterationRuleSchema {
-        const { fields } = foundry.data;
+        const fields = foundry.data.fields;
 
         // Set a default priority according to AE mode yet still later than AE-likes
         const baseSchema = super.defineSchema();
@@ -44,9 +44,8 @@ class ItemAlterationRuleElement extends RuleElementPF2e<ItemAlterationRuleSchema
         }
     }
 
-    override onApplyActiveEffects(): void {
-        this.applyAlteration();
-    }
+    /** Alteration properties that should be processed at the end of data preparation */
+    static #DELAYED_PROPERTIES = ["pd-recovery-dc"];
 
     override async preCreate({ tempItems }: RuleElementPF2e.PreCreateParams): Promise<void> {
         if (this.ignored) return;
@@ -83,15 +82,31 @@ class ItemAlterationRuleElement extends RuleElementPF2e<ItemAlterationRuleSchema
         }
     }
 
+    override onApplyActiveEffects(): void {
+        if (!this.constructor.#DELAYED_PROPERTIES.includes(this.property)) {
+            this.applyAlteration();
+        }
+    }
+
+    override afterPrepareData(): void {
+        if (this.constructor.#DELAYED_PROPERTIES.includes(this.property)) {
+            this.applyAlteration();
+        }
+    }
+
     applyAlteration({ singleItem = null, additionalItems = [] }: ApplyAlterationOptions = {}): void {
         // Predicate testing is done per item among specified item type
         if (this.ignored) return;
 
         const predicate = this.resolveInjectedProperties(this.predicate);
-        const actorRollOptions = predicate.length > 0 ? this.actor.getRollOptions() : [];
-        const parentRollOptions = this.parent.getRollOptions("parent");
+        const [actorRollOptions, parentRollOptions] =
+            predicate.length > 0 ? [this.actor.getRollOptions(), this.parent.getRollOptions("parent")] : [[], []];
         try {
-            const items = singleItem && singleItem.type === this.itemType ? [singleItem] : this.#getItemsOfType();
+            const items = singleItem
+                ? singleItem.id === this.itemId || singleItem.type === this.itemType
+                    ? [singleItem]
+                    : []
+                : this.#getItemsOfType();
             items.push(
                 ...additionalItems.filter((i) => (this.itemId && i.id === this.itemId) || this.itemType === i.type),
             );
@@ -140,7 +155,9 @@ class ItemAlterationRuleElement extends RuleElementPF2e<ItemAlterationRuleSchema
 
 interface ItemAlterationRuleElement
     extends RuleElementPF2e<ItemAlterationRuleSchema>,
-        ModelPropsFromRESchema<ItemAlterationRuleSchema> {}
+        ModelPropsFromRESchema<ItemAlterationRuleSchema> {
+    constructor: typeof ItemAlterationRuleElement;
+}
 
 type ItemAlterationRuleSchema = RuleElementSchema &
     ItemAlterationSchema & {

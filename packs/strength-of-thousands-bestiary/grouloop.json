@@ -14,7 +14,6 @@
                 "description": {
                     "value": ""
                 },
-                "displayLevels": {},
                 "prepared": {
                     "label": "Spellcasting Type",
                     "type": "String",
@@ -29,120 +28,84 @@
                     "title": ""
                 },
                 "rules": [],
-                "showSlotlessLevels": {
-                    "value": true
-                },
-                "showUnpreparedSpells": {
-                    "value": false
-                },
                 "slots": {
                     "slot0": {
                         "max": 5,
-                        "prepared": {
-                            "0": {
+                        "prepared": [
+                            {
                                 "id": "1IEZxdlDsJHNF6VV"
                             },
-                            "1": {
+                            {
                                 "id": "fDbIT4q0JydBhMCK"
                             },
-                            "2": {
+                            {
                                 "id": "bitevPtOPEfaCxKO"
                             },
-                            "3": {
+                            {
                                 "id": "RoDaBtE64gU7LBoq"
                             },
-                            "4": {
+                            {
                                 "id": "xEJutcuDDeoy8pd6"
                             }
-                        },
+                        ],
                         "value": 5
                     },
                     "slot1": {
                         "max": 3,
-                        "prepared": {
-                            "1": {
+                        "prepared": [
+                            {
                                 "id": "rXm4NbStEWsSWRyv"
                             },
-                            "2": {
+                            {
                                 "id": "mokjSeYW7fRSVnUv"
                             }
-                        },
+                        ],
                         "value": 3
-                    },
-                    "slot10": {
-                        "max": 0,
-                        "prepared": {},
-                        "value": 0
-                    },
-                    "slot11": {
-                        "max": 0,
-                        "prepared": {},
-                        "value": 0
                     },
                     "slot2": {
                         "max": 3,
-                        "prepared": {
-                            "1": {
+                        "prepared": [
+                            {
                                 "id": "fGb9MekqMQPmhr0Z"
                             },
-                            "2": {
+                            {
                                 "id": "wdZoDvKO1KuqCFGn"
                             }
-                        },
+                        ],
                         "value": 3
                     },
                     "slot3": {
                         "max": 3,
-                        "prepared": {
-                            "1": {
+                        "prepared": [
+                            {
                                 "id": "LYNCsl1NBJphmoHd"
                             },
-                            "2": {
+                            {
                                 "id": "ZOn5e98fPXQWcmt2"
                             }
-                        },
+                        ],
                         "value": 3
                     },
                     "slot4": {
                         "max": 3,
-                        "prepared": {
-                            "1": {
+                        "prepared": [
+                            {
                                 "id": "tVPWhKVON4Tv71WK"
                             },
-                            "2": {
+                            {
                                 "id": "rySQf0FxKvR2sK7j"
                             }
-                        },
+                        ],
                         "value": 3
                     },
                     "slot5": {
                         "max": 2,
-                        "prepared": {
-                            "1": {
+                        "prepared": [
+                            {
                                 "id": "W8umMB2LsPZAyh2W"
                             }
-                        },
+                        ],
                         "value": 2
-                    },
-                    "slot6": {
-                        "max": 0,
-                        "prepared": {},
-                        "value": 0
-                    },
-                    "slot7": {
-                        "max": 0,
-                        "prepared": {},
-                        "value": 0
-                    },
-                    "slot8": {
-                        "max": 0,
-                        "prepared": {},
-                        "value": 0
-                    },
-                    "slot9": {
-                        "max": 0,
-                        "prepared": {},
-                        "value": 0
                     }
                 },
                 "slug": null,
@@ -385,7 +348,7 @@
                     "sourceId": "Compendium.pf2e.spells-srd.Item.Y3G6Y6EDgCY0s3fq"
                 }
             },
-            "img": "systems/pf2e/icons/spells/hydraulic-torrent.webp",
+            "img": "icons/magic/air/wind-tornado-funnel-damage-blue.webp",
             "name": "Hydraulic Torrent",
             "sort": 500000,
             "system": {
@@ -399,6 +362,7 @@
                 "counteraction": false,
                 "damage": {
                     "0": {
+                        "applyMod": false,
                         "category": null,
                         "formula": "8d6",
                         "kinds": [
@@ -410,12 +374,12 @@
                 },
                 "defense": {
                     "save": {
-                        "basic": false,
+                        "basic": true,
                         "statistic": "fortitude"
                     }
                 },
                 "description": {
-                    "value": "<p>A swirling torrent of water manifests along a straight line, battering creatures and unattended objects in its path and possibly pushing them away from you. The torrent deals 8d6 bludgeoning damage. Each creature in the area must attempt a basic Fortitude save; unattended objects automatically fail. Creatures that fail the save are also knocked back 5 feet (10 feet on a critical failure).</p>\n<hr />\n<p><strong>Heightened (+1)</strong> The damage increases by 2d6.</p>"
+                    "value": "<p>A swirling torrent of water manifests along a straight line, battering creatures and unattended objects in its path and possibly pushing them away from you. The torrent deals 8d6 bludgeoning damage. Each creature in the area must attempt a basic Fortitude save; unattended objects automatically fail. Creatures and objects that fail are also knocked back 5 feet (10 feet on a critical failure).</p>\n<hr />\n<p><strong>Heightened (+1)</strong> The damage increases by 2d6.</p>"
                 },
                 "duration": {
                     "sustained": false,
@@ -436,9 +400,9 @@
                     "value": "HkaLSWDV9fVv0xkG"
                 },
                 "publication": {
-                    "license": "OGL",
-                    "remaster": false,
-                    "title": "Pathfinder Core Rulebook"
+                    "license": "ORC",
+                    "remaster": true,
+                    "title": "Pathfinder Player Core"
                 },
                 "range": {
                     "value": ""
@@ -2012,45 +1976,10 @@
             "type": "melee"
         },
         {
-            "_id": "WugQgrXYpjsDMRr6",
-            "flags": {
-                "core": {
-                    "sourceId": "Compendium.pf2e.bestiary-ability-glossary-srd.Item.qCCLZhnp2HhP3Ex6"
-                }
-            },
-            "img": "systems/pf2e/icons/actions/Passive.webp",
-            "name": "Darkvision",
-            "sort": 2800000,
-            "system": {
-                "actionType": {
-                    "value": "passive"
-                },
-                "actions": {
-                    "value": null
-                },
-                "category": "interaction",
-                "description": {
-                    "value": "<p>@Localize[PF2E.NPC.Abilities.Glossary.Darkvision]</p>"
-                },
-                "publication": {
-                    "license": "OGL",
-                    "remaster": false,
-                    "title": "Pathfinder Bestiary"
-                },
-                "rules": [],
-                "slug": "darkvision",
-                "traits": {
-                    "rarity": "common",
-                    "value": []
-                }
-            },
-            "type": "action"
-        },
-        {
             "_id": "e77kx9kh3ao1pfk0",
             "img": "systems/pf2e/icons/actions/TwoActions.webp",
             "name": "Soul-Shaking Croak",
-            "sort": 2900000,
+            "sort": 2800000,
             "system": {
                 "actionType": {
                     "value": "action"
@@ -2082,7 +2011,7 @@
             "_id": "q19s4nupvasfksu1",
             "img": "systems/pf2e/icons/actions/Passive.webp",
             "name": "Swamp Stride",
-            "sort": 3000000,
+            "sort": 2900000,
             "system": {
                 "actionType": {
                     "value": "passive"
@@ -2112,7 +2041,7 @@
             "_id": "q2xt5rycxzs5o14q",
             "img": "systems/pf2e/icons/actions/Passive.webp",
             "name": "Tongue Grab",
-            "sort": 3100000,
+            "sort": 3000000,
             "system": {
                 "actionType": {
                     "value": "passive"
@@ -2142,7 +2071,7 @@
             "_id": "wphcfb2j67kyqong",
             "img": "systems/pf2e/icons/default-icons/lore.svg",
             "name": "Athletics",
-            "sort": 3200000,
+            "sort": 3100000,
             "system": {
                 "description": {
                     "value": ""
@@ -2167,7 +2096,7 @@
             "_id": "xixfimk1mwoqc2m6",
             "img": "systems/pf2e/icons/default-icons/lore.svg",
             "name": "Deception",
-            "sort": 3300000,
+            "sort": 3200000,
             "system": {
                 "description": {
                     "value": ""
@@ -2192,7 +2121,7 @@
             "_id": "ymlgifyagv9sun6g",
             "img": "systems/pf2e/icons/default-icons/lore.svg",
             "name": "Intimidation",
-            "sort": 3400000,
+            "sort": 3300000,
             "system": {
                 "description": {
                     "value": ""
@@ -2217,7 +2146,7 @@
             "_id": "hyp1upt422u060f1",
             "img": "systems/pf2e/icons/default-icons/lore.svg",
             "name": "Nature",
-            "sort": 3500000,
+            "sort": 3400000,
             "system": {
                 "description": {
                     "value": ""
@@ -2242,7 +2171,7 @@
             "_id": "w2dw4arelqijgc47",
             "img": "systems/pf2e/icons/default-icons/lore.svg",
             "name": "Religion",
-            "sort": 3600000,
+            "sort": 3500000,
             "system": {
                 "description": {
                     "value": ""

@@ -898,7 +898,6 @@ const WEAPON_PROPERTY_RUNES: { [T in WeaponPropertyRuneType]: WeaponPropertyRune
             ],
             notes: [
                 {
-                    outcome: ["success"],
                     title: "PF2E.WeaponPropertyRune.ashen.Name",
                     text: "PF2E.WeaponPropertyRune.ashen.Note.success",
                 },
@@ -1334,7 +1333,6 @@ const WEAPON_PROPERTY_RUNES: { [T in WeaponPropertyRuneType]: WeaponPropertyRune
             ],
             notes: [
                 {
-                    outcome: ["success"],
                     title: "PF2E.WeaponPropertyRune.greaterAshen.Name",
                     text: "PF2E.WeaponPropertyRune.greaterAshen.Note.success",
                 },
@@ -1738,7 +1736,7 @@ const WEAPON_PROPERTY_RUNES: { [T in WeaponPropertyRuneType]: WeaponPropertyRune
                 },
                 {
                     outcome: ["criticalSuccess"],
-                    predicate: ["item:group:brawling"],
+                    predicate: [{ or: ["item:group:brawling", "item:group:firearm"] }],
                     title: "PF2E.WeaponPropertyRune.grievous.Name",
                     text: "PF2E.WeaponPropertyRune.grievous.Note.Brawling",
                 },

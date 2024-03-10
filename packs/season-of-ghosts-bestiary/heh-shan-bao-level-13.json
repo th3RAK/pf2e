@@ -14,7 +14,6 @@
                 "description": {
                     "value": ""
                 },
-                "displayLevels": {},
                 "prepared": {
                     "flexible": false,
                     "value": "innate"
@@ -31,71 +30,7 @@
                 "showSlotlessLevels": {
                     "value": false
                 },
-                "showUnpreparedSpells": {
-                    "value": false
-                },
-                "slots": {
-                    "slot0": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot1": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot10": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot11": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot2": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot3": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot4": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot5": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot6": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot7": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot8": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot9": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    }
-                },
+                "slots": {},
                 "slug": null,
                 "spelldc": {
                     "dc": 33,
@@ -732,41 +667,6 @@
             "type": "melee"
         },
         {
-            "_id": "s9EYmFKDJ3ygchjQ",
-            "flags": {
-                "core": {
-                    "sourceId": "Compendium.pf2e.bestiary-ability-glossary-srd.Item.qCCLZhnp2HhP3Ex6"
-                }
-            },
-            "img": "systems/pf2e/icons/actions/Passive.webp",
-            "name": "Darkvision",
-            "sort": 1000000,
-            "system": {
-                "actionType": {
-                    "value": "passive"
-                },
-                "actions": {
-                    "value": null
-                },
-                "category": "interaction",
-                "description": {
-                    "value": "<p>@Localize[PF2E.NPC.Abilities.Glossary.Darkvision]</p>"
-                },
-                "publication": {
-                    "license": "OGL",
-                    "remaster": false,
-                    "title": "Pathfinder Bestiary"
-                },
-                "rules": [],
-                "slug": "darkvision",
-                "traits": {
-                    "rarity": "common",
-                    "value": []
-                }
-            },
-            "type": "action"
-        },
-        {
             "_id": "zfcj9MZNHpEvkerg",
             "flags": {
                 "core": {
@@ -775,7 +675,7 @@
             },
             "img": "systems/pf2e/icons/actions/Passive.webp",
             "name": "Telepathy 100 feet",
-            "sort": 1100000,
+            "sort": 1000000,
             "system": {
                 "actionType": {
                     "value": "passive"
@@ -808,7 +708,7 @@
             "_id": "6u4WiGSgJcSBMIVQ",
             "img": "systems/pf2e/icons/actions/Passive.webp",
             "name": "Universal Language",
-            "sort": 1200000,
+            "sort": 1100000,
             "system": {
                 "actionType": {
                     "value": "passive"
@@ -838,7 +738,7 @@
             "_id": "X8q0VOcCAdQbazmw",
             "img": "systems/pf2e/icons/actions/Passive.webp",
             "name": "Urban Legend",
-            "sort": 1300000,
+            "sort": 1200000,
             "system": {
                 "actionType": {
                     "value": "passive"
@@ -908,7 +808,7 @@
             "_id": "jSkeJxRdb91MC4Sw",
             "img": "systems/pf2e/icons/default-icons/action.svg",
             "name": "Fear of Flutes",
-            "sort": 1400000,
+            "sort": 1300000,
             "system": {
                 "actionType": {
                     "value": "passive"
@@ -942,7 +842,7 @@
             },
             "img": "systems/pf2e/icons/actions/Passive.webp",
             "name": "Frightful Presence",
-            "sort": 1500000,
+            "sort": 1400000,
             "system": {
                 "actionType": {
                     "value": "passive"
@@ -988,7 +888,7 @@
             "_id": "ia7nfgIs3ERJytZy",
             "img": "systems/pf2e/icons/actions/Passive.webp",
             "name": "Persistence of Memory",
-            "sort": 1600000,
+            "sort": 1500000,
             "system": {
                 "actionType": {
                     "value": "passive"
@@ -1023,7 +923,7 @@
             "_id": "Kq9xEg3qUvI3aaTa",
             "img": "systems/pf2e/icons/default-icons/action.svg",
             "name": "Steal Soul",
-            "sort": 1700000,
+            "sort": 1600000,
             "system": {
                 "actionType": {
                     "value": "reaction"
@@ -1055,7 +955,7 @@
             "_id": "FSxcG2638SeV9elC",
             "img": "systems/pf2e/icons/default-icons/lore.svg",
             "name": "Arcana",
-            "sort": 1800000,
+            "sort": 1700000,
             "system": {
                 "description": {
                     "value": ""
@@ -1081,7 +981,7 @@
             "_id": "ePcFje92aAi63sks",
             "img": "systems/pf2e/icons/default-icons/lore.svg",
             "name": "Deception",
-            "sort": 1900000,
+            "sort": 1800000,
             "system": {
                 "description": {
                     "value": ""
@@ -1107,7 +1007,7 @@
             "_id": "ULgccwKftQgj3DmO",
             "img": "systems/pf2e/icons/default-icons/lore.svg",
             "name": "Intimidation",
-            "sort": 2000000,
+            "sort": 1900000,
             "system": {
                 "description": {
                     "value": ""
@@ -1133,7 +1033,7 @@
             "_id": "17NZRRDSMv37V4jZ",
             "img": "systems/pf2e/icons/default-icons/lore.svg",
             "name": "Religion",
-            "sort": 2100000,
+            "sort": 2000000,
             "system": {
                 "description": {
                     "value": ""
@@ -1159,7 +1059,7 @@
             "_id": "cLdgqZpWgJ3hY9N3",
             "img": "systems/pf2e/icons/default-icons/lore.svg",
             "name": "Society",
-            "sort": 2200000,
+            "sort": 2100000,
             "system": {
                 "description": {
                     "value": ""
@@ -1185,7 +1085,7 @@
             "_id": "wf9mGQdUV0aiuNjZ",
             "img": "systems/pf2e/icons/default-icons/lore.svg",
             "name": "Stealth",
-            "sort": 2300000,
+            "sort": 2200000,
             "system": {
                 "description": {
                     "value": ""
@@ -1211,7 +1111,7 @@
             "_id": "hUuaqiqPYlTz4DUT",
             "img": "systems/pf2e/icons/default-icons/lore.svg",
             "name": "Willowshore Lore",
-            "sort": 2400000,
+            "sort": 2300000,
             "system": {
                 "description": {
                     "value": ""

@@ -14,19 +14,6 @@
                 "description": {
                     "value": ""
                 },
-                "displayLevels": {
-                    "0": false,
-                    "1": false,
-                    "10": false,
-                    "2": false,
-                    "3": false,
-                    "4": false,
-                    "5": false,
-                    "6": false,
-                    "7": false,
-                    "8": false,
-                    "9": false
-                },
                 "prepared": {
                     "value": "prepared"
                 },
@@ -39,215 +26,193 @@
                     "title": ""
                 },
                 "rules": [],
-                "showSlotlessLevels": {
-                    "value": true
-                },
-                "showUnpreparedSpells": {
-                    "value": true
-                },
                 "slots": {
                     "slot0": {
                         "max": 6,
-                        "prepared": {
-                            "0": {
+                        "prepared": [
+                            {
                                 "id": "bO16oC2THO272oZN"
                             },
-                            "1": {
+                            {
                                 "id": "mZaUzAfVr7J65saq"
                             },
-                            "2": {
+                            {
                                 "id": "6ZBe0KdGuNNE38bN"
                             },
-                            "3": {
+                            {
                                 "id": "PvOQprZQlx0pZEIQ"
                             },
-                            "4": {
+                            {
                                 "id": "msa8yvg82eOI4BDV"
                             },
-                            "5": {
+                            {
                                 "id": "KC0dmrUq7ERwCXoA"
                             }
-                        },
-                        "value": 0
+                        ]
                     },
                     "slot1": {
                         "max": 4,
-                        "prepared": {
-                            "0": {
+                        "prepared": [
+                            {
                                 "id": "trUgq79adT9m1aOR"
                             },
-                            "1": {
+                            {
                                 "id": "BdPQErngb6Ijj4Mn"
                             },
-                            "2": {
+                            {
                                 "id": "IF3Ip83JdoHFU59T"
                             },
-                            "3": {
+                            {
                                 "id": "WmID1x3Aubmuo0hJ"
                             }
-                        },
-                        "value": 0
+                        ]
                     },
                     "slot10": {
                         "max": 2,
-                        "prepared": {
-                            "0": {
+                        "prepared": [
+                            {
                                 "id": "NJoXxnSizKwPpYXc"
                             },
-                            "1": {
+                            {
                                 "id": "NJoXxnSizKwPpYXc"
                             }
-                        },
-                        "value": 0
-                    },
-                    "slot11": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
+                        ]
                     },
                     "slot2": {
                         "max": 4,
-                        "prepared": {
-                            "0": {
+                        "prepared": [
+                            {
                                 "id": "MyjcGvFzFdBwrmH2"
                             },
-                            "1": {
+                            {
                                 "id": "NSn0dJHuBKI6cNz7"
                             },
-                            "2": {
+                            {
                                 "id": "rw3mZBgC0jG0kgkm"
                             },
-                            "3": {
+                            {
                                 "id": "htaOmMGKZTrmDKFo"
                             }
-                        },
-                        "value": 0
+                        ]
                     },
                     "slot3": {
                         "max": 4,
-                        "prepared": {
-                            "0": {
+                        "prepared": [
+                            {
                                 "id": "yke2CA9DIe7ifv4k"
                             },
-                            "1": {
+                            {
                                 "id": "PUKqSJ7MBKE6kh2x"
                             },
-                            "2": {
+                            {
                                 "id": "MyjcGvFzFdBwrmH2"
                             },
-                            "3": {
+                            {
                                 "id": "WmID1x3Aubmuo0hJ"
                             }
-                        },
-                        "value": 0
+                        ]
                     },
                     "slot4": {
                         "max": 4,
-                        "prepared": {
-                            "0": {
+                        "prepared": [
+                            {
                                 "id": "qmpqKA2Y9zmrmwxn"
                             },
-                            "1": {
+                            {
                                 "id": "BoBrALTFuXWtX2IY"
                             },
-                            "2": {
+                            {
                                 "id": "LFDA375VRz1HhqZw"
                             },
-                            "3": {
+                            {
                                 "id": "fAGRv3mnH064v6Es"
                             }
-                        },
-                        "value": 0
+                        ]
                     },
                     "slot5": {
                         "max": 4,
-                        "prepared": {
-                            "0": {
+                        "prepared": [
+                            {
                                 "id": "MSPhjjaQ2mMGXQwV"
                             },
-                            "1": {
+                            {
                                 "id": "ZjJJd0kW43tuEdmf"
                             },
-                            "2": {
+                            {
                                 "id": "ZjJJd0kW43tuEdmf"
                             },
-                            "3": {
+                            {
                                 "id": "yke2CA9DIe7ifv4k"
                             }
-                        },
-                        "value": 0
+                        ]
                     },
                     "slot6": {
                         "max": 4,
-                        "prepared": {
-                            "0": {
+                        "prepared": [
+                            {
                                 "id": "KUn344B6NDBWNcZ6"
                             },
-                            "1": {
+                            {
                                 "id": "WBnqhO22AlXmr9jm"
                             },
-                            "2": {
+                            {
                                 "id": "mUGmiNAKM6FWO93z"
                             },
-                            "3": {
+                            {
                                 "id": "KUn344B6NDBWNcZ6"
                             }
-                        },
-                        "value": 0
+                        ]
                     },
                     "slot7": {
                         "max": 4,
-                        "prepared": {
-                            "0": {
+                        "prepared": [
+                            {
                                 "id": "cH4uq940aWYL3jMn"
                             },
-                            "1": {
+                            {
                                 "id": "JT0YWapVdVm9aMeR"
                             },
-                            "2": {
+                            {
                                 "id": "8XMcMxN41Uhlgw8G"
                             },
-                            "3": {
+                            {
                                 "id": "yke2CA9DIe7ifv4k"
                             }
-                        },
-                        "value": 0
+                        ]
                     },
                     "slot8": {
                         "max": 4,
-                        "prepared": {
-                            "0": {
+                        "prepared": [
+                            {
                                 "id": "9HI1LBXsPb29GaVK"
                             },
-                            "1": {
+                            {
                                 "id": "W2eFbYBau7UWrkUD"
                             },
-                            "2": {
+                            {
                                 "id": "bmtlsbTnU2At8tBb"
                             },
-                            "3": {
+                            {
                                 "id": "W2eFbYBau7UWrkUD"
                             }
-                        },
-                        "value": 0
+                        ]
                     },
                     "slot9": {
                         "max": 4,
-                        "prepared": {
-                            "0": {
+                        "prepared": [
+                            {
                                 "id": "qIhk32nFzOkXfJ0U"
                             },
-                            "1": {
+                            {
                                 "id": "yke2CA9DIe7ifv4k"
                             },
-                            "2": {
+                            {
                                 "id": "yke2CA9DIe7ifv4k"
                             },
-                            "3": {
+                            {
                                 "id": "yke2CA9DIe7ifv4k"
                             }
-                        },
-                        "value": 0
+                        ]
                     }
                 },
                 "slug": null,
@@ -274,7 +239,6 @@
                 "description": {
                     "value": ""
                 },
-                "displayLevels": {},
                 "prepared": {
                     "value": "focus"
                 },
@@ -287,74 +251,7 @@
                     "title": ""
                 },
                 "rules": [],
-                "showSlotlessLevels": {
-                    "value": true
-                },
-                "showUnpreparedSpells": {
-                    "value": true
-                },
-                "slots": {
-                    "slot0": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot1": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot10": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot11": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot2": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot3": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot4": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot5": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot6": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot7": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot8": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot9": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    }
-                },
+                "slots": {},
                 "slug": null,
                 "spelldc": {
                     "dc": 44,
@@ -390,12 +287,62 @@
                     "0": {
                         "applyMod": false,
                         "category": null,
-                        "formula": "",
+                        "formula": "3d10",
                         "kinds": [
                             "damage"
                         ],
                         "materials": [],
-                        "type": "untyped"
+                        "type": "acid"
+                    },
+                    "1": {
+                        "applyMod": false,
+                        "category": null,
+                        "formula": "3d10",
+                        "kinds": [
+                            "damage"
+                        ],
+                        "materials": [],
+                        "type": "bludgeoning"
+                    },
+                    "2": {
+                        "applyMod": false,
+                        "category": null,
+                        "formula": "3d10",
+                        "kinds": [
+                            "damage"
+                        ],
+                        "materials": [],
+                        "type": "cold"
+                    },
+                    "3": {
+                        "applyMod": false,
+                        "category": null,
+                        "formula": "3d10",
+                        "kinds": [
+                            "damage"
+                        ],
+                        "materials": [],
+                        "type": "electricity"
+                    },
+                    "4": {
+                        "applyMod": false,
+                        "category": null,
+                        "formula": "3d10",
+                        "kinds": [
+                            "damage"
+                        ],
+                        "materials": [],
+                        "type": "bludgeoning"
+                    },
+                    "5": {
+                        "applyMod": false,
+                        "category": null,
+                        "formula": "3d10",
+                        "kinds": [
+                            "damage"
+                        ],
+                        "materials": [],
+                        "type": "fire"
                     }
                 },
                 "defense": {
@@ -405,7 +352,7 @@
                     }
                 },
                 "description": {
-                    "value": "<p>You call upon the unimaginable power of world-ending cataclysms, ripping a small piece of each cataclysm and combining them together into one horrifically powerful attack. The following effects come down upon all creatures in the area. Treat the resistances of creatures in the area as if they were 10 lower for the purpose of determining the cataclysm's damage. Each creature attempts one basic Reflex save that applies to all five types of damage.</p>\n<ul>\n<li>Flesh-dissolving acid rain deals 3d10 acid damage.</li>\n<li>A roaring earthquake shakes and bludgeons creatures on the ground, dealing 3d10 bludgeoning damage.</li>\n<li>A blast of freezing wind deals 3d10 cold damage.</li>\n<li>Incredible lightning lashes the area, dealing 3d10 electricity damage.</li>\n<li>Beating winds churn across the sky, dealing 3d10 bludgeoning damage to creatures flying in the area.</li>\n<li>An instant tsunami sweeps over creatures in the area, dealing 3d10 bludgeoning damage with the water trait (doubled for creatures swimming in the area).</li>\n<li>A massive wildfire burns in a sudden inferno, dealing 3d10 fire damage.</li>\n</ul>\n<p>@Damage[3d10[acid],3d10[bludgeoning],3d10[cold],3d10[electricity],3d10[bludgeoning],3d10[fire]]{Damage}</p>"
+                    "value": "<p>You call upon the unimaginable power of world-ending cataclysms, ripping a small piece of each cataclysm and combining them together into one horrifically powerful attack. The following effects come down upon all creatures in the area. Treat the resistances of creatures in the area as if they were 10 lower for the purpose of determining the cataclysm's damage. Each creature attempts one basic Reflex save that applies to all five types of damage.</p>\n<ul>\n<li>Flesh-dissolving acid rain deals 3d10 acid damage.</li>\n<li>A roaring earthquake shakes and bludgeons creatures on the ground, dealing 3d10 bludgeoning damage.</li>\n<li>A blast of freezing wind deals 3d10 cold damage.</li>\n<li>Incredible lightning lashes the area, dealing 3d10 electricity damage.</li>\n<li>Beating winds churn across the sky, dealing 3d10 bludgeoning damage to creatures flying in the area.</li>\n<li>An instant tsunami sweeps over creatures in the area, dealing 3d10 bludgeoning damage with the water trait (doubled for creatures swimming in the area).</li>\n<li>A massive wildfire burns in a sudden inferno, dealing 3d10 fire damage.</li>\n</ul>"
                 },
                 "duration": {
                     "sustained": false,
@@ -418,9 +365,9 @@
                     "value": "pdp1XYZ1mtcsTvM3"
                 },
                 "publication": {
-                    "license": "OGL",
-                    "remaster": false,
-                    "title": "Pathfinder Core Rulebook"
+                    "license": "ORC",
+                    "remaster": true,
+                    "title": "Pathfinder Player Core"
                 },
                 "range": {
                     "value": "1,000 feet"

@@ -14,9 +14,6 @@
                 "description": {
                     "value": ""
                 },
-                "displayLevels": {
-                    "6": true
-                },
                 "item": {
                     "value": 0
                 },
@@ -35,68 +32,37 @@
                 "showSlotlessLevels": {
                     "value": false
                 },
-                "showUnpreparedSpells": {
-                    "value": true
-                },
                 "slots": {
-                    "slot0": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
                     "slot1": {
                         "max": 2,
-                        "prepared": [],
                         "value": 2
-                    },
-                    "slot10": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot11": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
                     },
                     "slot2": {
                         "max": 1,
-                        "prepared": [],
                         "value": 1
                     },
                     "slot3": {
                         "max": 1,
-                        "prepared": [],
                         "value": 1
                     },
                     "slot4": {
                         "max": 2,
-                        "prepared": [],
                         "value": 2
                     },
                     "slot5": {
                         "max": 1,
-                        "prepared": [],
                         "value": 1
                     },
                     "slot6": {
                         "max": 3,
-                        "prepared": [],
                         "value": 3
-                    },
-                    "slot7": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
                     },
                     "slot8": {
                         "max": 1,
-                        "prepared": [],
                         "value": 1
                     },
                     "slot9": {
                         "max": 2,
-                        "prepared": [],
                         "value": 2
                     }
                 },
@@ -124,7 +90,6 @@
                 "description": {
                     "value": ""
                 },
-                "displayLevels": {},
                 "prepared": {
                     "value": "innate"
                 },
@@ -140,71 +105,7 @@
                 "showSlotlessLevels": {
                     "value": false
                 },
-                "showUnpreparedSpells": {
-                    "value": false
-                },
-                "slots": {
-                    "slot0": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot1": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot10": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot11": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot2": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot3": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot4": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot5": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot6": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot7": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot8": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot9": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    }
-                },
+                "slots": {},
                 "slug": null,
                 "spelldc": {
                     "dc": 23,
@@ -793,7 +694,7 @@
                             "damage"
                         ],
                         "materials": [],
-                        "type": "force"
+                        "type": "spirit"
                     }
                 },
                 "defense": {
@@ -803,11 +704,18 @@
                     }
                 },
                 "description": {
-                    "value": "<p>You concentrate ethereal energy and attack a creature's spirit, dealing 16d6 force damage. Because spirit blast affects the creature's spirit, it can damage a target projecting its consciousness (such as via project image) or possessing another creature even if the target's body is elsewhere. The possessed creature isn't harmed by the blast. The blast doesn't harm creatures that have no spirit, such as constructs.</p>\n<hr />\n<p><strong>Heightened (+1)</strong> The damage increases by 2d6.</p>"
+                    "value": "<p>You concentrate ethereal energy and attack a creature's spirit, dealing 16d6 spirit damage with a basic Fortitude save.</p>\n<hr />\n<p><strong>Heightened (+1)</strong> The damage increases by 2d6.</p>"
                 },
                 "duration": {
                     "sustained": false,
                     "value": ""
+                },
+                "heightening": {
+                    "damage": {
+                        "0": "2d6"
+                    },
+                    "interval": 1,
+                    "type": "interval"
                 },
                 "level": {
                     "value": 6
@@ -816,9 +724,9 @@
                     "value": "YWC5X9RpwpHTDgGR"
                 },
                 "publication": {
-                    "license": "OGL",
-                    "remaster": false,
-                    "title": "Pathfinder Core Rulebook"
+                    "license": "ORC",
+                    "remaster": true,
+                    "title": "Pathfinder Player Core"
                 },
                 "range": {
                     "value": "30 feet"
@@ -840,8 +748,8 @@
                     ],
                     "value": [
                         "concentrate",
-                        "force",
-                        "manipulate"
+                        "manipulate",
+                        "spirit"
                     ]
                 }
             },
@@ -2347,41 +2255,6 @@
             "type": "melee"
         },
         {
-            "_id": "uqAGOAWqfLDXtxZj",
-            "flags": {
-                "core": {
-                    "sourceId": "Compendium.pf2e.bestiary-ability-glossary-srd.Item.qCCLZhnp2HhP3Ex6"
-                }
-            },
-            "img": "systems/pf2e/icons/actions/Passive.webp",
-            "name": "Darkvision",
-            "sort": 3400000,
-            "system": {
-                "actionType": {
-                    "value": "passive"
-                },
-                "actions": {
-                    "value": null
-                },
-                "category": "interaction",
-                "description": {
-                    "value": "<p>@Localize[PF2E.NPC.Abilities.Glossary.Darkvision]</p>"
-                },
-                "publication": {
-                    "license": "OGL",
-                    "remaster": false,
-                    "title": "Pathfinder Bestiary"
-                },
-                "rules": [],
-                "slug": "darkvision",
-                "traits": {
-                    "rarity": "common",
-                    "value": []
-                }
-            },
-            "type": "action"
-        },
-        {
             "_id": "PTFpKWM9gdLACL3N",
             "flags": {
                 "core": {
@@ -2390,7 +2263,7 @@
             },
             "img": "systems/pf2e/icons/actions/Passive.webp",
             "name": "Coven",
-            "sort": 3500000,
+            "sort": 3400000,
             "system": {
                 "actionType": {
                     "value": "passive"
@@ -2423,7 +2296,7 @@
             "_id": "UOVIQWXoyaOc2IBj",
             "img": "systems/pf2e/icons/actions/Passive.webp",
             "name": "Nightmare Rider",
-            "sort": 3600000,
+            "sort": 3500000,
             "system": {
                 "actionType": {
                     "value": "passive"
@@ -2451,41 +2324,6 @@
             "type": "action"
         },
         {
-            "_id": "5ARBJjRyKKr0s71H",
-            "flags": {
-                "core": {
-                    "sourceId": "Compendium.pf2e.bestiary-ability-glossary-srd.Item.2YRDYVnC1eljaXKK"
-                }
-            },
-            "img": "systems/pf2e/icons/actions/Passive.webp",
-            "name": "At-Will Spells",
-            "sort": 3700000,
-            "system": {
-                "actionType": {
-                    "value": "passive"
-                },
-                "actions": {
-                    "value": null
-                },
-                "category": "interaction",
-                "description": {
-                    "value": "<p>@Localize[PF2E.NPC.Abilities.Glossary.AtWillSpells]</p>"
-                },
-                "publication": {
-                    "license": "OGL",
-                    "remaster": false,
-                    "title": ""
-                },
-                "rules": [],
-                "slug": "at-will-spells",
-                "traits": {
-                    "rarity": "common",
-                    "value": []
-                }
-            },
-            "type": "action"
-        },
-        {
             "_id": "2UrfKw5PocQe3AE6",
             "flags": {
                 "core": {
@@ -2494,7 +2332,7 @@
             },
             "img": "systems/pf2e/icons/actions/Passive.webp",
             "name": "Constant Spells",
-            "sort": 3800000,
+            "sort": 3600000,
             "system": {
                 "actionType": {
                     "value": "passive"
@@ -2524,7 +2362,7 @@
             "_id": "UwmfxnwjIDn1MR7C",
             "img": "systems/pf2e/icons/actions/Passive.webp",
             "name": "+2 status to all saves vs. magic",
-            "sort": 3900000,
+            "sort": 3700000,
             "system": {
                 "actionType": {
                     "value": "passive"
@@ -2577,7 +2415,7 @@
             },
             "img": "systems/pf2e/icons/actions/Passive.webp",
             "name": "-2 to All Saves (If Hearstone is Lost)",
-            "sort": 4000000,
+            "sort": 3800000,
             "system": {
                 "actionType": {
                     "value": "passive"
@@ -2622,7 +2460,7 @@
             "_id": "I8280Iq9dO7AtDc4",
             "img": "systems/pf2e/icons/actions/Passive.webp",
             "name": "Abyssal Plague",
-            "sort": 4100000,
+            "sort": 3900000,
             "system": {
                 "actionType": {
                     "value": "passive"
@@ -2654,7 +2492,7 @@
             "_id": "Y7eL4NGth0AzOHCF",
             "img": "systems/pf2e/icons/actions/OneAction.webp",
             "name": "Change Shape",
-            "sort": 4200000,
+            "sort": 4000000,
             "system": {
                 "actionType": {
                     "value": "action"
@@ -2688,7 +2526,7 @@
             "_id": "tW1DUMQeCYYiJFWi",
             "img": "systems/pf2e/icons/actions/Passive.webp",
             "name": "Dream Haunting",
-            "sort": 4300000,
+            "sort": 4100000,
             "system": {
                 "actionType": {
                     "value": "passive"
@@ -2721,7 +2559,7 @@
             "_id": "YOtRTnyprnEC769l",
             "img": "systems/pf2e/icons/actions/Passive.webp",
             "name": "Spell Ambush",
-            "sort": 4400000,
+            "sort": 4200000,
             "system": {
                 "actionType": {
                     "value": "passive"
@@ -2761,7 +2599,7 @@
             "_id": "fTvo8cRnJtf7Emw5",
             "img": "systems/pf2e/icons/default-icons/lore.svg",
             "name": "Arcana",
-            "sort": 4500000,
+            "sort": 4300000,
             "system": {
                 "description": {
                     "value": ""
@@ -2786,7 +2624,7 @@
             "_id": "ylNOZBb1cxrgAQFY",
             "img": "systems/pf2e/icons/default-icons/lore.svg",
             "name": "Deception",
-            "sort": 4600000,
+            "sort": 4400000,
             "system": {
                 "description": {
                     "value": ""
@@ -2811,7 +2649,7 @@
             "_id": "u8Jt99zWPuelmZaK",
             "img": "systems/pf2e/icons/default-icons/lore.svg",
             "name": "Diplomacy",
-            "sort": 4700000,
+            "sort": 4500000,
             "system": {
                 "description": {
                     "value": ""
@@ -2836,7 +2674,7 @@
             "_id": "Y8Pk1VRZXO5gC7Xs",
             "img": "systems/pf2e/icons/default-icons/lore.svg",
             "name": "Intimidation",
-            "sort": 4800000,
+            "sort": 4600000,
             "system": {
                 "description": {
                     "value": ""
@@ -2861,7 +2699,7 @@
             "_id": "rT3ALa64MeqbbZPM",
             "img": "systems/pf2e/icons/default-icons/lore.svg",
             "name": "Occultism",
-            "sort": 4900000,
+            "sort": 4700000,
             "system": {
                 "description": {
                     "value": ""
@@ -2886,7 +2724,7 @@
             "_id": "Z9iUUOf4GWYc3wWv",
             "img": "systems/pf2e/icons/default-icons/lore.svg",
             "name": "Religion",
-            "sort": 5000000,
+            "sort": 4800000,
             "system": {
                 "description": {
                     "value": ""

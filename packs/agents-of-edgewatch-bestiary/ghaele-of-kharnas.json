@@ -14,7 +14,6 @@
                 "description": {
                     "value": ""
                 },
-                "displayLevels": {},
                 "prepared": {
                     "value": "innate"
                 },
@@ -27,72 +26,42 @@
                     "title": ""
                 },
                 "rules": [],
-                "showSlotlessLevels": {
-                    "value": true
-                },
-                "showUnpreparedSpells": {
-                    "value": false
-                },
                 "slots": {
                     "slot0": {
                         "max": 3,
-                        "prepared": [],
                         "value": 3
                     },
                     "slot1": {
                         "max": 3,
-                        "prepared": [],
                         "value": 3
-                    },
-                    "slot10": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot11": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
                     },
                     "slot2": {
                         "max": 2,
-                        "prepared": [],
                         "value": 2
                     },
                     "slot3": {
                         "max": 1,
-                        "prepared": [],
                         "value": 1
                     },
                     "slot4": {
                         "max": 6,
-                        "prepared": [],
                         "value": 6
                     },
                     "slot5": {
                         "max": 1,
-                        "prepared": [],
                         "value": 1
                     },
                     "slot6": {
                         "max": 1,
-                        "prepared": [],
                         "value": 1
                     },
                     "slot7": {
                         "max": 1,
-                        "prepared": [],
                         "value": 1
                     },
                     "slot8": {
                         "max": 1,
-                        "prepared": [],
                         "value": 1
-                    },
-                    "slot9": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
                     }
                 },
                 "slug": null,
@@ -119,7 +88,6 @@
                 "description": {
                     "value": ""
                 },
-                "displayLevels": {},
                 "prepared": {
                     "value": "innate"
                 },
@@ -132,74 +100,7 @@
                     "title": ""
                 },
                 "rules": [],
-                "showSlotlessLevels": {
-                    "value": true
-                },
-                "showUnpreparedSpells": {
-                    "value": false
-                },
-                "slots": {
-                    "slot0": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot1": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot10": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot11": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot2": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot3": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot4": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot5": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot6": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot7": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot8": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot9": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    }
-                },
+                "slots": {},
                 "slug": null,
                 "spelldc": {
                     "dc": "38",
@@ -1788,76 +1689,6 @@
             "type": "melee"
         },
         {
-            "_id": "uLs1qWcXHyZE14d2",
-            "flags": {
-                "core": {
-                    "sourceId": "Compendium.pf2e.bestiary-ability-glossary-srd.Item.qCCLZhnp2HhP3Ex6"
-                }
-            },
-            "img": "systems/pf2e/icons/actions/Passive.webp",
-            "name": "Darkvision",
-            "sort": 2500000,
-            "system": {
-                "actionType": {
-                    "value": "passive"
-                },
-                "actions": {
-                    "value": null
-                },
-                "category": "interaction",
-                "description": {
-                    "value": "<p>@Localize[PF2E.NPC.Abilities.Glossary.Darkvision]</p>"
-                },
-                "publication": {
-                    "license": "OGL",
-                    "remaster": false,
-                    "title": "Pathfinder Bestiary"
-                },
-                "rules": [],
-                "slug": "darkvision",
-                "traits": {
-                    "rarity": "common",
-                    "value": []
-                }
-            },
-            "type": "action"
-        },
-        {
-            "_id": "OTSaRNEQPlVfldSC",
-            "flags": {
-                "core": {
-                    "sourceId": "Compendium.pf2e.bestiary-ability-glossary-srd.Item.2YRDYVnC1eljaXKK"
-                }
-            },
-            "img": "systems/pf2e/icons/actions/Passive.webp",
-            "name": "At-Will Spells",
-            "sort": 2600000,
-            "system": {
-                "actionType": {
-                    "value": "passive"
-                },
-                "actions": {
-                    "value": null
-                },
-                "category": "interaction",
-                "description": {
-                    "value": "<p>@Localize[PF2E.NPC.Abilities.Glossary.AtWillSpells]</p>"
-                },
-                "publication": {
-                    "license": "OGL",
-                    "remaster": false,
-                    "title": "Pathfinder Bestiary"
-                },
-                "rules": [],
-                "slug": "at-will-spells",
-                "traits": {
-                    "rarity": "common",
-                    "value": []
-                }
-            },
-            "type": "action"
-        },
-        {
             "_id": "c6pExwVTDS5Qyrw4",
             "flags": {
                 "core": {
@@ -1866,7 +1697,7 @@
             },
             "img": "systems/pf2e/icons/actions/Passive.webp",
             "name": "Constant Spells",
-            "sort": 2700000,
+            "sort": 2500000,
             "system": {
                 "actionType": {
                     "value": "passive"
@@ -1896,7 +1727,7 @@
             "_id": "A8r84vdl4zcvpCMg",
             "img": "systems/pf2e/icons/actions/FreeAction.webp",
             "name": "Free Blade",
-            "sort": 2800000,
+            "sort": 2600000,
             "system": {
                 "actionType": {
                     "value": "free"
@@ -1926,7 +1757,7 @@
             "_id": "nqhGLlFeLoFFBN9g",
             "img": "systems/pf2e/icons/actions/Passive.webp",
             "name": "Light Form",
-            "sort": 2900000,
+            "sort": 2700000,
             "system": {
                 "actionType": {
                     "value": "passive"
@@ -1956,7 +1787,7 @@
             "_id": "Tfnx5jxpKaKtZ7ES",
             "img": "systems/pf2e/icons/actions/OneAction.webp",
             "name": "Choose Weakness",
-            "sort": 3000000,
+            "sort": 2800000,
             "system": {
                 "actionType": {
                     "value": "action"
@@ -2096,7 +1927,7 @@
             "_id": "29elTy7XDcAju8yK",
             "img": "systems/pf2e/icons/actions/OneAction.webp",
             "name": "Ghaele's Gaze",
-            "sort": 3100000,
+            "sort": 2900000,
             "system": {
                 "actionType": {
                     "value": "action"
@@ -2129,7 +1960,7 @@
             "_id": "Gv8gIlACS3hfoYJF",
             "img": "systems/pf2e/icons/actions/Passive.webp",
             "name": "Greater Holy Blade",
-            "sort": 3200000,
+            "sort": 3000000,
             "system": {
                 "actionType": {
                     "value": "passive"
@@ -2176,7 +2007,7 @@
             "_id": "L3ou7mXkPANGyx83",
             "img": "systems/pf2e/icons/default-icons/lore.svg",
             "name": "Acrobatics",
-            "sort": 3300000,
+            "sort": 3100000,
             "system": {
                 "description": {
                     "value": ""
@@ -2201,7 +2032,7 @@
             "_id": "hi7wm9sKmCy6AoUP",
             "img": "systems/pf2e/icons/default-icons/lore.svg",
             "name": "Athletics",
-            "sort": 3400000,
+            "sort": 3200000,
             "system": {
                 "description": {
                     "value": ""
@@ -2226,7 +2057,7 @@
             "_id": "5pCpM6PmsPpqOPON",
             "img": "systems/pf2e/icons/default-icons/lore.svg",
             "name": "Diplomacy",
-            "sort": 3500000,
+            "sort": 3300000,
             "system": {
                 "description": {
                     "value": ""
@@ -2251,7 +2082,7 @@
             "_id": "TISpoRIMpFefT9Vu",
             "img": "systems/pf2e/icons/default-icons/lore.svg",
             "name": "Nature",
-            "sort": 3600000,
+            "sort": 3400000,
             "system": {
                 "description": {
                     "value": ""
@@ -2276,7 +2107,7 @@
             "_id": "pEl3BV5HM03K3dKL",
             "img": "systems/pf2e/icons/default-icons/lore.svg",
             "name": "Religion",
-            "sort": 3700000,
+            "sort": 3500000,
             "system": {
                 "description": {
                     "value": ""
@@ -2301,7 +2132,7 @@
             "_id": "O7RMP6Km5dGmzgP8",
             "img": "systems/pf2e/icons/default-icons/lore.svg",
             "name": "Stealth",
-            "sort": 3800000,
+            "sort": 3600000,
             "system": {
                 "description": {
                     "value": ""
@@ -2326,7 +2157,7 @@
             "_id": "aJfhxNbUXiAHn566",
             "img": "systems/pf2e/icons/default-icons/lore.svg",
             "name": "Warfare Lore",
-            "sort": 3900000,
+            "sort": 3700000,
             "system": {
                 "description": {
                     "value": ""

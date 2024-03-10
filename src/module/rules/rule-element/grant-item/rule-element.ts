@@ -18,21 +18,22 @@ class GrantItemRuleElement extends RuleElementPF2e<GrantItemSchema> {
     static override validActorTypes: ActorType[] = ["army", "character", "npc", "familiar"];
 
     /** The id of the granted item */
-    grantedId: string | null;
+    grantedId: string | null = null;
 
     /**
      * If the granted item has a `ChoiceSet`, its selection may be predetermined. The key of the record must be the
      * `ChoiceSet`'s designated `flag` property.
      */
-    preselectChoices: Record<string, string | number>;
+    preselectChoices: Record<string, string | number> = {};
 
     /** Actions taken when either the parent or child item are deleted */
-    onDeleteActions: Partial<OnDeleteActions> | null;
+    onDeleteActions: Partial<OnDeleteActions> | null = null;
 
     constructor(data: GrantItemSource, options: RuleElementOptions) {
         // Run slightly earlier if granting an in-memory condition
         if (data.inMemoryOnly) data.priority ??= 99;
         super(data, options);
+        if (this.invalid) return;
 
         // In-memory-only conditions are always reevaluated on update
         if (this.inMemoryOnly) {
@@ -50,7 +51,7 @@ class GrantItemRuleElement extends RuleElementPF2e<GrantItemSchema> {
         const isValidPreselect = (p: Record<string, unknown>): p is Record<string, string | number> =>
             Object.values(p).every((v) => ["string", "number"].includes(typeof v));
         this.preselectChoices =
-            R.isObject(data.preselectChoices) && isValidPreselect(data.preselectChoices)
+            R.isPlainObject(data.preselectChoices) && isValidPreselect(data.preselectChoices)
                 ? fu.deepClone(data.preselectChoices)
                 : {};
 
@@ -104,7 +105,7 @@ class GrantItemRuleElement extends RuleElementPF2e<GrantItemSchema> {
     }
 
     override async preCreate(args: RuleElementPF2e.PreCreateParams): Promise<void> {
-        if (this.inMemoryOnly) return;
+        if (this.inMemoryOnly || this.invalid) return;
 
         const { itemSource, pendingItems, context } = args;
         const ruleSource: GrantItemSource = args.ruleSource;
@@ -154,6 +155,11 @@ class GrantItemRuleElement extends RuleElementPF2e<GrantItemSchema> {
         const grantedSource = grantedItem.toObject();
         grantedSource._id = fu.randomID();
 
+        // An item may grant another copy of itself, but at least strip the copy of its grant REs
+        if (this.item.sourceId === (grantedSource.flags.core?.sourceId ?? "")) {
+            grantedSource.system.rules = grantedSource.system.rules.filter((r) => r.key !== "GrantItem");
+        }
+
         // Special case until configurable item alterations are supported:
         if (itemSource.type === "effect" && grantedSource.type === "effect") {
             grantedSource.system.level.value = itemSource.system?.level?.value ?? grantedSource.system.level.value;
@@ -173,6 +179,7 @@ class GrantItemRuleElement extends RuleElementPF2e<GrantItemSchema> {
 
         // Create a temporary owned item and run its actor-data preparation and early-stage rule-element callbacks
         const tempGranted = new ItemProxyPF2e(fu.deepClone(grantedSource), { parent: this.actor });
+        tempGranted.grantedBy = this.item;
 
         // Check for immunity and bail if a match
         if (tempGranted.isOfType("affliction", "condition", "effect") && this.actor.isImmuneTo(tempGranted)) {
@@ -218,7 +225,7 @@ class GrantItemRuleElement extends RuleElementPF2e<GrantItemSchema> {
     override async preUpdateActor(): Promise<{ create: ItemSourcePF2e[]; delete: string[] }> {
         const noAction = { create: [], delete: [] };
 
-        if (!this.reevaluateOnUpdate || this.inMemoryOnly) {
+        if (this.ignored || !this.reevaluateOnUpdate || this.inMemoryOnly) {
             return noAction;
         }
 
@@ -248,7 +255,9 @@ class GrantItemRuleElement extends RuleElementPF2e<GrantItemSchema> {
 
     /** Add an in-memory-only condition to the actor */
     override onApplyActiveEffects(): void {
-        this.#createInMemoryCondition();
+        if (!this.invalid) {
+            this.#createInMemoryCondition();
+        }
     }
 
     #getOnDeleteActions(data: GrantItemSource): Partial<OnDeleteActions> | null {

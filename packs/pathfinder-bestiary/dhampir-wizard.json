@@ -14,10 +14,6 @@
                 "description": {
                     "value": ""
                 },
-                "displayLevels": {
-                    "0": false,
-                    "1": false
-                },
                 "prepared": {
                     "flexible": false,
                     "value": "prepared"
@@ -34,98 +30,43 @@
                 "showSlotlessLevels": {
                     "value": false
                 },
-                "showUnpreparedSpells": {
-                    "value": false
-                },
                 "slots": {
                     "slot0": {
                         "max": 5,
-                        "prepared": {
-                            "0": {
+                        "prepared": [
+                            {
                                 "id": "ggsPDW1PR9EMGXcf"
                             },
-                            "1": {
+                            {
                                 "id": "uLMLLh4CPm3V37Y6"
                             },
-                            "2": {
+                            {
                                 "id": "xciXkyQ2CxfcBCoW"
                             },
-                            "3": {
+                            {
                                 "id": "iaYBMOhDKwYHXb3A"
                             },
-                            "4": {
+                            {
                                 "id": "fc1BnXW3vbdePr2A"
                             }
-                        },
-                        "value": 0
+                        ]
                     },
                     "slot1": {
                         "max": 4,
-                        "prepared": {
-                            "0": {
+                        "prepared": [
+                            {
                                 "id": "D1zSHMmMxgEMR3FM"
                             },
-                            "1": {
+                            {
                                 "id": "XCSe1QnwFDUxevoF"
                             },
-                            "2": {
+                            {
                                 "id": "XCSe1QnwFDUxevoF"
                             },
-                            "3": {
+                            {
                                 "id": "C8Ua4iHu6HGOfOFE"
                             }
-                        },
-                        "value": 0
-                    },
-                    "slot10": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot11": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot2": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot3": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot4": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot5": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot6": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot7": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot8": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot9": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
+                        ]
                     }
                 },
                 "slug": null,
@@ -1206,41 +1147,6 @@
             "type": "melee"
         },
         {
-            "_id": "7nAuNsDTN5NBtC7a",
-            "flags": {
-                "core": {
-                    "sourceId": "Compendium.pf2e.bestiary-ability-glossary-srd.Item.qCCLZhnp2HhP3Ex6"
-                }
-            },
-            "img": "systems/pf2e/icons/actions/Passive.webp",
-            "name": "Darkvision",
-            "sort": 1700000,
-            "system": {
-                "actionType": {
-                    "value": "passive"
-                },
-                "actions": {
-                    "value": null
-                },
-                "category": "interaction",
-                "description": {
-                    "value": "<p>@Localize[PF2E.NPC.Abilities.Glossary.Darkvision]</p>"
-                },
-                "publication": {
-                    "license": "OGL",
-                    "remaster": false,
-                    "title": "Pathfinder Bestiary"
-                },
-                "rules": [],
-                "slug": "darkvision",
-                "traits": {
-                    "rarity": "common",
-                    "value": []
-                }
-            },
-            "type": "action"
-        },
-        {
             "_id": "4pcckxSu3lSKQKx9",
             "flags": {
                 "core": {
@@ -1249,7 +1155,7 @@
             },
             "img": "systems/pf2e/icons/actions/Passive.webp",
             "name": "+2 Circumstance to All Saves vs. Disease",
-            "sort": 1800000,
+            "sort": 1700000,
             "system": {
                 "actionType": {
                     "value": "passive"
@@ -1289,7 +1195,7 @@
             "_id": "J6pZtpCOYKA1AxsU",
             "img": "systems/pf2e/icons/actions/Passive.webp",
             "name": "Blood of the Night",
-            "sort": 1900000,
+            "sort": 1800000,
             "system": {
                 "actionType": {
                     "value": "passive"
@@ -1324,7 +1230,7 @@
             },
             "img": "systems/pf2e/icons/actions/Passive.webp",
             "name": "Void Healing",
-            "sort": 2000000,
+            "sort": 1900000,
             "system": {
                 "actionType": {
                     "value": "passive"
@@ -1361,7 +1267,7 @@
             "_id": "ecmXztJCoTrafe0P",
             "img": "systems/pf2e/icons/default-icons/lore.svg",
             "name": "Acrobatics",
-            "sort": 2100000,
+            "sort": 2000000,
             "system": {
                 "description": {
                     "value": ""
@@ -1386,7 +1292,7 @@
             "_id": "LvYMIB2jmLkbeNgJ",
             "img": "systems/pf2e/icons/default-icons/lore.svg",
             "name": "Arcana",
-            "sort": 2200000,
+            "sort": 2100000,
             "system": {
                 "description": {
                     "value": ""
@@ -1411,7 +1317,7 @@
             "_id": "R6Oetc48QGK7ZSAg",
             "img": "systems/pf2e/icons/default-icons/lore.svg",
             "name": "Deception",
-            "sort": 2300000,
+            "sort": 2200000,
             "system": {
                 "description": {
                     "value": ""
@@ -1436,7 +1342,7 @@
             "_id": "HjMWLo0sGgxcyjkl",
             "img": "systems/pf2e/icons/default-icons/lore.svg",
             "name": "Intimidation",
-            "sort": 2400000,
+            "sort": 2300000,
             "system": {
                 "description": {
                     "value": ""
@@ -1461,7 +1367,7 @@
             "_id": "mPBLrczca6dFrQRu",
             "img": "systems/pf2e/icons/default-icons/lore.svg",
             "name": "Society",
-            "sort": 2500000,
+            "sort": 2400000,
             "system": {
                 "description": {
                     "value": ""
@@ -1486,7 +1392,7 @@
             "_id": "PHAfWKjShtFnf0Ow",
             "img": "systems/pf2e/icons/default-icons/lore.svg",
             "name": "Stealth",
-            "sort": 2600000,
+            "sort": 2500000,
             "system": {
                 "description": {
                     "value": ""
@@ -1511,7 +1417,7 @@
             "_id": "PuwbojJVdeWhRjeH",
             "img": "systems/pf2e/icons/default-icons/lore.svg",
             "name": "Vampire Lore",
-            "sort": 2700000,
+            "sort": 2600000,
             "system": {
                 "description": {
                     "value": ""

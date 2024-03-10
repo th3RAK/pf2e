@@ -248,7 +248,6 @@
                 "description": {
                     "value": ""
                 },
-                "displayLevels": {},
                 "prepared": {
                     "value": "focus"
                 },
@@ -261,74 +260,7 @@
                     "title": ""
                 },
                 "rules": [],
-                "showSlotlessLevels": {
-                    "value": true
-                },
-                "showUnpreparedSpells": {
-                    "value": true
-                },
-                "slots": {
-                    "slot0": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot1": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot10": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot11": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot2": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot3": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot4": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot5": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot6": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot7": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot8": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot9": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    }
-                },
+                "slots": {},
                 "slug": null,
                 "spelldc": {
                     "dc": 21,
@@ -2219,7 +2151,7 @@
                         "uuid": "Compendium.pf2e.classfeatures.Item.Deific Weapon"
                     },
                     "467es": {
-                        "img": "systems/pf2e/icons/features/classes/legendary-armor.webp",
+                        "img": "icons/equipment/head/greathelm-banded-steel.webp",
                         "level": 17,
                         "name": "Legendary Armor",
                         "uuid": "Compendium.pf2e.classfeatures.Item.Legendary Armor"
@@ -2261,13 +2193,13 @@
                         "uuid": "Compendium.pf2e.classfeatures.Item.Divine Will"
                     },
                     "gzf67": {
-                        "img": "systems/pf2e/icons/features/classes/champion-expertise.webp",
+                        "img": "icons/magic/holy/prayer-hands-glowing-yellow-white.webp",
                         "level": 9,
                         "name": "Champion Expertise",
                         "uuid": "Compendium.pf2e.classfeatures.Item.Champion Expertise"
                     },
                     "h4ydl": {
-                        "img": "systems/pf2e/icons/features/classes/greater-weapon-specialization.webp",
+                        "img": "icons/skills/melee/hand-grip-sword-orange.webp",
                         "level": 15,
                         "name": "Greater Weapon Specialization (Level 15)",
                         "uuid": "Compendium.pf2e.classfeatures.Item.Greater Weapon Specialization"
@@ -3033,7 +2965,9 @@
                         "holy"
                     ]
                 },
-                "skill": "itm",
+                "skill": [
+                    "intimidation"
+                ],
                 "slug": "iomedae",
                 "spells": {
                     "1": "Compendium.pf2e.spells-srd.Item.Gb7SeieEvd0pL2Eh",

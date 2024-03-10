@@ -5,7 +5,8 @@ import { itemIsOfType } from "@item/helpers.ts";
 import { PHYSICAL_ITEM_TYPES, PRECIOUS_MATERIAL_TYPES } from "@item/physical/values.ts";
 import { RARITIES } from "@module/data.ts";
 import { DamageRoll } from "@system/damage/roll.ts";
-import type { DamageType } from "@system/damage/types.ts";
+import { DamageDiceFaces, type DamageType } from "@system/damage/types.ts";
+import { DAMAGE_DICE_FACES } from "@system/damage/values.ts";
 import { PredicateField, SlugField, StrictNumberField } from "@system/schema-data-fields.ts";
 import * as R from "remeda";
 import type {
@@ -50,9 +51,11 @@ class ItemAlterationValidator<TSchema extends AlterationSchema> extends fields.S
         item: ItemOrSource<SourceFromSchema<TSchema>["itemType"]>;
         alteration: SourceFromSchema<TSchema>;
     } {
-        const { item, alteration } = data;
+        const alteration = (data.alteration = fu.mergeObject(this.getInitialValue(), data.alteration));
         const failure = this.validate(alteration);
         if (failure) throw new validation.DataModelValidationError(failure);
+
+        const item = data.item;
         if (item.type !== alteration.itemType) return false;
         const forItemFailure = this.#validateForItem?.(item, alteration);
         if (forItemFailure) throw new validation.DataModelValidationError(forItemFailure);
@@ -153,19 +156,61 @@ const ITEM_ALTERATION_VALIDATORS = {
         } as const),
     }),
     "check-penalty": new ItemAlterationValidator({
-        itemType: new fields.StringField({
-            required: true,
-            choices: ["armor"],
-        }),
+        itemType: new fields.StringField({ required: true, choices: () => ["armor"] }),
         mode: new fields.StringField({
             required: true,
-            choices: ["add", "downgrade", "override", "remove", "subtract", "upgrade"],
+            choices: () => ["add", "downgrade", "override", "remove", "subtract", "upgrade"],
         }),
         value: new StrictNumberField({
             required: true,
             nullable: false,
             integer: true,
             initial: undefined,
+        } as const),
+    }),
+    "damage-dice-faces": new ItemAlterationValidator(
+        {
+            itemType: new fields.StringField({ required: true, choices: ["weapon"] }),
+            mode: new fields.StringField({ required: true, choices: ["downgrade", "override", "upgrade"] }),
+            value: new StrictNumberField<DamageDiceFaces, DamageDiceFaces, true, true, true>({
+                required: true,
+                nullable: true,
+                choices: () => DAMAGE_DICE_FACES,
+                initial: null,
+            } as const),
+        },
+        {
+            validate: (data) => {
+                const hasBasicStructure = R.isObject(data) && "mode" in data && "value" in data;
+                if (!hasBasicStructure) return false;
+
+                const validFaces: readonly number[] = DAMAGE_DICE_FACES;
+                const valueIsFaceNumber = typeof data.value === "number" && validFaces.includes(data.value);
+                if (data.mode === "override" && !valueIsFaceNumber) {
+                    throw new validation.DataModelValidationError(
+                        new validation.DataModelValidationFailure({
+                            message: `value: must be 4, 6, 8, 10, or 12 if mode is "override"`,
+                        }),
+                    );
+                } else if (data.value !== null) {
+                    throw new validation.DataModelValidationError(
+                        new validation.DataModelValidationFailure({
+                            message: `value: must be null or omitted if mode is "${data.mode}"`,
+                        }),
+                    );
+                }
+
+                return true;
+            },
+        },
+    ),
+    "damage-type": new ItemAlterationValidator({
+        itemType: new fields.StringField({ required: true, choices: ["weapon"] }),
+        mode: new fields.StringField({ required: true, choices: ["override"] }),
+        value: new fields.StringField({
+            required: true,
+            nullable: false,
+            choices: () => CONFIG.PF2E.damageTypes,
         } as const),
     }),
     /** The passive defense targeted by an attack spell */
@@ -216,7 +261,6 @@ const ITEM_ALTERATION_VALIDATORS = {
             { required: true, nullable: false, initial: undefined } as const,
         ) satisfies DescriptionValueField,
     }),
-
     "dex-cap": new ItemAlterationValidator({
         itemType: new fields.StringField({
             required: true,
@@ -464,7 +508,7 @@ interface AlterationFieldOptions<TSourceProp extends SourceFromSchema<Alteration
 type AlterationSchema = {
     itemType: StringField<ItemType, ItemType, true, false, false>;
     mode: StringField<AELikeChangeMode, AELikeChangeMode, true, false, false>;
-    value: DataField<JSONValue, unknown, true, boolean, boolean>;
+    value: DataField<Exclude<JSONValue, undefined>, Exclude<JSONValue, undefined>, true, boolean, boolean>;
 };
 
 type PersistentDamageValueSchema = {

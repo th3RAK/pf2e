@@ -14,9 +14,6 @@
                 "description": {
                     "value": ""
                 },
-                "displayLevels": {
-                    "0": false
-                },
                 "prepared": {
                     "value": "prepared"
                 },
@@ -29,187 +26,157 @@
                     "title": ""
                 },
                 "rules": [],
-                "showSlotlessLevels": {
-                    "value": true
-                },
-                "showUnpreparedSpells": {
-                    "value": true
-                },
                 "slots": {
                     "slot0": {
                         "max": 6,
-                        "prepared": {
-                            "0": {
+                        "prepared": [
+                            {
                                 "id": "sqwolfRdRZlUaJ3Q"
                             },
-                            "1": {
+                            {
                                 "id": "coZ2XUxg8eNqSBsw"
                             },
-                            "2": {
+                            {
                                 "id": "hd2cJbZWfxCPPdId"
                             },
-                            "3": {
+                            {
                                 "id": "R8g9cVN80JeOzFE3"
                             },
-                            "4": {
+                            {
                                 "id": "J6vLIHv0wQrzSlra"
                             },
-                            "5": {
+                            {
                                 "id": "1VcshBGambLpqvOp"
                             }
-                        },
-                        "value": 0
+                        ]
                     },
                     "slot1": {
                         "max": 4,
-                        "prepared": {
-                            "0": {
+                        "prepared": [
+                            {
                                 "id": "0NTdedJ0OZqk3Zqu"
                             },
-                            "1": {
+                            {
                                 "id": "813sSutnvAFfuhE8"
                             },
-                            "2": {
+                            {
                                 "id": "lBPclIXvVHjh8BdG"
                             },
-                            "3": {
+                            {
                                 "id": "oQRTBKtpV0idG8q1"
                             }
-                        },
-                        "value": 0
-                    },
-                    "slot10": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot11": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
+                        ]
                     },
                     "slot2": {
                         "max": 4,
-                        "prepared": {
-                            "0": {
+                        "prepared": [
+                            {
                                 "id": "cDJg6Bpx4sASXrcd"
                             },
-                            "1": {
+                            {
                                 "id": "pGv3IyvmE2y8X53O"
                             },
-                            "2": {
+                            {
                                 "id": "hAmjZRvYOGzg5N91"
                             },
-                            "3": {
+                            {
                                 "id": "mO9cLNzTh80n5kJd"
                             }
-                        },
-                        "value": 0
+                        ]
                     },
                     "slot3": {
                         "max": 4,
-                        "prepared": {
-                            "0": {
+                        "prepared": [
+                            {
                                 "id": "1jxI5XKCf8dXj0BO"
                             },
-                            "1": {
+                            {
                                 "id": "2noPjqAi0XNjXL9c"
                             },
-                            "2": {
+                            {
                                 "id": "TG81KUuhrunUWTGn"
                             },
-                            "3": {
+                            {
                                 "id": "tv55uPsCm5vUEtKL"
                             }
-                        },
-                        "value": 0
+                        ]
                     },
                     "slot4": {
                         "max": 4,
-                        "prepared": {
-                            "0": {
+                        "prepared": [
+                            {
                                 "id": "A2Z3cHWAyWfHQI6w"
                             },
-                            "1": {
+                            {
                                 "id": "DoF48uMYB8HbPZ4F"
                             },
-                            "2": {
+                            {
                                 "id": "9MSymasxSA9Dhps2"
                             },
-                            "3": {
+                            {
                                 "id": "2vI1EPq1JOrj6W4M"
                             }
-                        },
-                        "value": 0
+                        ]
                     },
                     "slot5": {
                         "max": 3,
-                        "prepared": {
-                            "0": {
+                        "prepared": [
+                            {
                                 "id": "ErNhgmmqCjnjZmGb"
                             },
-                            "1": {
+                            {
                                 "id": "MEtoduiyNmoD2E2p"
                             },
-                            "2": {
+                            {
                                 "id": "1jWFXeaPDWWRsbZo"
                             }
-                        },
-                        "value": 0
+                        ]
                     },
                     "slot6": {
                         "max": 4,
-                        "prepared": {
-                            "0": {
+                        "prepared": [
+                            {
                                 "id": "QrXXUXbe4uVcZhcZ"
                             },
-                            "1": {
+                            {
                                 "id": "aaLgYeY0gRxLP5PO"
                             },
-                            "2": {
+                            {
                                 "id": "DlmkIhJIJu74MB94"
                             },
-                            "3": {
+                            {
                                 "id": "jVmBdK7GyKy1sFDW"
                             }
-                        },
-                        "value": 0
+                        ]
                     },
                     "slot7": {
                         "max": 3,
-                        "prepared": {
-                            "0": {
+                        "prepared": [
+                            {
                                 "id": "Cejx8Ta1MQunwYnz"
                             },
-                            "1": {
+                            {
                                 "id": "L1WYgNyJyRluezu6"
                             },
-                            "2": {
+                            {
                                 "id": "gvQmf5w0Lv5esl5I"
                             }
-                        },
-                        "value": 0
+                        ]
                     },
                     "slot8": {
                         "max": 3,
-                        "prepared": {
-                            "0": {
+                        "prepared": [
+                            {
                                 "expended": false,
                                 "id": "n7GcO06Ky9VKKKme"
                             },
-                            "1": {
+                            {
                                 "id": "dyhpvSMTI4czZF8L"
                             },
-                            "2": {
+                            {
                                 "id": "65UL8ZvQjpjHVmcp"
                             }
-                        },
-                        "value": 0
-                    },
-                    "slot9": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
+                        ]
                     }
                 },
                 "slug": null,
@@ -3133,45 +3100,10 @@
             "type": "melee"
         },
         {
-            "_id": "5wnaaHpUx6f7lycE",
-            "flags": {
-                "core": {
-                    "sourceId": "Compendium.pf2e.bestiary-ability-glossary-srd.Item.fFu2sZz4KB01fVRc"
-                }
-            },
-            "img": "systems/pf2e/icons/actions/Passive.webp",
-            "name": "Low-Light Vision",
-            "sort": 4300000,
-            "system": {
-                "actionType": {
-                    "value": "passive"
-                },
-                "actions": {
-                    "value": null
-                },
-                "category": "interaction",
-                "description": {
-                    "value": "<p>@Localize[PF2E.NPC.Abilities.Glossary.LowLightVision]</p>"
-                },
-                "publication": {
-                    "license": "OGL",
-                    "remaster": false,
-                    "title": "Pathfinder Bestiary"
-                },
-                "rules": [],
-                "slug": "low-light-vision",
-                "traits": {
-                    "rarity": "common",
-                    "value": []
-                }
-            },
-            "type": "action"
-        },
-        {
             "_id": "QgE3ujjsFZSthy7z",
             "img": "systems/pf2e/icons/actions/TwoActions.webp",
             "name": "Illusory Copies",
-            "sort": 4400000,
+            "sort": 4300000,
             "system": {
                 "actionType": {
                     "value": "action"
@@ -3215,7 +3147,7 @@
             },
             "img": "systems/pf2e/icons/actions/Passive.webp",
             "name": "Sneak Attack",
-            "sort": 4500000,
+            "sort": 4400000,
             "system": {
                 "actionType": {
                     "value": "passive"
@@ -3263,7 +3195,7 @@
             "_id": "JjLnvmNwSDSDlTY6",
             "img": "systems/pf2e/icons/default-icons/lore.svg",
             "name": "Acrobatics",
-            "sort": 4600000,
+            "sort": 4500000,
             "system": {
                 "description": {
                     "value": ""
@@ -3288,7 +3220,7 @@
             "_id": "BDfrH797F8WVsAci",
             "img": "systems/pf2e/icons/default-icons/lore.svg",
             "name": "Arcana",
-            "sort": 4700000,
+            "sort": 4600000,
             "system": {
                 "description": {
                     "value": ""
@@ -3313,7 +3245,7 @@
             "_id": "WkhPyo0GeiUUil24",
             "img": "systems/pf2e/icons/default-icons/lore.svg",
             "name": "Architecture Lore",
-            "sort": 4800000,
+            "sort": 4700000,
             "system": {
                 "description": {
                     "value": ""
@@ -3338,7 +3270,7 @@
             "_id": "Su30yW5WFQYALhu6",
             "img": "systems/pf2e/icons/default-icons/lore.svg",
             "name": "Deception",
-            "sort": 4900000,
+            "sort": 4800000,
             "system": {
                 "description": {
                     "value": ""
@@ -3363,7 +3295,7 @@
             "_id": "PenF5jYI6eCfXE9T",
             "img": "systems/pf2e/icons/default-icons/lore.svg",
             "name": "Occultism",
-            "sort": 5000000,
+            "sort": 4900000,
             "system": {
                 "description": {
                     "value": ""
@@ -3388,7 +3320,7 @@
             "_id": "kSJmjdAGEfWQEFf8",
             "img": "systems/pf2e/icons/default-icons/lore.svg",
             "name": "Society",
-            "sort": 5100000,
+            "sort": 5000000,
             "system": {
                 "description": {
                     "value": ""
@@ -3413,7 +3345,7 @@
             "_id": "zLoaZVAUEDZqF7Pe",
             "img": "systems/pf2e/icons/default-icons/lore.svg",
             "name": "Stealth",
-            "sort": 5200000,
+            "sort": 5100000,
             "system": {
                 "description": {
                     "value": ""
@@ -3438,7 +3370,7 @@
             "_id": "JI3weZ62QGwO52kV",
             "img": "systems/pf2e/icons/default-icons/lore.svg",
             "name": "Thievery",
-            "sort": 5300000,
+            "sort": 5200000,
             "system": {
                 "description": {
                     "value": ""

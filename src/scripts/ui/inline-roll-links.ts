@@ -2,13 +2,14 @@ import { ActorPF2e } from "@actor";
 import { SAVE_TYPES } from "@actor/values.ts";
 import { ItemPF2e } from "@item";
 import { ActionTrait } from "@item/ability/types.ts";
+import { EFFECT_AREA_SHAPES } from "@item/spell/values.ts";
 import { ChatMessageFlagsPF2e, ChatMessagePF2e } from "@module/chat-message/index.ts";
 import { calculateDC } from "@module/dc.ts";
 import { eventToRollParams } from "@scripts/sheet-util.ts";
 import { CheckDC } from "@system/degree-of-success.ts";
 import { Statistic, StatisticRollParameters } from "@system/statistic/index.ts";
 import { TextEditorPF2e } from "@system/text-editor.ts";
-import { ErrorPF2e, getActionGlyph, htmlClosest, htmlQueryAll, objectHasKey, sluggify, tupleHasValue } from "@util";
+import { ErrorPF2e, getActionGlyph, htmlClosest, htmlQueryAll, sluggify, tupleHasValue } from "@util";
 import { getSelectedActors } from "@util/token-actor-utils.ts";
 import * as R from "remeda";
 
@@ -53,9 +54,7 @@ export const InlineRollLinks = {
         }
     },
 
-    listen: (html: HTMLElement, foundryDoc: ClientDocument | null = null): void => {
-        foundryDoc ??= resolveDocument(html, foundryDoc);
-
+    listen: (html: HTMLElement, foundryDoc = resolveDocument(html)): void => {
         const links = htmlQueryAll(html, inlineSelector).filter((l) => ["A", "SPAN"].includes(l.nodeName));
         InlineRollLinks.injectRepostElement(links, foundryDoc);
 
@@ -92,17 +91,10 @@ export const InlineRollLinks = {
         }
 
         for (const link of links.filter((l) => l.dataset.pf2Check && !l.dataset.invalid)) {
-            const {
-                pf2Check,
-                pf2Dc,
-                pf2Traits,
-                pf2Label,
-                pf2Defense,
-                pf2Adjustment,
-                pf2Roller,
-                pf2RollOptions,
-                overrideTraits,
-            } = link.dataset;
+            const { pf2Check, pf2Dc, pf2Traits, pf2Label, pf2Defense, pf2Adjustment, pf2Roller, pf2RollOptions } =
+                link.dataset;
+            const overrideTraits = "overrideTraits" in link.dataset;
+            const targetOwner = "targetOwner" in link.dataset;
 
             if (!pf2Check) return;
 
@@ -118,13 +110,25 @@ export const InlineRollLinks = {
                     }
 
                     // Use the DOM document as a fallback if it's an actor and the check isn't a saving throw
-                    const actors = getSelectedActors({ exclude: ["loot"], assignedFallback: true });
+                    const sheetActor = ((): ActorPF2e | null => {
+                        const maybeActor: ActorPF2e | null =
+                            foundryDoc instanceof ActorPF2e
+                                ? foundryDoc
+                                : foundryDoc instanceof ItemPF2e && foundryDoc.actor
+                                  ? foundryDoc.actor
+                                  : null;
+                        return maybeActor?.isOwner && !maybeActor.isOfType("loot", "party") ? maybeActor : null;
+                    })();
+                    const rollingActors = [
+                        sheetActor ?? getSelectedActors({ exclude: ["loot"], assignedFallback: true }),
+                    ].flat();
+
                     const isSave = tupleHasValue(SAVE_TYPES, pf2Check);
-                    if (parent?.isOfType("party") || (actors.length === 0 && parent && !isSave)) {
+                    if (parent?.isOfType("party") || (rollingActors.length === 0 && parent && !isSave)) {
                         return [parent];
                     }
 
-                    return actors;
+                    return rollingActors;
                 })();
 
                 if (actors.length === 0) {
@@ -182,7 +186,11 @@ export const InlineRollLinks = {
                                 continue;
                             }
 
-                            const targetActor = pf2Defense ? game.user.targets.first()?.actor : null;
+                            const targetActor = pf2Defense
+                                ? targetOwner
+                                    ? parent
+                                    : game.user.targets.first()?.actor
+                                : null;
 
                             const dcValue = (() => {
                                 const adjustment = Number(pf2Adjustment) || 0;
@@ -283,26 +291,24 @@ export const InlineRollLinks = {
                     return;
                 }
 
-                const templateData: DeepPartial<foundry.documents.MeasuredTemplateSource> = JSON.parse(
-                    pf2TemplateData ?? "{}",
-                );
-                templateData.distance ||= Number(pf2Distance);
-                templateData.fillColor ||= game.user.color;
-                templateData.t = templateConversion[pf2EffectArea];
+                const data: DeepPartial<foundry.documents.MeasuredTemplateSource> = JSON.parse(pf2TemplateData ?? "{}");
+                data.distance ||= Number(pf2Distance);
+                data.fillColor ||= game.user.color;
+                data.t = templateConversion[pf2EffectArea];
 
-                switch (templateData.t) {
+                switch (data.t) {
                     case "ray":
-                        templateData.width =
+                        data.width =
                             Number(pf2Width) || CONFIG.MeasuredTemplate.defaults.width * canvas.dimensions.distance;
                         break;
                     case "cone":
-                        templateData.angle ||= CONFIG.MeasuredTemplate.defaults.angle;
+                        data.angle ||= CONFIG.MeasuredTemplate.defaults.angle;
                         break;
                     case "rect": {
-                        const distance = templateData.distance ?? 0;
-                        templateData.distance = Math.hypot(distance, distance);
-                        templateData.width = distance;
-                        templateData.direction = 45;
+                        const distance = data.distance ?? 0;
+                        data.distance = Math.hypot(distance, distance);
+                        data.width = distance;
+                        data.direction = 45;
                         break;
                     }
                 }
@@ -311,11 +317,9 @@ export const InlineRollLinks = {
                     pf2e: {},
                 };
 
-                if (
-                    objectHasKey(CONFIG.PF2E.areaTypes, pf2EffectArea) &&
-                    objectHasKey(CONFIG.PF2E.areaSizes, templateData.distance)
-                ) {
-                    flags.pf2e.areaType = pf2EffectArea;
+                const normalSize = (Math.ceil(data.distance) / 5) * 5 || 5;
+                if (tupleHasValue(EFFECT_AREA_SHAPES, pf2EffectArea) && data.distance === normalSize) {
+                    flags.pf2e.areaShape = pf2EffectArea;
                 }
 
                 const messageId =
@@ -339,10 +343,10 @@ export const InlineRollLinks = {
                 }
 
                 if (!R.isEmpty(flags.pf2e)) {
-                    templateData.flags = flags;
+                    data.flags = flags;
                 }
 
-                canvas.templates.createPreview(templateData);
+                canvas.templates.createPreview(data);
             });
         }
     },
@@ -353,7 +357,10 @@ export const InlineRollLinks = {
         return `<span data-visibility="${showDC}">${flavor}</span> ${target.outerHTML}`.trim();
     },
 
-    repostAction: (target: HTMLElement, foundryDoc: ClientDocument | null = null): void => {
+    repostAction: async (
+        target: HTMLElement,
+        foundryDoc: ClientDocument | null = null,
+    ): Promise<ChatMessagePF2e | undefined> => {
         if (!["pf2Action", "pf2Check", "pf2EffectArea"].some((d) => d in target.dataset)) {
             return;
         }
@@ -373,7 +380,7 @@ export const InlineRollLinks = {
         })();
 
         const speaker = actor
-            ? ChatMessagePF2e.getSpeaker({ actor, token: actor.getActiveTokens(false, true).shift() })
+            ? ChatMessagePF2e.getSpeaker({ actor, token: actor.getActiveTokens(true, true).shift() })
             : ChatMessagePF2e.getSpeaker();
 
         // If the originating document is a journal entry, include its UUID as a flag. If a chat message, copy over
@@ -386,11 +393,7 @@ export const InlineRollLinks = {
                   ? { pf2e: { origin: fu.deepClone(message.flags.pf2e.origin) } }
                   : {};
 
-        ChatMessagePF2e.create({
-            speaker,
-            content,
-            flags,
-        });
+        return ChatMessagePF2e.create({ speaker, content, flags });
     },
 
     /** Give inline damage-roll links from items flavor text of the item name */

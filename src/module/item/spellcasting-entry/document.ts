@@ -8,8 +8,10 @@ import { OneToTen, ZeroToFour, ZeroToTen } from "@module/data.ts";
 import type { UserPF2e } from "@module/user/index.ts";
 import { Statistic } from "@system/statistic/index.ts";
 import { ErrorPF2e, ordinalString, setHasElement, sluggify } from "@util";
+import * as R from "remeda";
 import { SpellCollection, type SpellSlotGroupId } from "./collection.ts";
 import { SpellcastingEntrySource, SpellcastingEntrySystemData } from "./data.ts";
+import { createCounteractStatistic } from "./helpers.ts";
 import { CastOptions, SpellcastingCategory, SpellcastingEntry, SpellcastingSheetData } from "./types.ts";
 
 class SpellcastingEntryPF2e<TParent extends ActorPF2e | null = ActorPF2e | null>
@@ -23,6 +25,11 @@ class SpellcastingEntryPF2e<TParent extends ActorPF2e | null = ActorPF2e | null>
 
     get attribute(): AttributeString {
         return this.system.ability.value || "cha";
+    }
+
+    get counteraction(): Statistic {
+        if (!this.actor) throw ErrorPF2e("Unexpected missing actor");
+        return createCounteractStatistic(this as SpellcastingEntryPF2e<ActorPF2e>);
     }
 
     /** @deprecated */
@@ -93,12 +100,29 @@ class SpellcastingEntryPF2e<TParent extends ActorPF2e | null = ActorPF2e | null>
     override prepareBaseData(): void {
         super.prepareBaseData();
 
+        this.spells = null;
         this.system.prepared.flexible ??= false;
         this.system.prepared.validItems ||= null;
 
+        if (this.isPrepared) {
+            const isFlexible = this.isFlexible;
+            for (const [key, group] of Object.entries(this.system.slots)) {
+                const emptyList = isFlexible && key !== "slot0";
+                group.prepared = emptyList
+                    ? []
+                    : R.sortBy(R.compact(Object.values(group.prepared)), (s) => s.id === null);
+                group.prepared.length = emptyList ? 0 : group.max;
+                for (const index of Array.fromRange(group.prepared.length)) {
+                    const slot = (group.prepared[index] ??= { id: null, expended: false });
+                    slot.expended ??= false;
+                }
+            }
+        }
+
         // Assign a default "invalid" statistic in case something goes wrong
-        if (this.actor) {
-            this.statistic = new Statistic(this.actor, {
+        const actor = this.actor;
+        if (actor) {
+            this.statistic = new Statistic(actor, {
                 slug: this.slug ?? sluggify(this.name),
                 label: "PF2E.Actor.Creature.Spellcasting.InvalidProficiency",
                 check: { type: "check" },
@@ -108,19 +132,15 @@ class SpellcastingEntryPF2e<TParent extends ActorPF2e | null = ActorPF2e | null>
 
     override prepareSiblingData(this: SpellcastingEntryPF2e<NonNullable<TParent>>): void {
         const actor = this.actor;
-        if (!actor) {
-            this.spells = null;
-        } else {
-            this.spells = new SpellCollection(this);
-            const spells = actor.itemTypes.spell.filter(
-                (s): s is SpellPF2e<NonNullable<TParent>> => s.system.location.value === this.id,
-            );
-            for (const spell of spells) {
-                this.spells.set(spell.id, spell);
-            }
-
-            actor.spellcasting?.collections.set(this.spells.id, this.spells);
+        this.spells = new SpellCollection(this) as SpellCollection<NonNullable<TParent>>;
+        const spells = actor.itemTypes.spell.filter(
+            (s): s is SpellPF2e<NonNullable<TParent>> => s.system.location.value === this.id,
+        );
+        for (const spell of spells) {
+            this.spells.set(spell.id, spell);
         }
+
+        actor.spellcasting?.collections.set(this.spells.id, this.spells);
     }
 
     override prepareActorData(this: SpellcastingEntryPF2e<NonNullable<TParent>>): void {
@@ -181,7 +201,7 @@ class SpellcastingEntryPF2e<TParent extends ActorPF2e | null = ActorPF2e | null>
             const baseDC = Number(this.system?.spelldc?.dc ?? 0) + adjustment;
 
             // Assign statistic data to the spellcasting entry
-            this.statistic = new Statistic(actor, {
+            this.statistic = new Statistic(actor as ActorPF2e, {
                 slug,
                 attribute: this.attribute,
                 label: CONFIG.PF2E.magicTraditions[tradition ?? "arcane"],
@@ -190,11 +210,11 @@ class SpellcastingEntryPF2e<TParent extends ActorPF2e | null = ActorPF2e | null>
                 check: {
                     type: "attack-roll",
                     domains: checkDomains,
-                    modifiers: [new ModifierPF2e("PF2E.ModifierTitle", baseMod, "untyped")],
+                    modifiers: [new ModifierPF2e({ slug: "base", label: "PF2E.ModifierTitle", modifier: baseMod })],
                 },
                 dc: {
                     domains: dcDomains,
-                    modifiers: [new ModifierPF2e("PF2E.ModifierTitle", baseDC - 10, "untyped")],
+                    modifiers: [new ModifierPF2e({ slug: "base", label: "PF2E.ModifierTitle", modifier: baseDC - 10 })],
                 },
             });
         } else {
@@ -257,7 +277,7 @@ class SpellcastingEntryPF2e<TParent extends ActorPF2e | null = ActorPF2e | null>
         }
     }
 
-    async consume(spell: SpellPF2e<ActorPF2e>, rank: number, slotId?: number): Promise<boolean> {
+    async consume(spell: SpellPF2e<ActorPF2e>, rank: number, slotIndex?: number): Promise<boolean> {
         const actor = this.actor;
         if (!actor?.isOfType("character", "npc")) {
             throw ErrorPF2e("Spellcasting entries require an actor");
@@ -287,26 +307,19 @@ class SpellcastingEntryPF2e<TParent extends ActorPF2e | null = ActorPF2e | null>
 
         // For prepared spells, we deduct the slot. We use the given one or try to find a good match
         if (this.isPrepared && !this.isFlexible) {
-            const preparedData = this.system.slots[slotKey].prepared;
-            slotId ??= Number(
-                Object.entries(preparedData)
-                    .filter(([_, slot]) => slot.id === spell.id && !slot.expended)
-                    .at(0)?.[0],
-            );
-
-            if (!Number.isInteger(slotId)) {
+            const slots = this.system.slots[slotKey].prepared;
+            const resolvedIndex = slotIndex ?? slots.findIndex((s) => s.id === spell.id && !s.expended);
+            if (!Number.isInteger(resolvedIndex)) {
                 throw ErrorPF2e("Slot not given for prepared spell, and no alternative slot was found");
             }
-
-            const isExpended = preparedData[slotId].expended ?? false;
-            if (isExpended) {
+            if (slots[resolvedIndex].expended) {
                 ui.notifications.warn(game.i18n.format("PF2E.SpellSlotExpendedError", { spell: spell.name }));
                 return false;
             }
 
             if (rank.between(1, 10)) {
                 const groupId = rank as SpellSlotGroupId;
-                return !!(await this.spells.setSlotExpendedState(groupId, slotId, true));
+                return !!(await this.spells.setSlotExpendedState(groupId, resolvedIndex, true));
             }
         }
 
@@ -392,7 +405,7 @@ class SpellcastingEntryPF2e<TParent extends ActorPF2e | null = ActorPF2e | null>
         });
     }
 
-    override getRollOptions(prefix = "spellcasting"): string[] {
+    override getRollOptions(prefix = this.type): string[] {
         return [
             `${prefix}:${this.attribute}`,
             `${prefix}:attribute:${this.attribute}`,

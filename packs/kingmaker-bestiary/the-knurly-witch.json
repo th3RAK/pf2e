@@ -14,7 +14,6 @@
                 "description": {
                     "value": ""
                 },
-                "displayLevels": {},
                 "prepared": {
                     "flexible": false,
                     "value": "prepared"
@@ -28,203 +27,181 @@
                     "title": ""
                 },
                 "rules": [],
-                "showSlotlessLevels": {
-                    "value": true
-                },
-                "showUnpreparedSpells": {
-                    "value": false
-                },
                 "slots": {
                     "slot0": {
                         "max": 5,
-                        "prepared": {
-                            "0": {
+                        "prepared": [
+                            {
                                 "id": "pSHxkZDjDzT5X94m"
                             },
-                            "1": {
+                            {
                                 "id": "cxfRDUdBtE68rg5q"
                             },
-                            "2": {
+                            {
                                 "id": "Xc2yrsztkCC8y8NS"
                             },
-                            "3": {
+                            {
                                 "id": "pZAT0vi9hDKTVSo3"
                             },
-                            "4": {
+                            {
                                 "id": "K8OZWKPgIkM5C6fD"
                             }
-                        },
-                        "value": 0
+                        ]
                     },
                     "slot1": {
                         "max": 3,
-                        "prepared": {
-                            "0": {
+                        "prepared": [
+                            {
                                 "id": "tWPUvEpnZjBF8OyK"
                             },
-                            "1": {
+                            {
                                 "id": "1Cpl1ywgQLWsD8si"
                             },
-                            "2": {
+                            {
                                 "id": "BzgE9UaGtjuslqrA"
                             }
-                        },
-                        "value": 0
+                        ]
                     },
                     "slot10": {
                         "max": 8,
-                        "prepared": {
-                            "0": {
+                        "prepared": [
+                            {
                                 "id": "3KH3babd3JkABBVe"
                             },
-                            "1": {
+                            {
                                 "id": "3KH3babd3JkABBVe"
                             },
-                            "2": {
+                            {
                                 "id": "3KH3babd3JkABBVe"
                             },
-                            "3": {
+                            {
                                 "id": "3KH3babd3JkABBVe"
                             },
-                            "4": {
+                            {
                                 "id": "3KH3babd3JkABBVe"
                             },
-                            "5": {
+                            {
                                 "id": "3KH3babd3JkABBVe"
                             },
-                            "6": {
+                            {
                                 "id": "3KH3babd3JkABBVe"
                             },
-                            "7": {
+                            {
                                 "id": "6KicFTsFZgp8zDNY"
                             }
-                        },
-                        "value": 0
-                    },
-                    "slot11": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
+                        ]
                     },
                     "slot2": {
                         "max": 3,
-                        "prepared": {
-                            "0": {
+                        "prepared": [
+                            {
                                 "id": "Xuk985WQ6ui92Vrv"
                             },
-                            "1": {
+                            {
                                 "id": "SLGZrNbGgBFdTzJA"
                             },
-                            "2": {
+                            {
                                 "id": "uc3vQHzvjOgPbStU"
                             }
-                        },
-                        "value": 0
+                        ]
                     },
                     "slot3": {
                         "max": 3,
-                        "prepared": {
-                            "0": {
+                        "prepared": [
+                            {
                                 "id": "3ILjWkVH9pGNI2Jt"
                             },
-                            "1": {
+                            {
                                 "id": "0us8t6POiCpdLxFQ"
                             },
-                            "2": {
+                            {
                                 "id": "NTqvtIYNwhRNvpfz"
                             }
-                        },
-                        "value": 0
+                        ]
                     },
                     "slot4": {
                         "max": 3,
-                        "prepared": {
-                            "0": {
+                        "prepared": [
+                            {
                                 "id": "87rqP5kuIfd8uulP"
                             },
-                            "1": {
+                            {
                                 "id": "9q70YtKpix2hWKpu"
                             },
-                            "2": {
+                            {
                                 "id": "ysWKQsPkbmcNcqa4"
                             }
-                        },
-                        "value": 0
+                        ]
                     },
                     "slot5": {
                         "max": 3,
-                        "prepared": {
-                            "0": {
+                        "prepared": [
+                            {
                                 "id": "tWPUvEpnZjBF8OyK"
                             },
-                            "1": {
+                            {
                                 "id": "PGqmNhT5tXOPKRbK"
                             },
-                            "2": {
+                            {
                                 "id": "pso3opFNQijNVZim"
                             }
-                        },
-                        "value": 0
+                        ]
                     },
                     "slot6": {
                         "max": 3,
-                        "prepared": {
-                            "0": {
+                        "prepared": [
+                            {
                                 "id": "BOmNZglvU01QcddQ"
                             },
-                            "1": {
+                            {
                                 "id": "VXs9Esp60FCj1JKk"
                             },
-                            "2": {
+                            {
                                 "id": "Cpk91B0MZfDaFU5x"
                             }
-                        },
-                        "value": 0
+                        ]
                     },
                     "slot7": {
                         "max": 3,
-                        "prepared": {
-                            "0": {
+                        "prepared": [
+                            {
                                 "id": "wjCuM9yUWYXvLWQZ"
                             },
-                            "1": {
+                            {
                                 "id": "C4NGp8fmWYQHnPSp"
                             },
-                            "2": {
+                            {
                                 "id": "usmV1R65L2N3zmgW"
                             }
-                        },
-                        "value": 0
+                        ]
                     },
                     "slot8": {
                         "max": 3,
-                        "prepared": {
-                            "0": {
+                        "prepared": [
+                            {
                                 "id": "kQwpVk13LBeVGzdQ"
                             },
-                            "1": {
+                            {
                                 "id": "3fkayyPwmcgfS2UH"
                             },
-                            "2": {
+                            {
                                 "id": "zlNknuhRxo0fLsee"
                             }
-                        },
-                        "value": 0
+                        ]
                     },
                     "slot9": {
                         "max": 3,
-                        "prepared": {
-                            "0": {
+                        "prepared": [
+                            {
                                 "id": "zlNknuhRxo0fLsee"
                             },
-                            "1": {
+                            {
                                 "id": "CQT5qeWpSdyEa3H6"
                             },
-                            "2": {
+                            {
                                 "id": "u8bpuH40swuBYpfb"
                             }
-                        },
-                        "value": 0
+                        ]
                     }
                 },
                 "slug": null,
@@ -250,7 +227,6 @@
                 "description": {
                     "value": ""
                 },
-                "displayLevels": {},
                 "prepared": {
                     "value": "focus"
                 },
@@ -263,74 +239,7 @@
                     "title": ""
                 },
                 "rules": [],
-                "showSlotlessLevels": {
-                    "value": true
-                },
-                "showUnpreparedSpells": {
-                    "value": false
-                },
-                "slots": {
-                    "slot0": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot1": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot10": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot11": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot2": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot3": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot4": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot5": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot6": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot7": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot8": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot9": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    }
-                },
+                "slots": {},
                 "slug": null,
                 "spelldc": {
                     "dc": 44,
@@ -3428,41 +3337,6 @@
             "type": "melee"
         },
         {
-            "_id": "9oO34owbXFTjCGng",
-            "flags": {
-                "core": {
-                    "sourceId": "Compendium.pf2e.bestiary-ability-glossary-srd.Item.qCCLZhnp2HhP3Ex6"
-                }
-            },
-            "img": "systems/pf2e/icons/actions/Passive.webp",
-            "name": "Darkvision",
-            "sort": 4200000,
-            "system": {
-                "actionType": {
-                    "value": "passive"
-                },
-                "actions": {
-                    "value": null
-                },
-                "category": "interaction",
-                "description": {
-                    "value": "<p>@Localize[PF2E.NPC.Abilities.Glossary.Darkvision]</p>"
-                },
-                "publication": {
-                    "license": "OGL",
-                    "remaster": false,
-                    "title": "Pathfinder Bestiary"
-                },
-                "rules": [],
-                "slug": "darkvision",
-                "traits": {
-                    "rarity": "common",
-                    "value": []
-                }
-            },
-            "type": "action"
-        },
-        {
             "_id": "e0fcFHdf91dsur91",
             "flags": {
                 "core": {
@@ -3471,7 +3345,7 @@
             },
             "img": "systems/pf2e/icons/actions/Passive.webp",
             "name": "+1 Status to All Saves vs. Magic",
-            "sort": 4300000,
+            "sort": 4200000,
             "system": {
                 "actionType": {
                     "value": "passive"
@@ -3519,7 +3393,7 @@
             "_id": "utrBYZarwPMS7ACv",
             "img": "systems/pf2e/icons/actions/Passive.webp",
             "name": "Resolve",
-            "sort": 4400000,
+            "sort": 4300000,
             "system": {
                 "actionType": {
                     "value": "passive"
@@ -3568,7 +3442,7 @@
             "_id": "bKPOLbNfdVcrEpjV",
             "img": "systems/pf2e/icons/actions/TwoActions.webp",
             "name": "Bonds of Iron",
-            "sort": 4500000,
+            "sort": 4400000,
             "system": {
                 "actionType": {
                     "value": "action"
@@ -3622,7 +3496,7 @@
             },
             "img": "systems/pf2e/icons/actions/OneAction.webp",
             "name": "Change Shape",
-            "sort": 4600000,
+            "sort": 4500000,
             "system": {
                 "actionType": {
                     "value": "action"
@@ -3661,7 +3535,7 @@
             },
             "img": "systems/pf2e/icons/actions/OneAction.webp",
             "name": "Rend",
-            "sort": 4700000,
+            "sort": 4600000,
             "system": {
                 "actionType": {
                     "value": "action"
@@ -3691,7 +3565,7 @@
             "_id": "PG62mZgFRnBReYcw",
             "img": "systems/pf2e/icons/actions/Passive.webp",
             "name": "Word of Recall",
-            "sort": 4800000,
+            "sort": 4700000,
             "system": {
                 "actionType": {
                     "value": "passive"
@@ -3726,7 +3600,7 @@
             },
             "img": "systems/pf2e/icons/actions/OneAction.webp",
             "name": "Grab",
-            "sort": 4900000,
+            "sort": 4800000,
             "system": {
                 "actionType": {
                     "value": "action"
@@ -3756,7 +3630,7 @@
             "_id": "hWyVoEhzDMwxDZ5l",
             "img": "systems/pf2e/icons/default-icons/lore.svg",
             "name": "Acrobatics",
-            "sort": 5000000,
+            "sort": 4900000,
             "system": {
                 "description": {
                     "value": ""
@@ -3781,7 +3655,7 @@
             "_id": "r0Jfu2EKhpHiK8Io",
             "img": "systems/pf2e/icons/default-icons/lore.svg",
             "name": "Athletics",
-            "sort": 5100000,
+            "sort": 5000000,
             "system": {
                 "description": {
                     "value": ""
@@ -3822,7 +3696,7 @@
             "_id": "P1xNgroTVlaW6FFN",
             "img": "systems/pf2e/icons/default-icons/lore.svg",
             "name": "Deception",
-            "sort": 5200000,
+            "sort": 5100000,
             "system": {
                 "description": {
                     "value": ""
@@ -3847,7 +3721,7 @@
             "_id": "XrTR3CEOopUYJSoF",
             "img": "systems/pf2e/icons/default-icons/lore.svg",
             "name": "Intimidation",
-            "sort": 5300000,
+            "sort": 5200000,
             "system": {
                 "description": {
                     "value": ""
@@ -3872,7 +3746,7 @@
             "_id": "85yL7SnChVoWJ5uw",
             "img": "systems/pf2e/icons/default-icons/lore.svg",
             "name": "Nature",
-            "sort": 5400000,
+            "sort": 5300000,
             "system": {
                 "description": {
                     "value": ""
@@ -3897,7 +3771,7 @@
             "_id": "zzjd5DZVfvv06YIm",
             "img": "systems/pf2e/icons/default-icons/lore.svg",
             "name": "Occultism",
-            "sort": 5500000,
+            "sort": 5400000,
             "system": {
                 "description": {
                     "value": ""
@@ -3922,7 +3796,7 @@
             "_id": "q70qynHLs2QDHKB7",
             "img": "systems/pf2e/icons/default-icons/lore.svg",
             "name": "Religion",
-            "sort": 5600000,
+            "sort": 5500000,
             "system": {
                 "description": {
                     "value": ""

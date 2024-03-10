@@ -14,7 +14,6 @@
                 "description": {
                     "value": ""
                 },
-                "displayLevels": {},
                 "prepared": {
                     "value": "spontaneous"
                 },
@@ -30,68 +29,45 @@
                 "showSlotlessLevels": {
                     "value": false
                 },
-                "showUnpreparedSpells": {
-                    "value": false
-                },
                 "slots": {
-                    "slot0": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
                     "slot1": {
                         "max": 4,
-                        "prepared": [],
                         "value": 4
                     },
                     "slot10": {
                         "max": 1,
-                        "prepared": [],
                         "value": 1
-                    },
-                    "slot11": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
                     },
                     "slot2": {
                         "max": 4,
-                        "prepared": [],
                         "value": 4
                     },
                     "slot3": {
                         "max": 4,
-                        "prepared": [],
                         "value": 4
                     },
                     "slot4": {
                         "max": 4,
-                        "prepared": [],
                         "value": 4
                     },
                     "slot5": {
                         "max": 4,
-                        "prepared": [],
                         "value": 4
                     },
                     "slot6": {
                         "max": 4,
-                        "prepared": [],
                         "value": 4
                     },
                     "slot7": {
                         "max": 4,
-                        "prepared": [],
                         "value": 4
                     },
                     "slot8": {
                         "max": 4,
-                        "prepared": [],
                         "value": 4
                     },
                     "slot9": {
                         "max": 4,
-                        "prepared": [],
                         "value": 4
                     }
                 },
@@ -118,7 +94,6 @@
                 "description": {
                     "value": ""
                 },
-                "displayLevels": {},
                 "prepared": {
                     "value": "focus"
                 },
@@ -131,74 +106,7 @@
                     "title": ""
                 },
                 "rules": [],
-                "showSlotlessLevels": {
-                    "value": true
-                },
-                "showUnpreparedSpells": {
-                    "value": false
-                },
-                "slots": {
-                    "slot0": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot1": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot10": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot11": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot2": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot3": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot4": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot5": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot6": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot7": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot8": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot9": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    }
-                },
+                "slots": {},
                 "slug": null,
                 "spelldc": {
                     "dc": 41,
@@ -813,7 +721,7 @@
                     }
                 },
                 "description": {
-                    "value": "<p>You point your finger toward the target and speak a word of slaying. You deal 70 void damage to the target. If the damage from finger of death reduces the target to 0 Hit Points, the target dies instantly.</p>\n<hr />\n<p><strong>Heightened (+1)</strong> The damage increases by 10.</p>"
+                    "value": "<p>You point your finger toward the target and speak a word of slaying. You deal 70 void damage to the target. If the damage from <em>finger of death</em> reduces the target to 0 Hit Points, the target dies instantly.</p>\n<hr />\n<p><strong>Heightened (+1)</strong> The damage increases by 10.</p>"
                 },
                 "duration": {
                     "sustained": false,
@@ -5102,41 +5010,6 @@
             "type": "melee"
         },
         {
-            "_id": "NcZMn3pf8nbMeY8x",
-            "flags": {
-                "core": {
-                    "sourceId": "Compendium.pf2e.bestiary-ability-glossary-srd.Item.qCCLZhnp2HhP3Ex6"
-                }
-            },
-            "img": "systems/pf2e/icons/actions/Passive.webp",
-            "name": "Darkvision",
-            "sort": 6200000,
-            "system": {
-                "actionType": {
-                    "value": "passive"
-                },
-                "actions": {
-                    "value": null
-                },
-                "category": "interaction",
-                "description": {
-                    "value": "<p>@Localize[PF2E.NPC.Abilities.Glossary.Darkvision]</p>"
-                },
-                "publication": {
-                    "license": "OGL",
-                    "remaster": false,
-                    "title": "Pathfinder Bestiary"
-                },
-                "rules": [],
-                "slug": "darkvision",
-                "traits": {
-                    "rarity": "common",
-                    "value": []
-                }
-            },
-            "type": "action"
-        },
-        {
             "_id": "SaMUZistsZa0Bskd",
             "flags": {
                 "core": {
@@ -5145,7 +5018,7 @@
             },
             "img": "systems/pf2e/icons/actions/Passive.webp",
             "name": "All-Around Vision",
-            "sort": 6300000,
+            "sort": 6200000,
             "system": {
                 "actionType": {
                     "value": "passive"
@@ -5182,7 +5055,7 @@
             "_id": "zGXZKhk95VPsSdKN",
             "img": "systems/pf2e/icons/actions/Reaction.webp",
             "name": "Biting Snakes",
-            "sort": 6400000,
+            "sort": 6300000,
             "system": {
                 "actionType": {
                     "value": "reaction"
@@ -5212,7 +5085,7 @@
             "_id": "hSGaU1UT8mzmPFWl",
             "img": "systems/pf2e/icons/actions/Passive.webp",
             "name": "Petrifying Gaze",
-            "sort": 6500000,
+            "sort": 6400000,
             "system": {
                 "actionType": {
                     "value": "passive"
@@ -5266,7 +5139,7 @@
             "_id": "2lGYb3ZO8pwxgMhD",
             "img": "systems/pf2e/icons/actions/OneAction.webp",
             "name": "Focus Gaze",
-            "sort": 6600000,
+            "sort": 6500000,
             "system": {
                 "actionType": {
                     "value": "action"
@@ -5301,7 +5174,7 @@
             "_id": "7ff6eVjIgZUezVKm",
             "img": "systems/pf2e/icons/actions/Passive.webp",
             "name": "Jabberwock Bloodline",
-            "sort": 6700000,
+            "sort": 6600000,
             "system": {
                 "actionType": {
                     "value": "passive"
@@ -5331,7 +5204,7 @@
             "_id": "FuDdgAP7wwq6LCFO",
             "img": "systems/pf2e/icons/actions/Passive.webp",
             "name": "Phomandala's Venom",
-            "sort": 6800000,
+            "sort": 6700000,
             "system": {
                 "actionType": {
                     "value": "passive"
@@ -5363,7 +5236,7 @@
             "_id": "907AYCZJGYIzNC2a",
             "img": "systems/pf2e/icons/actions/FreeAction.webp",
             "name": "Quickened Casting",
-            "sort": 6900000,
+            "sort": 6800000,
             "system": {
                 "actionType": {
                     "value": "free"
@@ -5398,7 +5271,7 @@
             "_id": "vrZuMJAZcSYNFRp1",
             "img": "systems/pf2e/icons/actions/Passive.webp",
             "name": "Woodland Stride",
-            "sort": 7000000,
+            "sort": 6900000,
             "system": {
                 "actionType": {
                     "value": "passive"
@@ -5428,7 +5301,7 @@
             "_id": "h7xzhshxjRu1aYDI",
             "img": "systems/pf2e/icons/default-icons/lore.svg",
             "name": "Acrobatics",
-            "sort": 7100000,
+            "sort": 7000000,
             "system": {
                 "description": {
                     "value": ""
@@ -5453,7 +5326,7 @@
             "_id": "osDPBvg7aTANFPqK",
             "img": "systems/pf2e/icons/default-icons/lore.svg",
             "name": "Arcana",
-            "sort": 7200000,
+            "sort": 7100000,
             "system": {
                 "description": {
                     "value": ""
@@ -5478,7 +5351,7 @@
             "_id": "aB3Eiwm7lKulxfZ4",
             "img": "systems/pf2e/icons/default-icons/lore.svg",
             "name": "Deception",
-            "sort": 7300000,
+            "sort": 7200000,
             "system": {
                 "description": {
                     "value": ""
@@ -5503,7 +5376,7 @@
             "_id": "pu7iTks4TUgGpglG",
             "img": "systems/pf2e/icons/default-icons/lore.svg",
             "name": "First World Lore",
-            "sort": 7400000,
+            "sort": 7300000,
             "system": {
                 "description": {
                     "value": ""
@@ -5528,7 +5401,7 @@
             "_id": "Fn8fkoUs8T3m4WNI",
             "img": "systems/pf2e/icons/default-icons/lore.svg",
             "name": "Intimidation",
-            "sort": 7500000,
+            "sort": 7400000,
             "system": {
                 "description": {
                     "value": ""
@@ -5553,7 +5426,7 @@
             "_id": "mNXGxizBDqLTX88n",
             "img": "systems/pf2e/icons/default-icons/lore.svg",
             "name": "Nature",
-            "sort": 7600000,
+            "sort": 7500000,
             "system": {
                 "description": {
                     "value": ""
@@ -5578,7 +5451,7 @@
             "_id": "Is8r4a3Da3oQfLbO",
             "img": "systems/pf2e/icons/default-icons/lore.svg",
             "name": "Religion",
-            "sort": 7700000,
+            "sort": 7600000,
             "system": {
                 "description": {
                     "value": ""

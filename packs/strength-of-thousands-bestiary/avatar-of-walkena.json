@@ -14,7 +14,6 @@
                 "description": {
                     "value": ""
                 },
-                "displayLevels": {},
                 "prepared": {
                     "label": "Spellcasting Type",
                     "type": "String",
@@ -29,132 +28,96 @@
                     "title": ""
                 },
                 "rules": [],
-                "showSlotlessLevels": {
-                    "value": true
-                },
-                "showUnpreparedSpells": {
-                    "value": false
-                },
                 "slots": {
                     "slot0": {
                         "max": 4,
-                        "prepared": {
-                            "0": {
+                        "prepared": [
+                            {
                                 "id": "45CwlZ5HYXZhOa7R"
                             },
-                            "1": {
+                            {
                                 "id": "kwqeThlf4wrpgCBa"
                             },
-                            "2": {
+                            {
                                 "id": "4EWz3K4hcip2bzjB"
                             },
-                            "3": {
+                            {
                                 "id": "Z8Bm3SRuql5QJCox"
                             }
-                        },
+                        ],
                         "value": 4
-                    },
-                    "slot1": {
-                        "max": 0,
-                        "prepared": {},
-                        "value": 0
-                    },
-                    "slot10": {
-                        "max": 0,
-                        "prepared": {},
-                        "value": 0
-                    },
-                    "slot11": {
-                        "max": 0,
-                        "prepared": {},
-                        "value": 0
-                    },
-                    "slot2": {
-                        "max": 0,
-                        "prepared": {},
-                        "value": 0
-                    },
-                    "slot3": {
-                        "max": 0,
-                        "prepared": {},
-                        "value": 0
                     },
                     "slot4": {
                         "max": 1,
-                        "prepared": {
-                            "0": {
+                        "prepared": [
+                            {
                                 "id": "mqsJ0JAz4t1EfPPQ"
                             }
-                        },
+                        ],
                         "value": 1
                     },
                     "slot5": {
                         "max": 3,
-                        "prepared": {
-                            "0": {
+                        "prepared": [
+                            {
                                 "id": "e6JvSVSkufa8BYDN"
                             },
-                            "1": {
+                            {
                                 "id": "FpaY5nWlhsKRW5Fx"
                             },
-                            "2": {
+                            {
                                 "id": "v6xkaAdy18kaoRMy"
                             }
-                        },
+                        ],
                         "value": 3
                     },
                     "slot6": {
                         "max": 3,
-                        "prepared": {
-                            "0": {
+                        "prepared": [
+                            {
                                 "id": "uZfcPAS3kyVJqrVX"
                             },
-                            "1": {
+                            {
                                 "id": "PPxWX9Yuq2G2oMab"
                             },
-                            "2": {
+                            {
                                 "id": "jkuILGHUgihk8s4M"
                             }
-                        },
+                        ],
                         "value": 3
                     },
                     "slot7": {
                         "max": 4,
-                        "prepared": {
-                            "0": {
+                        "prepared": [
+                            {
                                 "id": "kFiYMkp0WV0vxEE0"
                             },
-                            "1": {
+                            {
                                 "id": "FpaY5nWlhsKRW5Fx"
                             },
-                            "2": {
+                            {
                                 "id": "v6xkaAdy18kaoRMy"
                             },
-                            "3": {
+                            {
                                 "id": "oSc0TMEl34RXLg3I"
                             }
-                        },
+                        ],
                         "value": 4
                     },
                     "slot8": {
                         "max": 3,
-                        "prepared": {
-                            "0": {
+                        "prepared": [
+                            {
                                 "id": "yy91KaoNfXNhu0ci"
                             },
-                            "1": {
+                            {
                                 "id": "OE7wsLvW4UtyhlKu"
                             },
-                            "2": {
+                            {
                                 "id": "dAxSJjgDptTfoFVQ"
                             }
-                        },
+                        ],
                         "value": 3
-                    },
-                    "slot9": {
-                        "max": 0,
-                        "prepared": {},
-                        "value": 0
                     }
                 },
                 "slug": null,
@@ -1836,7 +1799,7 @@
                 },
                 "defense": null,
                 "description": {
-                    "value": "<p>A small ball of flame appears in the palm of your hand, and you lash out with it either in melee or at range. Make a spell attack roll against your target's AC. This is normally a ranged attack, but you can also make a melee attack against a creature in your unarmed reach.</p>\n<p>On a success, you deal 2d4 fire damage. On a critical success, the target takes double damage and [[/r (@item.level)d4[persistent,fire]]] damage.</p>\n<hr />\n<p><strong>Heightened (+1)</strong> Increase the damage by 1d4 and the persistent damage on a critical hit by 1d4.</p>"
+                    "value": "<p>A small ball of flame appears in the palm of your hand, and you lash out with it either in melee or at range. Make a spell attack roll against your target's AC. This is normally a ranged attack, but you can also make a melee attack against a creature in your unarmed reach.</p>\n<p>On a success, you deal 2d4 fire damage. On a critical success, the target takes double damage and @Damage[(@item.level)d4[persistent,fire]] damage.</p>\n<hr />\n<p><strong>Heightened (+1)</strong> Increase the damage by 1d4 and the persistent damage on a critical hit by 1d4.</p>"
                 },
                 "duration": {
                     "sustained": false,

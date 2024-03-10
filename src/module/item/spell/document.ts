@@ -1,5 +1,6 @@
 import type { ActorPF2e } from "@actor";
 import { DamageDicePF2e, ModifierPF2e } from "@actor/modifiers.ts";
+import { DamageContext } from "@actor/roll-context/damage.ts";
 import { AttributeString } from "@actor/types.ts";
 import { SAVE_TYPES } from "@actor/values.ts";
 import type { ConsumablePF2e } from "@item";
@@ -15,6 +16,7 @@ import { ChatMessagePF2e, ItemOriginFlag } from "@module/chat-message/index.ts";
 import { OneToTen, Rarity, ZeroToThree, ZeroToTwo } from "@module/data.ts";
 import { RollNotePF2e } from "@module/notes.ts";
 import {
+    extractDamageAlterations,
     extractDamageDice,
     extractModifierAdjustments,
     extractModifiers,
@@ -28,17 +30,17 @@ import { CheckRoll } from "@system/check/index.ts";
 import { DamagePF2e } from "@system/damage/damage.ts";
 import { DamageModifierDialog } from "@system/damage/dialog.ts";
 import { combinePartialTerms, createDamageFormula, parseTermsFromSimpleFormula } from "@system/damage/formula.ts";
-import { DamageCategorization } from "@system/damage/helpers.ts";
+import { DamageCategorization, applyBaseDamageAlterations } from "@system/damage/helpers.ts";
 import { DamageRoll } from "@system/damage/roll.ts";
 import {
     BaseDamageData,
+    DamageDamageContext,
     DamageFormulaData,
     DamageKind,
-    DamageRollContext,
     SpellDamageTemplate,
 } from "@system/damage/types.ts";
 import { DEGREE_OF_SUCCESS_STRINGS } from "@system/degree-of-success.ts";
-import { Statistic, StatisticRollParameters } from "@system/statistic/index.ts";
+import { StatisticRollParameters } from "@system/statistic/index.ts";
 import { EnrichmentOptionsPF2e, TextEditorPF2e } from "@system/text-editor.ts";
 import {
     ErrorPF2e,
@@ -61,7 +63,7 @@ import {
 } from "./data.ts";
 import { createDescriptionPrepend, createSpellRankLabel, getPassiveDefenseLabel } from "./helpers.ts";
 import { SpellOverlayCollection } from "./overlay.ts";
-import { EffectAreaSize, MagicTradition, SpellTrait } from "./types.ts";
+import { EffectAreaShape, MagicTradition, SpellTrait } from "./types.ts";
 
 class SpellPF2e<TParent extends ActorPF2e | null = ActorPF2e | null> extends ItemPF2e<TParent> {
     readonly parentItem: ConsumablePF2e<TParent> | null;
@@ -234,13 +236,31 @@ class SpellPF2e<TParent extends ActorPF2e | null = ActorPF2e | null> extends Ite
     }
 
     get area(): (SpellArea & { label: string }) | null {
-        if (!this.system.area) return null;
+        const areaData = this.system.area;
+        if (!areaData) return null;
 
-        const size = Number(this.system.area.value);
-        const unit = game.i18n.localize("PF2E.Foot");
-        const shape = game.i18n.localize(CONFIG.PF2E.areaTypes[this.system.area.type]);
-        const label = game.i18n.format("PF2E.Item.Spell.Area", { size, unit, shape });
-        return { ...this.system.area, label };
+        const formatString = "PF2E.Item.Spell.Area";
+        const shape = game.i18n.localize(`PF2E.Area.Shape.${areaData.type}`);
+
+        // Handle special cases of very large areas
+        const largeAreaLabel = {
+            1320: "PF2E.Area.Size.Quarter",
+            2640: "PF2E.Area.Size.Half",
+            5280: "1",
+        }[areaData.value];
+        if (largeAreaLabel) {
+            const size = game.i18n.localize(largeAreaLabel);
+            const unit = game.i18n.localize("PF2E.Area.Size.Mile");
+            const label = game.i18n.format(formatString, { shape, size, unit, units: unit });
+            return { ...areaData, label };
+        }
+
+        const size = Number(areaData.value);
+        const unit = game.i18n.localize("PF2E.Foot.Label");
+        const units = game.i18n.localize("PF2E.Foot.Plural");
+        const label = game.i18n.format(formatString, { shape, size, unit, units });
+
+        return { ...areaData, label };
     }
 
     /** Whether the "damage" roll of this spell deals damage or heals (or both, depending on the target) */
@@ -331,11 +351,9 @@ class SpellPF2e<TParent extends ActorPF2e | null = ActorPF2e | null> extends Ite
 
         const { attribute, isAttack } = this;
         const checkStatistic = spellcasting.statistic;
-        const spellTraits = R.uniq(R.compact([...this.traits, spellcasting.tradition]));
         const damageKinds = Array.from(this.damageKinds);
         const domains = R.compact(
             [
-                damageKinds,
                 damageKinds.map((k) => `spell-${k}`),
                 damageKinds.map((k) => `${this.id}-${k}`),
                 isAttack ? ["attack-damage", "attack-spell-damage"] : null,
@@ -343,26 +361,28 @@ class SpellPF2e<TParent extends ActorPF2e | null = ActorPF2e | null> extends Ite
             ].flat(),
         );
 
-        const contextData = await this.actor.getDamageRollContext({
-            target: isAttack ? params.target : null,
-            item: this as SpellPF2e<ActorPF2e>,
-            statistic: checkStatistic.check,
+        const spellTraits = R.uniq(R.compact([...this.traits, spellcasting.tradition])).sort();
+        const actionAndTraitOptions = new Set(["action:cast-a-spell", "self:action:slug:cast-a-spell", ...spellTraits]);
+        const contextData = await new DamageContext({
+            origin: { actor: this.actor, item: this as SpellPF2e<ActorPF2e>, statistic: checkStatistic },
+            target: isAttack ? { token: params.target } : null,
             domains,
-            options: new Set(["action:cast-a-spell", "self:action:slug:cast-a-spell", ...spellTraits]),
+            options: actionAndTraitOptions,
             checkContext: null,
             outcome: null,
             traits: spellTraits,
             viewOnly: !isAttack || !params.target,
-        });
+        }).resolve();
+        if (!contextData.origin) return null;
 
-        const context: DamageRollContext = {
+        const context: DamageDamageContext = {
             type: "damage-roll",
             sourceType: isAttack ? "attack" : "save",
             outcome: isAttack ? "success" : null, // we'll need to support other outcomes later
             domains,
             options: contextData.options,
-            self: contextData.self,
-            target: contextData.target ?? null,
+            self: contextData.origin,
+            target: contextData.target,
             rollMode: params.rollMode,
             traits: contextData.traits,
         };
@@ -370,7 +390,9 @@ class SpellPF2e<TParent extends ActorPF2e | null = ActorPF2e | null> extends Ite
         // Add modifiers and damage die adjustments
         const modifiers: ModifierPF2e[] = [];
         const damageDice: DamageDicePF2e[] = [];
-        const { actor } = contextData.self;
+        const actor = contextData.origin.actor;
+        const { damageAlterations, modifierAdjustments } = actor.synthetics;
+
         if (actor.system.abilities) {
             const attributes = actor.system.abilities;
             const attributeModifiers = Object.entries(this.system.damage)
@@ -385,23 +407,38 @@ class SpellPF2e<TParent extends ActorPF2e | null = ActorPF2e | null> extends Ite
                             modifier: attributes[attribute].mod,
                             damageType: d.type,
                             damageCategory: d.category || null,
-                            adjustments: extractModifierAdjustments(
-                                actor.synthetics.modifierAdjustments,
-                                domains,
-                                `ability-${k}`,
-                            ),
+                            alterations: extractDamageAlterations(damageAlterations, domains, `ability-${k}`),
+                            adjustments: extractModifierAdjustments(modifierAdjustments, domains, `ability-${k}`),
                         }),
                 );
 
             const extractOptions = {
+                selectors: domains,
                 resolvables: { spell: this, target: contextData.target?.actor ?? null },
                 test: contextData.options,
             };
             const extracted = processDamageCategoryStacking(base, {
                 modifiers: [attributeModifiers, extractModifiers(actor.synthetics, domains, extractOptions)].flat(),
-                dice: extractDamageDice(actor.synthetics.damageDice, domains, extractOptions),
+                dice: extractDamageDice(actor.synthetics.damageDice, extractOptions),
                 test: contextData.options,
             });
+
+            // Apply alterations to base damage
+            if (actor) {
+                const item = this as SpellPF2e<NonNullable<TParent>>;
+                applyBaseDamageAlterations({ actor, item, base, domains, rollOptions: context.options });
+            }
+
+            // Apply alterations to damage synthetics
+            for (const dice of extracted.dice) {
+                dice.applyAlterations({ item: this as SpellPF2e<NonNullable<TParent>>, test: contextData.options });
+            }
+            for (const modifier of extracted.modifiers) {
+                modifier.applyDamageAlterations({
+                    item: this as SpellPF2e<NonNullable<TParent>>,
+                    test: contextData.options,
+                });
+            }
 
             modifiers.push(...extracted.modifiers);
             damageDice.push(...extracted.dice);
@@ -534,13 +571,13 @@ class SpellPF2e<TParent extends ActorPF2e | null = ActorPF2e | null> extends Ite
 
     placeTemplate(message?: ChatMessagePF2e): Promise<MeasuredTemplatePF2e> {
         if (!canvas.ready) throw ErrorPF2e("No canvas");
-        const templateConversion = {
+        const templateConversion: Record<EffectAreaShape, MeasuredTemplateType> = {
             burst: "circle",
             cone: "cone",
             cube: "rect",
+            cylinder: "circle",
             emanation: "circle",
             line: "ray",
-            rect: "rect",
             square: "rect",
         } as const;
 
@@ -561,7 +598,7 @@ class SpellPF2e<TParent extends ActorPF2e | null = ActorPF2e | null> extends Ite
                         traits: fu.deepClone(this.system.traits.value),
                         ...this.getOriginData(),
                     },
-                    areaType: this.system.area?.type ?? null,
+                    areaShape: this.system.area?.type ?? null,
                 },
             },
         };
@@ -594,7 +631,7 @@ class SpellPF2e<TParent extends ActorPF2e | null = ActorPF2e | null> extends Ite
         this.system.level.value = (Math.clamped(this.system.level.value, 1, 10) || 1) as OneToTen;
 
         if (this.system.area?.value) {
-            this.system.area.value = (Number(this.system.area.value) || 5) as EffectAreaSize;
+            this.system.area.value = Math.max(5, Math.ceil(this.system.area.value / 5) * 5 || 5);
             this.system.area.type ||= "burst";
         } else {
             this.system.area = null;
@@ -681,7 +718,10 @@ class SpellPF2e<TParent extends ActorPF2e | null = ActorPF2e | null> extends Ite
         processSanctification(this);
     }
 
-    override getRollOptions(prefix = this.type, options: { includeVariants?: boolean } = {}): string[] {
+    override getRollOptions(
+        prefix = this.type,
+        options: { includeGranter?: boolean; includeVariants?: boolean } = {},
+    ): string[] {
         const spellcasting = this.spellcasting;
         const spellOptions = new Set(["magical", `${prefix}:rank:${this.rank}`, ...this.traits]);
 
@@ -755,10 +795,7 @@ class SpellPF2e<TParent extends ActorPF2e | null = ActorPF2e | null> extends Ite
             }
         }
 
-        const rollOptions = super.getRollOptions(prefix);
-        rollOptions.push(...spellOptions);
-
-        return rollOptions;
+        return [...super.getRollOptions(prefix, options), ...spellOptions];
     }
 
     override async toMessage(
@@ -894,7 +931,7 @@ class SpellPF2e<TParent extends ActorPF2e | null = ActorPF2e | null> extends Ite
         })();
 
         // Spell attack labels
-        const { damageKinds } = this;
+        const damageKinds = this.damageKinds;
         const damageLabel = damageKinds.has("damage")
             ? damageKinds.has("healing")
                 ? "PF2E.Damage.Kind.Both.Roll.Verb"
@@ -961,9 +998,7 @@ class SpellPF2e<TParent extends ActorPF2e | null = ActorPF2e | null> extends Ite
             throw ErrorPF2e("Spell points to location that is not a spellcasting type");
         }
 
-        context.extraRollOptions = R.uniq(
-            R.compact(["action:cast-a-spell", "self:action:slug:cast-a-spell", context.extraRollOptions].flat()),
-        );
+        context.extraRollOptions = R.uniq(["action:cast-a-spell", ...(context.extraRollOptions ?? [])]);
 
         return statistic.check.roll({
             ...eventToRollParams(event, { type: "check" }),
@@ -1013,7 +1048,8 @@ class SpellPF2e<TParent extends ActorPF2e | null = ActorPF2e | null> extends Ite
     /** Roll counteract check */
     async rollCounteract(event?: MouseEvent | JQuery.ClickEvent): Promise<Rolled<CheckRoll> | null> {
         event = event instanceof Event ? event : event?.originalEvent;
-        if (!this.actor?.isOfType("character", "npc")) {
+        const actor: ActorPF2e | null = this.actor;
+        if (!actor?.isOfType("character", "npc")) {
             return null;
         }
 
@@ -1025,20 +1061,11 @@ class SpellPF2e<TParent extends ActorPF2e | null = ActorPF2e | null> extends Ite
             return null;
         }
 
-        // NPCs have neither a proficiency bonus nor specified attribute modifier: use their base attack roll modifier
-        const baseModifier = this.actor.isOfType("npc")
-            ? spellcasting.statistic.check.modifiers.find((m) => m.type === "untyped" && m.slug === "modifier")?.clone()
-            : null;
+        const statistic = spellcasting.counteraction;
+        if (!statistic) return null;
 
-        const localize = localizer("PF2E.Item.Spell.Counteract");
-        const statistic = new Statistic(this.actor, {
-            slug: "counteract",
-            label: localize("Label"),
-            attribute: spellcasting.statistic.attribute,
-            rank: spellcasting.statistic.rank ?? 0,
-            modifiers: R.compact([baseModifier]),
-        });
         const domain = "counteract-check";
+        const localize = localizer("PF2E.Item.Spell.Counteract");
         const notes = [
             new RollNotePF2e({ selector: domain, text: localize("Hint") }),
             ...DEGREE_OF_SUCCESS_STRINGS.map((degreeString): RollNotePF2e => {
@@ -1058,9 +1085,7 @@ class SpellPF2e<TParent extends ActorPF2e | null = ActorPF2e | null> extends Ite
         ];
 
         const traits = R.uniq(R.compact([...this.traits, spellcasting.tradition]));
-        const { check } = statistic.extend({ domains: [domain], rollOptions: traits });
-
-        return check.roll({
+        return statistic.check.roll({
             ...eventToRollParams(event, { type: "check" }),
             label: game.i18n.localize("PF2E.Check.Specific.Counteract"),
             extraRollNotes: notes,
@@ -1074,9 +1099,6 @@ class SpellPF2e<TParent extends ActorPF2e | null = ActorPF2e | null> extends Ite
         if (this.isVariant && this.appliedOverlays) {
             flag.variant = { overlays: [...this.appliedOverlays.values()] };
         }
-        flag.rollOptions = R.compact(
-            [this.actor?.getSelfRollOptions("origin"), this.getRollOptions("origin:item")].flat(),
-        );
 
         return flag;
     }
@@ -1153,7 +1175,19 @@ class SpellPF2e<TParent extends ActorPF2e | null = ActorPF2e | null> extends Ite
             changed.system,
             ...Object.values(changed.system.overlays ?? {}).map((o) => o?.system),
         ]);
+
         for (const system of systemChanges) {
+            // Normalize or remove spell area
+            const areaData = changed.system.area;
+            if (areaData) {
+                if (typeof areaData.value === "number") {
+                    areaData.value = Math.max(5, Math.ceil(areaData.value / 5) * 5 || 5);
+                    areaData.type ||= "burst";
+                } else if (areaData.value === null || !areaData.type) {
+                    changed.system.area = null;
+                }
+            }
+
             // Normalize defense data; wipe if both defenses are `null`
             for (const defenseType of ["passive", "save"] as const) {
                 const newValue = system.defense?.[defenseType];
@@ -1219,7 +1253,7 @@ interface SpellConstructionContext<TParent extends ActorPF2e | null> extends Doc
 
 interface SpellDamage {
     template: SpellDamageTemplate;
-    context: DamageRollContext;
+    context: DamageDamageContext;
 }
 
 interface SpellVariantChatData {

@@ -2,11 +2,12 @@ import type { ActorPF2e } from "@actor";
 import { TrickMagicItemPopup } from "@actor/sheet/trick-magic-item-popup.ts";
 import type { SpellPF2e, WeaponPF2e } from "@item";
 import { ItemProxyPF2e, PhysicalItemPF2e } from "@item";
+import { processSanctification } from "@item/ability/helpers.ts";
 import { RawItemChatData } from "@item/base/data/index.ts";
 import { TrickMagicItemEntry } from "@item/spellcasting-entry/trick.ts";
 import type { SpellcastingEntry } from "@item/spellcasting-entry/types.ts";
 import type { ValueAndMax } from "@module/data.ts";
-import type { RuleElementPF2e } from "@module/rules/index.ts";
+import type { ItemAlterationRuleElement } from "@module/rules/rule-element/item-alteration/index.ts";
 import type { UserPF2e } from "@module/user/document.ts";
 import { DamageRoll } from "@system/damage/roll.ts";
 import { ErrorPF2e, setHasElement } from "@util";
@@ -41,7 +42,16 @@ class ConsumablePF2e<TParent extends ActorPF2e | null = ActorPF2e | null> extend
         if (!this.system.spell) return null;
 
         const context = { parent: this.actor, parentItem: this };
-        return new ItemProxyPF2e(fu.deepClone(this.system.spell), context) as SpellPF2e<NonNullable<TParent>>;
+        const spell = new ItemProxyPF2e(fu.deepClone(this.system.spell), context) as SpellPF2e<NonNullable<TParent>>;
+
+        const alterations = this.actor.rules.filter((r): r is ItemAlterationRuleElement => r.key === "ItemAlteration");
+        for (const alteration of alterations) {
+            alteration.applyAlteration({ singleItem: spell });
+        }
+
+        processSanctification(spell);
+
+        return spell;
     }
 
     override prepareBaseData(): void {
@@ -62,16 +72,6 @@ class ConsumablePF2e<TParent extends ActorPF2e | null = ActorPF2e | null> extend
                 break;
             }
         }
-    }
-
-    /** Rule elements cannot be executed from consumable items, but they can be used to generate effects */
-    override prepareRuleElements(): RuleElementPF2e[] {
-        const rules = super.prepareRuleElements();
-        for (const rule of rules) {
-            rule.ignored = true;
-        }
-
-        return rules;
     }
 
     override async getChatData(
@@ -118,9 +118,9 @@ class ConsumablePF2e<TParent extends ActorPF2e | null = ActorPF2e | null> extend
         return game.i18n.format("PF2E.identification.UnidentifiedItem", { item: itemType });
     }
 
-    override getRollOptions(prefix = this.type): string[] {
+    override getRollOptions(prefix = this.type, options?: { includeGranter?: boolean }): string[] {
         return [
-            ...super.getRollOptions(prefix),
+            ...super.getRollOptions(prefix, options),
             ...Object.entries({
                 [`category:${this.category}`]: true,
             })
@@ -141,10 +141,10 @@ class ConsumablePF2e<TParent extends ActorPF2e | null = ActorPF2e | null> extend
     }
 
     /** Use a consumable item, sending the result to chat */
-    async consume(): Promise<void> {
+    async consume(thisMany = 1): Promise<void> {
         const actor = this.actor;
         if (!actor) return;
-        const { value, max } = this.uses;
+        const uses = this.uses;
 
         if (["scroll", "wand"].includes(this.category) && this.system.spell) {
             if (actor.spellcasting?.canCastConsumable(this)) {
@@ -159,11 +159,11 @@ class ConsumablePF2e<TParent extends ActorPF2e | null = ActorPF2e | null> extend
             }
         } else if (this.category !== "ammo") {
             // Announce consumption of non-ammunition
-            const exhausted = max > 1 && value === 1;
-            const key = exhausted ? "UseExhausted" : max > 1 ? "UseMulti" : "UseSingle";
+            const exhausted = uses.max >= thisMany && uses.value === thisMany;
+            const key = exhausted && uses.max > 1 ? "UseExhausted" : uses.max > thisMany ? "UseMulti" : "UseSingle";
             const content = game.i18n.format(`PF2E.ConsumableMessage.${key}`, {
                 name: this.name,
-                current: value - 1,
+                current: uses.value - thisMany,
             });
             const flags = {
                 pf2e: {
@@ -185,24 +185,24 @@ class ConsumablePF2e<TParent extends ActorPF2e | null = ActorPF2e | null> extend
         }
 
         // Optionally destroy the item
-        if (this.system.uses.autoDestroy && value <= 1) {
-            const { quantity } = this;
+        if (this.system.uses.autoDestroy && uses.value <= thisMany) {
+            const quantityRemaining = this.quantity;
 
             // Keep ammunition if it has rule elements
             const isPreservedAmmo = this.category === "ammo" && this.system.rules.length > 0;
-            if (quantity <= 1 && !isPreservedAmmo) {
+            if (quantityRemaining <= 1 && !isPreservedAmmo) {
                 await this.delete();
             } else {
                 // Deduct one from quantity if this item has one charge or doesn't have charges
                 await this.update({
-                    "system.quantity": Math.max(quantity - 1, 0),
-                    "system.uses.value": max,
+                    "system.quantity": Math.max(quantityRemaining - 1, 0),
+                    "system.uses.value": uses.max,
                 });
             }
         } else {
             // Deduct one charge
             await this.update({
-                "system.uses.value": Math.max(value - 1, 0),
+                "system.uses.value": Math.max(uses.value - thisMany, 0),
             });
         }
     }

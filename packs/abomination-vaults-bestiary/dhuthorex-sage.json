@@ -14,15 +14,6 @@
                 "description": {
                     "value": ""
                 },
-                "displayLevels": {
-                    "0": false,
-                    "1": false,
-                    "2": false,
-                    "3": false,
-                    "4": false,
-                    "5": false,
-                    "6": false
-                },
                 "prepared": {
                     "flexible": false,
                     "value": "prepared"
@@ -39,135 +30,96 @@
                 "showSlotlessLevels": {
                     "value": false
                 },
-                "showUnpreparedSpells": {
-                    "value": true
-                },
                 "slots": {
                     "slot0": {
                         "max": 5,
-                        "prepared": {
-                            "0": {
+                        "prepared": [
+                            {
                                 "id": "oWjKVBKbh8vKWS3m"
                             },
-                            "1": {
+                            {
                                 "id": "6Uz4zkWbiz6C2Twl"
                             },
-                            "2": {
+                            {
                                 "id": "Y662F8FUyEorlnn0"
                             },
-                            "3": {
+                            {
                                 "id": "7WVhx1xWX9BzPAvm"
                             },
-                            "4": {
+                            {
                                 "id": "MmCtiYT4nZBIhkgw"
                             }
-                        },
-                        "value": 0
+                        ]
                     },
                     "slot1": {
                         "max": 3,
-                        "prepared": {
-                            "0": {
+                        "prepared": [
+                            {
                                 "id": "IYE8y022dlXFfAJT"
                             },
-                            "1": {
+                            {
                                 "id": "StVHreaLBqjdC0Hb"
                             },
-                            "2": {
+                            {
                                 "id": "dAgiVUx969Bcgzoo"
                             }
-                        },
-                        "value": 0
-                    },
-                    "slot10": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot11": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
+                        ]
                     },
                     "slot2": {
                         "max": 3,
-                        "prepared": {
-                            "0": {
+                        "prepared": [
+                            {
                                 "id": "ztXOEHzJxSOKCWl2"
                             },
-                            "1": {
+                            {
                                 "id": "svuoWZVdsXdMglm5"
                             },
-                            "2": {
+                            {
                                 "id": "GEKTuuVWbw8FCTZt"
                             }
-                        },
-                        "value": 0
+                        ]
                     },
                     "slot3": {
                         "max": 3,
-                        "prepared": {
-                            "0": {
+                        "prepared": [
+                            {
                                 "id": "ieKVlBypgyuEFGJb"
                             },
-                            "1": {
+                            {
                                 "id": "lDbKq3xfvBHjORin"
                             },
-                            "2": {
+                            {
                                 "id": "0UeqKDsrHd1nZCrd"
                             }
-                        },
-                        "value": 0
+                        ]
                     },
                     "slot4": {
                         "max": 3,
-                        "prepared": {
-                            "0": {
+                        "prepared": [
+                            {
                                 "id": "ZhANxBM4uwe8vP1H"
                             },
-                            "1": {
+                            {
                                 "id": "UXFl3ZS49L2OnoiF"
                             },
-                            "2": {
+                            {
                                 "id": "P5ucJgcoClV6hkhp"
                             }
-                        },
-                        "value": 0
+                        ]
                     },
                     "slot5": {
                         "max": 3,
-                        "prepared": {
-                            "0": {
+                        "prepared": [
+                            {
                                 "id": "lkHsAhnVEvosTrQ8"
                             },
-                            "1": {
+                            {
                                 "id": "J0wiCJqX1kRcXAO8"
                             },
-                            "2": {
+                            {
                                 "id": "ZBeRDgGBQ5F9aNXS"
                             }
-                        },
-                        "value": 0
-                    },
-                    "slot6": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot7": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot8": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot9": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
+                        ]
                     }
                 },
                 "slug": null,
@@ -194,7 +146,6 @@
                 "description": {
                     "value": ""
                 },
-                "displayLevels": {},
                 "prepared": {
                     "flexible": false,
                     "value": "innate"
@@ -211,71 +162,7 @@
                 "showSlotlessLevels": {
                     "value": false
                 },
-                "showUnpreparedSpells": {
-                    "value": true
-                },
-                "slots": {
-                    "slot0": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot1": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot10": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot11": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot2": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot3": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot4": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot5": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot6": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot7": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot8": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    },
-                    "slot9": {
-                        "max": 0,
-                        "prepared": [],
-                        "value": 0
-                    }
-                },
+                "slots": {},
                 "slug": null,
                 "spelldc": {
                     "dc": 27,
@@ -2074,41 +1961,6 @@
             "type": "melee"
         },
         {
-            "_id": "43FJrgdgr667MXKo",
-            "flags": {
-                "core": {
-                    "sourceId": "Compendium.pf2e.bestiary-ability-glossary-srd.Item.qCCLZhnp2HhP3Ex6"
-                }
-            },
-            "img": "systems/pf2e/icons/actions/Passive.webp",
-            "name": "Darkvision",
-            "sort": 2900000,
-            "system": {
-                "actionType": {
-                    "value": "passive"
-                },
-                "actions": {
-                    "value": null
-                },
-                "category": "interaction",
-                "description": {
-                    "value": "<p>@Localize[PF2E.NPC.Abilities.Glossary.Darkvision]</p>"
-                },
-                "publication": {
-                    "license": "OGL",
-                    "remaster": false,
-                    "title": "Pathfinder Bestiary"
-                },
-                "rules": [],
-                "slug": "darkvision",
-                "traits": {
-                    "rarity": "common",
-                    "value": []
-                }
-            },
-            "type": "action"
-        },
-        {
             "_id": "3b3sEGxcz23toRTi",
             "flags": {
                 "core": {
@@ -2117,7 +1969,7 @@
             },
             "img": "systems/pf2e/icons/actions/Passive.webp",
             "name": "Wavesense (Imprecise) 60 feet",
-            "sort": 3000000,
+            "sort": 2900000,
             "system": {
                 "actionType": {
                     "value": "passive"
@@ -2152,7 +2004,7 @@
             },
             "img": "systems/pf2e/icons/actions/Passive.webp",
             "name": "All-Around Vision",
-            "sort": 3100000,
+            "sort": 3000000,
             "system": {
                 "actionType": {
                     "value": "passive"
@@ -2194,7 +2046,7 @@
             },
             "img": "systems/pf2e/icons/actions/Reaction.webp",
             "name": "Attack of Opportunity",
-            "sort": 3200000,
+            "sort": 3100000,
             "system": {
                 "actionType": {
                     "value": "reaction"
@@ -2229,7 +2081,7 @@
             },
             "img": "systems/pf2e/icons/actions/Passive.webp",
             "name": "Frightful Presence",
-            "sort": 3300000,
+            "sort": 3200000,
             "system": {
                 "actionType": {
                     "value": "passive"
@@ -2280,7 +2132,7 @@
             },
             "img": "systems/pf2e/icons/actions/OneAction.webp",
             "name": "Aquatic Ambush",
-            "sort": 3400000,
+            "sort": 3300000,
             "system": {
                 "actionType": {
                     "value": "action"
@@ -2333,7 +2185,7 @@
             },
             "img": "systems/pf2e/icons/actions/OneAction.webp",
             "name": "Grab",
-            "sort": 3500000,
+            "sort": 3400000,
             "system": {
                 "actionType": {
                     "value": "action"
@@ -2368,7 +2220,7 @@
             },
             "img": "systems/pf2e/icons/actions/OneAction.webp",
             "name": "Push",
-            "sort": 3600000,
+            "sort": 3500000,
             "system": {
                 "actionType": {
                     "value": "action"
@@ -2398,7 +2250,7 @@
             "_id": "QYsv3FUNxKhqmBrt",
             "img": "systems/pf2e/icons/default-icons/lore.svg",
             "name": "Athletics",
-            "sort": 3700000,
+            "sort": 3600000,
             "system": {
                 "description": {
                     "value": ""
@@ -2423,7 +2275,7 @@
             "_id": "eMCF5HvYtImNLJkr",
             "img": "systems/pf2e/icons/default-icons/lore.svg",
             "name": "Occultism",
-            "sort": 3800000,
+            "sort": 3700000,
             "system": {
                 "description": {
                     "value": ""
@@ -2448,7 +2300,7 @@
             "_id": "7G6m1twqO0yjiZBc",
             "img": "systems/pf2e/icons/default-icons/lore.svg",
             "name": "Stealth",
-            "sort": 3900000,
+            "sort": 3800000,
             "system": {
                 "description": {
                     "value": ""
@@ -2473,7 +2325,7 @@
             "_id": "h47sVJN3pNPjm1Ls",
             "img": "systems/pf2e/icons/default-icons/lore.svg",
             "name": "Survival",
-            "sort": 4000000,
+            "sort": 3900000,
             "system": {
                 "description": {
                     "value": ""
