@@ -108,6 +108,7 @@
                 "CubeFace": "Cube Face",
                 "Fangs": "Fangs",
                 "FireMote": "Fire Mote",
+                "Fist": "Fist",
                 "Foot": "Foot",
                 "Foreleg": "Foreleg",
                 "Gust": "Gust",
@@ -626,6 +627,14 @@
             "AncientWisp": {
                 "PinpointLight": "Pinpoint Light"
             },
+            "AsoBerang": {
+                "PhantomFlames": {
+                    "Fire": "Fire",
+                    "None": "None",
+                    "Spirit": "Spirit"
+                },
+                "SpectralFlame": "Spectral Flame"
+            },
             "BarghestFeed": "How many times has the Barghest fed?",
             "BladeMagus": {
                 "ArcaneCascade": {
@@ -702,7 +711,7 @@
                             "Medium": "Medium Water Elemental",
                             "Small": "Small Water Elemental"
                         },
-                         "Wood": {
+                        "Wood": {
                             "Elemental": "Wood Elemental",
                             "Medium": "Medium Wood Elemental",
                             "Small": "Small Wood Elemental"
@@ -824,8 +833,27 @@
             "Falrok": {
                 "LazuriteTerrainSwitch": "In lazurite infused terrain"
             },
+            "FiveColorOrchidMantis": {
+                "ColorShift": {
+                    "Black": "Black - Water",
+                    "Green": "Green - Wood",
+                    "None": "No Color Selected",
+                    "Red": "Red - Fire",
+                    "White": "White - Metal",
+                    "Yellow": "Yellow - Earth"
+                }
+            },
             "GangUp": {
                 "TwoAllies": "Two allies are within reach of the target"
+            },
+            "GauChoRong": {
+                "SubsumedTrait": {
+                    "Animal": "Animal",
+                    "Aquatic": "Aquatic",
+                    "Amphibious": "Amphibious",
+                    "Humanoid": "Humanoid",
+                    "NoneOrOther": "Manually Select Resistance, if applicable"
+                }
             },
             "GiantAnimatedStatueBrazier": "Brazier is alight",
             "GrimReaper": {
@@ -926,6 +954,16 @@
                 "TargetMurderedPaleStranger": "Target Murdered Pale Stranger",
                 "TargetNeverKilled": "Target has Never Killed"
             },
+            "PlanarScion": {
+                "Duskwalker": {
+                    "HuntPrey": {
+                        "AC": "Designated Prey attacks the Duskwalker",
+                        "Checks": "Duskwalker rolls checks against his Designated Prey"
+                    },
+                    "Immunity": "effects that would transform their body or soul to an undead",
+                    "SpiritHunter": "Target is Designated by Spirit Hunter"
+                }
+            },
             "PoltergeistTelekineticStorm": {
                 "MultiAttackLabel": "Telekinetic Storm - Multiple Targets",
                 "MultipleTargets": "Multiple Targets",
@@ -957,6 +995,9 @@
             },
             "Seugathi": {
                 "MindfogSuppression": "Suppress Mindfog Aura"
+            },
+            "Silene": {
+                "LumberjacksBane": "Target is wielding an axe"
             },
             "Shell": {
                 "BrokenShell": "Broken Shell",
@@ -992,6 +1033,33 @@
             "Surgeon": {
                 "MedicalMalpracticeCriticalSuccess": "Medical Malpractice (Critical Success)"
             },
+            "TheGreatFlood": {
+                "LeadingHead": "Leading Head",
+                "LeadingHeadDescription": {
+                    "NoHeadSelected": "During each of the Great Flood's appearances, one head takes the lead once combat begins, chosen by the GM when initiative is rolled. Whichever head is in the lead grants a different action the Great Flood can use during its first turn each round (see Coordinated Actions).",
+                    "Aloof": "The aloof head casts a 5th-rank @UUID[Compendium.pf2e.spells-srd.Item.aIHY2DArKFweIrpf]{Command} (@Check[type:will|dc:42]).",
+                    "Ambitious": "The ambitious head declares a divine position above its station. It gains 100 temporary Hit Points for 1 minute. It also gains a weakness 20 to spirit damage and can't Claim Position again for 1 minute.",
+                    "Assertive": "The Great Flood Swims, then makes a melee Strike.",
+                    "Capricious": "The capricious head counteracts each mental effect on themself as a 10th-rank effect with a [[/r 1d20+32 #Counteract]]{+32} counteract modifier.",
+                    "PeoplePleaser": "The heads discuss and audibly agree on a creature to target. Until they Build Consensus again, their Strikes deal an additional 20 precision damage to that creature.",
+                    "Perfectionist": "The perfectionist head criticizes a creature within their aura. The creature must succeed at a @Check[type:will|dc:42] save or take @Damage[9d6[persistent,mental]] damage.",
+                    "Playful": "The playful head makes an ill-timed quip about the impermanence of life. They attempt to @UUID[Compendium.pf2e.actionspf2e.Item.2u915NdUyQan6uKF]{Demoralize} each creature within their aura.",
+                    "Secretive": "The Great Flood is @UUID[Compendium.pf2e.conditionitems.Item.zJxUflt9np0q4yML]{Invisible} until the end of their turn and teleports to an open space within their aura.",
+                    "Suspicious": "The Great Flood peers at their surroundings. Until they move, they see through illusions in their aura and the reach of their jaws is increased to 25 feet."
+                },
+                "LeadingHeadName": {
+                    "NoHeadSelected": "None Selected",
+                    "Aloof": "Aloof",
+                    "Ambitious": "Ambitious",
+                    "Assertive": "Assertive",
+                    "Capricious": "Capricious",
+                    "PeoplePleaser": "People Pleaser",
+                    "Perfectionist": "Perfectionist",
+                    "Playful": "Playful",
+                    "Secretive": "Secretive",
+                    "Suspicious": "Suspicious"
+                }
+            },
             "TreerazerPlantAttack": "Attack a Plant",
             "Vampire": {
                 "JiangShi": {
@@ -1007,6 +1075,18 @@
                             "Note": "The target becomes @UUID[Compendium.pf2e.conditionitems.Item.MIRkyAjyBeXivMa7]{Enfeebled 1}"
                         }
                     }
+                }
+            },
+            "Vordine": {
+                "TridentOfDis": {
+                    "NoAlly": "No Ally",
+                    "UnholyAlly": "Unholy Ally"
+                }
+            },
+            "Warsworn": {
+                "AnimatedWeapon": {
+                    "DieSize": "Animated Weapon - Die Size",
+                    "DamageType": "Animated Weapon - Damage Type"
                 }
             },
             "YetiNightmareGuardianRage": "Nightmare Guardian Rage",
@@ -1464,6 +1544,7 @@
             "AgainstDemons": "Against Demons",
             "Aid": "To Aid",
             "AttemptToFascinateOutdoorsInBrightSun": "Using Fascinating Performance Outdoors in Bright Sun",
+            "Balance": "To Balance",
             "Blacksmithing": "For Blacksmithing",
             "BloodOrWater": "In Blood or Water",
             "BoundHome": "Within Bound Home",
@@ -2541,6 +2622,9 @@
                     "GuidingLuck": "You can't use Guiding Luck's effect that applies to attack rolls and Perception checks to use Shared Luck to benefit an ally."
                 }
             },
+            "Harrowing": {
+                "RerollLabel": "Rerolling roll using the Harrowing result"
+            },
             "HarrowChosen": {
                 "Misaligned": "Misaligned",
                 "PartialMatch": "Partial Match",
@@ -2774,6 +2858,9 @@
                     "StrongjawKobold": "Strongjaw Kobold",
                     "VenomtailKobold": "Venomtail Kobold"
                 },
+                "DragonsBreath": {
+                    "DescriptionAlteration": "You channel your draconic exemplar's power into a gout of energy that manifests as a @Template[type:line|distance:60] or a @Template[type:cone|distance:30], dealing @Damage[ceil(@actor.level/2)d8[@actor.flags.pf2e.draconicExemplar.damageType]|traits:area-damage] damage. Each creature in the area must attempt a basic saving throw against the higher of your class DC or spell DC. You can't use this ability again for 1 hour."
+                },
                 "DragonsPresence": {
                     "Note": "When you roll a success on a saving throw against a fear effect, you get a critical success instead. When you roll a failure against a fear effect, you get a critical failure instead."
                 }
@@ -2830,6 +2917,9 @@
                 },
                 "SparklingTarge": {
                     "DefendingLabel": "Defending against magic"
+                },
+                "Spellstrike": {
+                    "RechargeNote": "You recharge your Spellstrike when you cast a conflux spell that takes at least 1 action to cast."
                 }
             },
             "MantleOfTheUnwaveringHeart": {
@@ -3050,6 +3140,9 @@
             "PackAttack": {
                 "Label": "Target is Within Range of At Least Two Allies"
             },
+            "PathfinderAgentDedication": {
+                "ThoroughReports": "Thorough Reports"
+            },
             "Poppet": {
                 "WashOut": {
                     "Note": "Each time you succeed at a Fortitude save against an ongoing poison, you reduce its stage by 2, or by 1 against a virulent poison. Each critical success you achieve against an ongoing poison reduces its stage by 3, or by 2 against a virulent poison."
@@ -3209,7 +3302,7 @@
                     "TargetOfPsychicIre": "Choose one target of the spell. Psychic phenomena turn themselves on the target—typically, objects fling themselves at the creature. At the beginning of each of the target's turns, it takes @Damage[(@item.level)d4[bludgeoning]] damage, with a basic Reflex save. The target remains marked by psychic ire for 3 rounds. The effect persists even if you fall @UUID[Compendium.pf2e.conditionitems.Item.fBnFDH2MTzgFijKf]{Unconscious} or leave the area.",
                     "TelekineticHand": {
                         "Base": "You create a multitude of telekinetic hands that grip onto a creature and move it about. Target a creature of Medium size or smaller with the amped spell instead of an object. You attempt to @UUID[Compendium.pf2e.actionspf2e.Item.7blmbDrQFNfdT731]{Shove} the target in a direction of your choice, rolling a spell attack roll against its Fortitude DC instead of an Athletics check. The creature takes a –10-foot circumstance penalty to its Speeds until the spell ends. Starting the round after you Cast the Spell, the first time each round you Sustain the Spell, you can attempt to Shove the creature again.",
-                        "Heightened": "You can attempt to @UUID[Compendium.pf2e.actionspf2e.Item.Dt6B1slsBy8ipJu9]{Disarm} the creature instead of attempting to @UUID[Compendium.pf2e.actionspf2e.Item.7blmbDrQFNfdT731]{Shove} it. If you knock an item out of the creature's grasp in this way, the mage hand immediately grabs it. Any effect of the mage hand on the creature ends, and the spell now carries the item, just like you had picked it up with an unamped mage hand."
+                        "Heightened": "You can attempt to @UUID[Compendium.pf2e.actionspf2e.Item.Dt6B1slsBy8ipJu9]{Disarm} the creature instead of attempting to @UUID[Compendium.pf2e.actionspf2e.Item.7blmbDrQFNfdT731]{Shove} it. If you knock an item out of the creature's grasp in this way, the Telekinetic Hand immediately grabs it. Any effect of the Telekinetic Hand on the creature ends, and the spell now carries the item, just like you had picked it up with an unamped Telekinetic Hand."
                     },
                     "TelekineticProjectile": {
                         "Base": "You fling objects with even more force, driving your opponents backwards in a hail of objects. On a success, you push the target 5 feet away from you, and on a critical success, you push the target 10 feet away from you in addition to dealing double damage.",
@@ -3625,7 +3718,7 @@
                     "Description": "When you cast _mist_, you can modify the spell to replace its standard effects with the following: You cause a cloud of thick fog to blanket the area, making it difficult to see the ground. The area within the fog is difficult terrain for creatures that can't see through fog or mist. You can Dismiss the cloud."
                 },
                 "LarcenousHand": {
-                    "Description": "When you cast _telekinetic hand_, you can remove its duration, modify its range to 20 feet, and modify its target to be an attended object within the spell's Bulk limit that wouldn't be time-consuming to remove. Add the following to the spell's standard effects: If the creature attending the object is willing to have you take the item, mage hand carries the item to you. If the creature is unwilling, you must attempt to [[/act steal]] the target object with a Thievery check. The usual restrictions on attempts to Steal an object apply, including the restrictions that you can't steal objects that would be extremely noticeable or time-consuming to remove (like worn shoes or armor or actively wielded objects) and you can't Steal from a creature in combat or otherwise on guard. On a successful Steal check, the mage hand carries the item to you, and on a critical failure, you can't use this modification again for 1 hour. If you're a master in Thievery, you can attempt to Steal from a creature in combat or otherwise on guard, though if you do so, the spell's casting time increases by 1 action."
+                    "Description": "When you cast _telekinetic hand_, you can remove its duration, modify its range to 20 feet, and modify its target to be an attended object within the spell's Bulk limit that wouldn't be time-consuming to remove. Add the following to the spell's standard effects: If the creature attending the object is willing to have you take the item, Telekinetic Hand carries the item to you. If the creature is unwilling, you must attempt to [[/act steal]] the target object with a Thievery check. The usual restrictions on attempts to Steal an object apply, including the restrictions that you can't steal objects that would be extremely noticeable or time-consuming to remove (like worn shoes or armor or actively wielded objects) and you can't Steal from a creature in combat or otherwise on guard. On a successful Steal check, the Telekinetic Hand carries the item to you, and on a critical failure, you can't use this modification again for 1 hour. If you're a master in Thievery, you can attempt to Steal from a creature in combat or otherwise on guard, though if you do so, the spell's casting time increases by 1 action."
                 },
                 "LingeringFlames": {
                     "Description": "When you cast _fireball_, you can modify its effects, decreasing the base damage to 5d6 and causing it to deal @Damage[(2*(@item.level - 2))[fire,persistent]] damage to creatures that fail their save, doubled as normal on a critical failure. If you do, replace its heightened entry with the following.",

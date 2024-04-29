@@ -1,3 +1,116 @@
+## 5.15.1
+
+### System Improvements
+
+-   (redeux) Set default level in party check level-based DC's to average party level
+-   (Supe) Show GM Notes in item summaries
+-   (Supe) Add world time setting for imperial calendar
+-   (Supe) Expose `Predicate` for module use
+
+### Bugfixes
+
+-   (stwlam) Fix styling of action traits on familiar sheet
+-   (stwlam) Prevent loss of modifier adjustments from property runes
+-   (stwlam) Scale scatter damage with number of weapon damage dice
+-   (Supe) Avoid filtering homebrew creature traits from ability items
+-   (Supe) Fix overriding spell area in fixed heightening
+-   (Supe) Fix inclusion of parent roll options in predication tests of modifier clones
+-   (Supe) Fix validation of `override` mode damage dice faces item alterations
+-   (Supe) Include item options in target context clones
+-   (Supe) Fix adding skills to deities
+
+### Data Updates
+
+-   (Abaddon) Add Goodberry to renamed spells page of Remaster Changes journal entry
+-   (Abaddon) Add metal and wood domains to Domains journal entry
+-   (Abaddon) Add scaling persistent fire damage to scorching blast
+-   (Abaddon) Fix Hair Trigger prerequisite
+-   (Abaddon) Remove broken spell links from granted deity spells
+-   (Dire Weasel) Add automation for Gallop
+-   (Dire Weasel) Add cold damage partial to Kargstaad's Hatchet Strike
+-   (Dire Weasel) Add custom resistances for some liches and vampires
+-   (Dire Weasel) Add effect for Vescavor's Chaotic Spawning, Vilderavn's Aura of Disquietude
+-   (Dire Weasel) Add effect, area, and leveled damage link for Volcanic Eruption
+-   (Dire Weasel) Add links to Bone Prophet's Raise Serpent
+-   (Dire Weasel) Add reach automation for Shadow Giant's Shadow Chain and Vordine's Trident of Dis
+-   (Dire Weasel) Add template to Transmute Rock And Mud and update description to use lists rather than bullets
+-   (Dire Weasel) Fix action cost and inline damage of Vloriak's Spew Rusted Shards
+-   (Dire Weasel) Fix damage type of Spider Sting
+-   (Dire Weasel) Fix defenses and size of Mighty Bul-Gae
+-   (Dire Weasel) Fix description of Flawed Orb of Gold Dragonkind
+-   (Dire Weasel) Fix Fearsome Brute multiplier for master Intimidation
+-   (Dire Weasel) Fix formatting error in Energy Breath Potion (Sonic, Lesser)
+-   (Dire Weasel) Fix Gimmerling's Sly Disarm action cost
+-   (Dire Weasel) Fix links in Smoke Ball (Lesser)
+-   (Dire Weasel) Fix missing exceptions for Zecui's Harden Chitin resistance
+-   (Dire Weasel) Fix skill bonuses for Immense Mandragora
+-   (Dire Weasel) Remove incorrect Agathion trait from Hryngar Forgepriest
+-   (kromko) Fix description formatting of many items
+-   (kromko) Fix formatting of several Spell descriptions
+-   (kromko) Make minor formatting and grammar changes in Bestiary 2 item descriptions
+-   (Manni) Fix item description on Age of Ashes NPC
+-   (redeux) Add Routine to Helpful Wisp Swarm (PFS 5-13)
+-   (Rigo) Add description alteration for Dragons Breath
+-   (Rigo) Add effect for Cascade Countermeasure
+-   (Rigo) Add Monster Core's Banshee
+-   (Rigo) Correct Glimpse Weakness scaling and fix other data errors
+-   (Rigo) Fix Ghostly Resistance definitions
+-   (Rigo) Remove surface cantrips as a choice for archetype psychics
+-   (Rigo) Use Item Alteration for Spellstrike recharge reminder in Conflux Spells
+-   (SpartanCPA) Add actors from PFS Quest #17
+-   (SpartanCPA) Adjust old dragon names to match Monster Core standard
+-   (SpartanCPA) Adjust Remastered Ghost Resistances
+-   (SpartanCPA) Correct action type of Retract Body (Monster Core)
+-   (stwlam) Correct level of standard-grade adamantine armor
+-   (stwlam) Fix hands value of Tetsubo
+-   (Supe) Tweak Ferrous Form and add effect for alloy flesh and steel
+-   (Surge) Make many corrections to Monster Core data
+-   (Tikael) Add 2024 April Fools blog creature
+-   (Tikael) Add effect for Lava Leap
+-   (Tikael) Fix level of Waldgeist
+-   (Tikael) Fix stats of Topiary beast and monster
+-   (Tikael) Tone down light on Shining Child
+
+## 5.15.0
+
+### Highlights
+
+-   (Avagdu, Dire Weasel, SpartanCPA) Add creatures from Monster Core
+-   (Avagdu) Update Player Core iconics at levels 3-5 to remaster versions
+
+### Bugfixes
+
+-   (In3luki) Update elite/weak adjustments to reflect changes in GM Core
+-   (In3luki) Fix issue causing enemy DCs to appear to players following rerolls
+-   (stwlam) Fix parentheses sometimes appearing in private damage rolls
+-   (stwlam) Replace usage of `Array#toReversed` with `Array#reverse` to accommodate very old versions of Chrome
+-   (Supe) Fix actors directory showing familiars at level 0 and familiar-triggered errors thrown in party actors
+-   (Supe) Fix formatting for Feint Army tactical war action
+-   (Supe) Fix rolling army skills and initiative
+
+### Data Updates
+
+-   (Avagdu) Add "Meet the Iconic" Backstories to Official Iconic Characters
+-   (Dire Weasel) Add automation for Catch Rock, Discerning Strike, Polearm Tricks, Prayer Attack, Thorough Reports, and Twist the Hook
+-   (Dire Weasel) Add inline performance check to Counter Performance
+-   (Dire Weasel) Fix Clockwork Fabricator's Constrict damage link
+-   (Dire Weasel) Fix Yuni's level
+-   (Dire Weasel) Move some description text to GM notes for Ring of Bestial Friendship
+-   (Dire Weasel) Update Poltergeist Telekinetic Object and Telekinetic Storm
+-   (Dire Weasel) Update Treat Wounds description to text in Player Core
+-   (Drental) Remove old darkvision and low-light-vision ancestry Features
+-   (kromko) Fix description of Second Chance's action
+-   (kromko) Remove duplicate lore from Chandriu Invisar
+-   (rectulo) Fix Description of Midnight Milk (refined)
+-   (rectulo) Fix prerequisite of Steal Vitality
+-   (Rigo) Add missing conscious mind info in class feature and classes journal
+-   (Rigo) Fix Enervating Wail's damage formula
+-   (stwlam) Fix action type and cost of Scare to Death
+-   (Surge) Update Light of Truth effect
+-   (Tikael) Add spell effect for Harrowing ritual
+-   (Tikael) Fix traditions of Briny Bolt
+-   (Tikael) Move Curse of Outpouring Life toggle to spellcasting
+
 ## 5.14.4
 
 ### Bugfixes

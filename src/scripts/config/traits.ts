@@ -235,6 +235,7 @@ const creatureTraits = {
     wight: "PF2E.TraitWight",
     "wild-hunt": "PF2E.TraitWildHunt",
     wraith: "PF2E.TraitWraith",
+    wraithvine: "PF2E.TraitWraithvine",
     wyrwood: "PF2E.TraitWyrwood",
     xulgath: "PF2E.TraitXulgath",
     zombie: "PF2E.TraitZombie",
@@ -349,6 +350,7 @@ const spellTraits = {
     summon: "PF2E.TraitSummon",
     summoned: "PF2E.TraitSummoned",
     teleportation: "PF2E.TraitTeleportation",
+    trial: "PF2E.TraitTrial",
     "true-name": "PF2E.TraitTrueName",
     visual: "PF2E.TraitVisual",
 };
