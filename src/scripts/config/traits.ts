@@ -912,7 +912,7 @@ const equipmentTraits = {
 
 const shieldTraits = {
     ...sanctificationTraits,
-    ...elementTraits,
+    ...damageTraits,
     ...magicTraditions,
     apex: "PF2E.TraitApex",
     "deflecting-bludgeoning": "PF2E.TraitDeflectingBludgeoning",
@@ -930,13 +930,14 @@ const shieldTraits = {
     invested: "PF2E.TraitInvested",
     "launching-dart": "PF2E.TraitLaunching",
     magical: "PF2E.TraitMagical",
+    relic: "PF2E.TraitRelic",
     "shield-throw-20": "PF2E.TraitShieldThrow20",
     "shield-throw-30": "PF2E.TraitShieldThrow30",
 };
 
 const armorTraits = {
     ...sanctificationTraits,
-    ...elementTraits,
+    ...damageTraits,
     ...magicTraditions,
     adjusted: "PF2E.TraitAdjusted",
     alchemical: "PF2E.TraitAlchemical",
@@ -968,6 +969,7 @@ const armorTraits = {
     noisy: "PF2E.TraitNoisy",
     plant: "PF2E.TraitPlant",
     ponderous: "PF2E.TraitPonderous",
+    relic: "PF2E.TraitRelic",
 };
 
 const rangeDescriptions = R.mapToObj(RANGE_TRAITS, (trait) => [trait, "PF2E.TraitDescriptionRange"]);
