@@ -1,3 +1,40 @@
+## 5.16.0
+
+### Data Updates
+
+-   (Avagdu, DocSchlock, Dogstarrb, Rigo, Roxim, Tikael, TMun) Add content from Howl of the Wild
+-   (Abaddon) Update familiar elemental ability for remaster
+-   (DocSchlock) Update Winter Sleet stance effect to also match the errata
+-   (kromko) Fix localization for angel and animal traits
+-   (Rigo) Add automation for Phase Bolt
+-   (Rigo) Update missing instances of Inventor Unstable DC errata (Clockwork Celerity/Explosive Leap/Haphazard Repair/Negate Damage)
+
+## 5.15.4
+
+### Bugfixes
+
+-   (Supe) Fix cantrips and focus spells casting at 1st rank for NPCs above level 20
+-   (Supe) Set spellcasting proficiency to trained if at least one spellcasting entry exists
+
+### Data Updates
+
+-   (Abbadon) Minor corrections for Triggerbrand Salvo, Malevolent Mannequins, and Harlo Krant
+-   (Ambrose M) Add automation for Strix Flight feats, Life Link, and Hand of the Apprentice
+-   (Cuingamehtar) Add new creature trait descriptions from Monster Core
+-   (Dire Weasel) Improve automation of Emblazon Feats
+-   (Dire Weasel) Update Sending's target and refresh it on all NPCs
+-   (DocSchlock) Fix description of the Injection trait
+-   (DocSchlock) Minor corrections for Bort's Blessing, Consecrate, and Tekko-Gaki
+-   (jfn4th) Fix message formatting for hag blood magic
+-   (LJSmith066) Fix Meteor Swarm for all NPCs in the bestiary
+-   (LJSmith006) Add automation for Mechanical Symbiosis
+-   (Rigo) Add effects for the Hero Point Deck
+-   (Tikael) Add automation for Pitborn
+-   (Tikael) Fix Barbarian's Spirit Instinct's Greater Weapon Specialization
+-   (Tikael) Restored Ancestry Guide Tiefling and Aasimar feats as Nephilim feats with remaster edits
+-   (Tikael) Incorporate Errata from May 17, 2024
+-   (Dire Weasel, Tikael) Minor corrections for PFS and Bestiary NPCs
+
 ## 5.15.3
 
 ### Bugfixes
