@@ -165,6 +165,19 @@ input[type="number"] {
                 text-align: center;
             }
         }
+        button {
+            background: transparent;
+            border-radius: 2px 2px 0 0;
+            border: 1px solid var(--color-border-divider);
+            color: var(--primary);
+            cursor: pointer;
+            font: 500 var(--font-size-12) / 1 var(--sans-serif);
+            height: 20px;
+            margin: 0;
+            outline: none;
+            text-transform: uppercase;
+            width: auto;
+        }
     }
 }
 
@@ -172,14 +185,13 @@ input[type="number"] {
     grid-area: abilities;
     display: grid;
     flex: 0;
-    grid-template-columns: 1fr 1fr
+    grid-template-columns: 1fr 1fr 1fr
     input {
         height: auto;
     }
-    .header {
+    header {
         grid-row-start: 1;
-        grid-column-start: 1;
-        grid-column-end: 4;
+        grid-column-start: span 3;
     }
     .ability {
         grid-row-start: 2;

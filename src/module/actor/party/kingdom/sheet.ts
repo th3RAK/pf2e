@@ -32,7 +32,7 @@ import {
 import * as R from "remeda";
 import Sortable from "sortablejs";
 import { KingdomBuilder } from "./builder.ts";
-import { calculateKingdomCollectionData } from "./helpers.ts";
+import { calculateKingdomCollectionData, calculateKingdomStabilizationData } from "./helpers.ts";
 import { Kingdom } from "./model.ts";
 import {
     KingdomAbilityData,
@@ -434,6 +434,31 @@ class KingdomSheetPF2e extends ActorSheetPF2e<PartyPF2e> {
                 },
                 content: await renderTemplate("systems/pf2e/templates/actors/party/kingdom/collection.hbs", {
                     ...calculateKingdomCollectionData(this.kingdom),
+                }),
+            });
+        });
+
+        htmlQuery(html, "[data-action=stabilize]")?.addEventListener("click", async () => {
+            ChatMessagePF2e.create({
+                speaker: {
+                    ...ChatMessagePF2e.getSpeaker(this.actor),
+                    alias: this.kingdom.name,
+                },
+                content: await renderTemplate("systems/pf2e/templates/actors/party/kingdom/determineStability.hbs", {
+                    ...calculateKingdomStabilizationData(this.kingdom),
+                }),
+            });
+        });
+
+        htmlQuery(html, "[data-action=payConsumption]")?.addEventListener("click", async () => {
+            ChatMessagePF2e.create({
+                speaker: {
+                    ...ChatMessagePF2e.getSpeaker(this.actor),
+                    alias: this.kingdom.name,
+                },
+                content: await renderTemplate("systems/pf2e/templates/actors/party/kingdom/payConsumption.hbs", {
+                    consumption: this.kingdom.consumption,
+                    points: this.kingdom.resources.points,
                 }),
             });
         });

@@ -1,6 +1,6 @@
 <div class="chat-card pf2e kingdom">
     <header class="card-header flexrow">
-        <h3>{{localize "PF2E.Kingmaker.Kingdom.CollectDialog.Header"}}</h3>
+        <h3>Income: Collect Taxes</h3>
     </header>
     <p>{{localize "PF2E.Kingmaker.Kingdom.CollectDialog.Description" dice=formula}}</p>
     <ul>
@@ -8,7 +8,6 @@
         <li>{{value}} {{localize (concat "PF2E.Kingmaker.Kingdom.Commodity." slug)}}</li>
     {{/each}}
     </ul>
-    <p>{{localize "PF2E.Kingmaker.Kingdom.CollectDialog.Disclaimer"}}</p>
     <button type="button" data-action="kingdom-collect" data-visibility="owner">
         {{localize "PF2E.Kingmaker.Confirm"}}
     </button>

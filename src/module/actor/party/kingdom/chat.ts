@@ -24,6 +24,36 @@ export async function handleKingdomChatMessageEvents(options: KingdomChatMessage
         );
         message.update({ content: content.innerHTML });
     }
+
+    if (htmlClosest(event.target, "[data-action=kingdom-determineStability]")) {
+        if (!party.isOwner) return;
+        const kingdom = party.campaign;
+        await kingdom.determineStability();
+
+        const content = createHTMLElement("div", { innerHTML: message.content });
+        htmlQuery(content, "[data-action=determineStability]")?.replaceWith(
+            createHTMLElement("div", {
+                classes: ["confirmation"],
+                children: [fontAwesomeIcon("fa-check"), "Stability Determined"],
+            }),
+        );
+        message.update({ content: content.innerHTML });
+    }
+
+    if (htmlClosest(event.target, "[data-action=kingdom-payConsumption]")) {
+        if (!party.isOwner) return;
+        const kingdom = party.campaign;
+        await kingdom.payConsumption();
+
+        const content = createHTMLElement("div", { innerHTML: message.content });
+        htmlQuery(content, "[data-action=payConsumption]")?.replaceWith(
+            createHTMLElement("div", {
+                classes: ["confirmation"],
+                children: [fontAwesomeIcon("fa-check"), "Consumption Paid"],
+            }),
+        );
+        message.update({ content: content.innerHTML });
+    }
 }
 
 interface KingdomChatMessageParams {

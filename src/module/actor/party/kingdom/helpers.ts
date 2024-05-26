@@ -28,6 +28,14 @@ function calculateKingdomCollectionData(kingdom: Kingdom): {
     };
 }
 
+function calculateKingdomStabilizationData(kingdom: Kingdom): {
+    formula: string;
+} { 
+    return {
+        formula: "1d20+"+`${kingdom.skills.stability.mod}` 
+    };
+}
+
 async function importDocuments(actor: ActorPF2e, items: ItemPF2e[], skipDialog: boolean): Promise<void> {
     const newDocuments = items.filter((d) => !actor.items.some((i) => i.sourceId === d.uuid));
     const createData = newDocuments.map((d) => d.toObject());
@@ -64,4 +72,4 @@ async function importDocuments(actor: ActorPF2e, items: ItemPF2e[], skipDialog: 
     await actor.createEmbeddedDocuments("Item", createData);
 }
 
-export { calculateKingdomCollectionData, importDocuments, resolveKingdomBoosts };
+export { calculateKingdomCollectionData, calculateKingdomStabilizationData, importDocuments, resolveKingdomBoosts };

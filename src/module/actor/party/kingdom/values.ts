@@ -404,25 +404,25 @@ interface KingdomEdictData {
 const KINGDOM_EDICTS = ["holiday", "promotion", "taxation"] as const;
 const KINGDOM_EDICT_CHOICES = ["0","1","2","3","4"] as const;
 const KINGDOM_EDICT_HOLIDAY_DATA = {
-    0: { label: "No Holidays", economy: 0, loyalty: -1, stability: 0, consumption: 0 },
-    1: { label: "1 Holiday", economy: 0, loyalty: 1, stability: 0, consumption: 1 },
-    2: { label: "2-6 Holidays", economy: 0, loyalty: 2, stability: 0, consumption: 2 },
-    3: { label: "7-12 Holidays", economy: 0, loyalty: 3, stability: 0, consumption: 4 },
-    4: { label: "13-24 Holidays", economy: 0, loyalty: 4, stability: 0, consumption: 8 },   
+    0: { label: "No Holidays (-1 Loyalty)", economy: 0, loyalty: -1, stability: 0, consumption: 0 },
+    1: { label: "1 Holiday (1 Loyalty, 1 Consumption)", economy: 0, loyalty: 1, stability: 0, consumption: 1 },
+    2: { label: "2-6 Holidays (2 Loyalty, 2 Consumption)", economy: 0, loyalty: 2, stability: 0, consumption: 2 },
+    3: { label: "7-12 Holidays (3 Loyalty, 4 Consumption)", economy: 0, loyalty: 3, stability: 0, consumption: 4 },
+    4: { label: "13-24 Holidays (4 Loyalty, 8 Consumption)", economy: 0, loyalty: 4, stability: 0, consumption: 8 },   
 } satisfies Record<KingdomEdictsChoice, KingdomEdictData>;
 const KINGDOM_EDICT_PROMOTION_DATA = {
-    0: { label: "No Promotion", economy: 0, loyalty: 0, stability: -1, consumption: 0 },
-    1: { label: "Token Promotion", economy: 0, loyalty: 0, stability: 1, consumption: 1 },
-    2: { label: "Standard Promotion", economy: 0, loyalty: 0, stability: 2, consumption: 2 },
-    3: { label: "Aggressive Promotion", economy: 0, loyalty: 0, stability: 3, consumption: 4 },
-    4: { label: "Expansionist Promotion", economy: 0, loyalty: 0, stability: 4, consumption: 8 },
+    0: { label: "No Promotion (-1 Stability)", economy: 0, loyalty: 0, stability: -1, consumption: 0 },
+    1: { label: "Token Promotion (1 Stability, 1 Consumption)", economy: 0, loyalty: 0, stability: 1, consumption: 1 },
+    2: { label: "Standard Promotion (2 Stability, 2 Consumption)", economy: 0, loyalty: 0, stability: 2, consumption: 2 },
+    3: { label: "Aggressive Promotion (3 Stability, 4 Consumption)", economy: 0, loyalty: 0, stability: 3, consumption: 4 },
+    4: { label: "Expansionist Promotion (4 Stability, 8 Consumption)", economy: 0, loyalty: 0, stability: 4, consumption: 8 },
 } satisfies Record<KingdomEdictsChoice, KingdomEdictData>;
 const KINGDOM_EDICT_TAXATION_DATA = {
-    0: { label: "No Taxation", economy: 0, loyalty: 1, stability: 0, consumption: 0 },
-    1: { label: "Light Taxation", economy: 1, loyalty: -1, stability: 0, consumption: 0 },
-    2: { label: "Normal Taxation", economy: 2, loyalty: -2, stability: 0, consumption: 0 },
-    3: { label: "Heavy Taxation", economy: 3, loyalty: -4, stability: 0, consumption: 0 },
-    4: { label: "Overwhelming Taxation", economy: 4, loyalty: -8, stability: 0, consumption: 0 },
+    0: { label: "No Taxation (1 Loyalty)", economy: 0, loyalty: 1, stability: 0, consumption: 0 },
+    1: { label: "Light Taxation (1 Economy, -1 Loyalty)", economy: 1, loyalty: -1, stability: 0, consumption: 0 },
+    2: { label: "Normal Taxation (2 Economy, -2 Loyalty)", economy: 2, loyalty: -2, stability: 0, consumption: 0 },
+    3: { label: "Heavy Taxation (3 Economy, -4 Loyalty)", economy: 3, loyalty: -4, stability: 0, consumption: 0 },
+    4: { label: "Overwhelming Taxation (4 Economy, -8 Loyalty)", economy: 4, loyalty: -8, stability: 0, consumption: 0 },
 } satisfies Record<KingdomEdictsChoice, KingdomEdictData>;
 const KINGDOM_EDICT_DATA : Record<KingdomEdict, Record<string,KingdomEdictData>> = {
     holiday : KINGDOM_EDICT_HOLIDAY_DATA,

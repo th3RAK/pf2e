@@ -49,16 +49,22 @@
         </header>
         <div class="resource-data">
             <section class="stats">
-                <div data-tooltip="{{kingdom.consumption.breakdown}}">
-                    {{localize "PF2E.Kingmaker.Consumption.Label"}}
-                    <span class="number">{{kingdom.consumption.value}}</span>
-                </div>
+                <button type="button" data-action="stabilize" data-tooltip="Determine Kingdom Stability">
+                    Determine Kingdom Stability
+                </button>
                 <label>
                     {{localize "PF2E.Kingmaker.Kingdom.Unrest"}}
                     <input type="number" name="unrest.value" value="{{kingdom.unrest.value}}"/>
-                    /
-                    <span class="number">{{kingdom.unrest.anarchyThreshold}}</span>
                 </label>
+                <div>
+                    <button type="button" data-action="payConsumption" data-tooltip="Pay Consumption">
+                        Pay Consumption
+                    </button>
+                    <span data-tooltip="{{kingdom.consumption.breakdown}}">
+                        {{localize "PF2E.Kingmaker.Consumption.Label"}}
+                        <span class="number">{{kingdom.consumption.value}}</span>
+                    </span>
+                </div>
             </section>
         </div>
     </section>
