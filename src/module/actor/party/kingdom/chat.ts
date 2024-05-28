@@ -31,7 +31,7 @@ export async function handleKingdomChatMessageEvents(options: KingdomChatMessage
         await kingdom.determineStability();
 
         const content = createHTMLElement("div", { innerHTML: message.content });
-        htmlQuery(content, "[data-action=determineStability]")?.replaceWith(
+        htmlQuery(content, "[data-action=kingdom-determineStability]")?.replaceWith(
             createHTMLElement("div", {
                 classes: ["confirmation"],
                 children: [fontAwesomeIcon("fa-check"), "Stability Determined"],
@@ -46,7 +46,7 @@ export async function handleKingdomChatMessageEvents(options: KingdomChatMessage
         await kingdom.payConsumption();
 
         const content = createHTMLElement("div", { innerHTML: message.content });
-        htmlQuery(content, "[data-action=payConsumption]")?.replaceWith(
+        htmlQuery(content, "[data-action=kingdom-payConsumption]")?.replaceWith(
             createHTMLElement("div", {
                 classes: ["confirmation"],
                 children: [fontAwesomeIcon("fa-check"), "Consumption Paid"],
