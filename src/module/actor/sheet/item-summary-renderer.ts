@@ -43,11 +43,14 @@ export class ItemSummaryRenderer<TActor extends ActorPF2e, TSheet extends Applic
         if (options.instant) {
             summaryElem.hidden = !showSummary;
         } else if (showSummary) {
-            await gsap.fromTo(
-                summaryElem,
-                { height: 0, opacity: 0, hidden: false },
-                { height: "auto", opacity: 1, duration },
-            );
+            // Only animate if not already showing
+            if (summaryElem.hidden) {
+                await gsap.fromTo(
+                    summaryElem,
+                    { height: 0, opacity: 0, hidden: false },
+                    { height: "auto", opacity: 1, duration },
+                );
+            }
         } else {
             await gsap.to(summaryElem, {
                 height: 0,
@@ -101,7 +104,7 @@ export class ItemSummaryRenderer<TActor extends ActorPF2e, TSheet extends Applic
             item.isOfType("action", "feat") && item.system.selfEffect
                 ? `@UUID[${item.system.selfEffect.uuid}]{${item.system.selfEffect.name}}`
                 : null;
-        const selfEffect = effectLinkText && (await TextEditor.enrichHTML(effectLinkText, { async: true }));
+        const selfEffect = effectLinkText && (await TextEditor.enrichHTML(effectLinkText));
 
         const summary = await renderTemplate("systems/pf2e/templates/actors/partials/item-summary.hbs", {
             item,

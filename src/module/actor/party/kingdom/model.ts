@@ -129,7 +129,7 @@ class Kingdom extends DataModel<PartyPF2e, KingdomSchema> implements PartyCampai
     /** Perform the collection portion of the income phase */
     async collect(): Promise<void> {
         const { formula, commodities } = calculateKingdomCollectionData(this);
-        const roll = await new Roll(formula).evaluate({ async: true });
+        const roll = await new Roll(formula).evaluate();
         await roll.toMessage(
             {
                 flavor: game.i18n.localize("PF2E.Kingmaker.Kingdom.Resources.Points"),
@@ -159,7 +159,7 @@ class Kingdom extends DataModel<PartyPF2e, KingdomSchema> implements PartyCampai
     /** Perform the stability portion of the upkeep phase */
     async determineStability(): Promise<void> {
         const { formula } = calculateKingdomStabilizationData(this);
-        const roll = await new Roll(formula).evaluate({ async: true });
+        const roll = await new Roll(formula).evaluate();
         await roll.toMessage(
             {
                 flavor: "Determine Kingdom Stability",
@@ -191,7 +191,7 @@ class Kingdom extends DataModel<PartyPF2e, KingdomSchema> implements PartyCampai
                 },
             });
         } else {
-            const rollUnrest = await new Roll("1d4").evaluate({ async: true });
+            const rollUnrest = await new Roll("1d4").evaluate();
             await rollUnrest.toMessage(
                 {
                     flavor: "Additional Unrest",

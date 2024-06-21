@@ -71,8 +71,12 @@
             {
                 "key": "BaseSpeed",
                 "predicate": [
-                    "werecreature:wereboar",
-                    "werecreature:werewolf"
+                    {
+                        "or": [
+                            "werecreature:wereboar",
+                            "werecreature:werewolf"
+                        ]
+                    }
                 ],
                 "selector": "land",
                 "value": 30
@@ -289,6 +293,7 @@
                 "slug": "claw",
                 "traits": [
                     "agile",
+                    "finesse",
                     "unarmed"
                 ]
             },
