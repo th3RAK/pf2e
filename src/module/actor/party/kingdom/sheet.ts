@@ -726,7 +726,10 @@ class KingdomSheetPF2e extends ActorSheetPF2e<PartyPF2e> {
 
             if (uuid) {
                 for (const clickable of htmlQueryAll(data, "[data-action=open-sheet]")) {
-                    clickable.addEventListener("click", () => fromUuid(uuid).then((a) => a?.sheet.render(true)));
+                    clickable.addEventListener("click", async () => {
+                        const quality = await fromUuid(uuid);
+                        quality?.sheet.render(true);
+                    });
                 }
             }
         }
@@ -740,7 +743,10 @@ class KingdomSheetPF2e extends ActorSheetPF2e<PartyPF2e> {
 
             if (uuid) {
                 for (const clickable of htmlQueryAll(data, "[data-action=open-sheet]")) {
-                    clickable.addEventListener("click", () => fromUuid(uuid).then((a) => a?.sheet.render(true)));
+                    clickable.addEventListener("click", async () => {
+                        const lot = await fromUuid(uuid);
+                        lot?.sheet.render(true);
+                    });
                 }
             }
         }
@@ -753,7 +759,10 @@ class KingdomSheetPF2e extends ActorSheetPF2e<PartyPF2e> {
 
             if (uuid) {
                 for (const clickable of htmlQueryAll(data, "[data-action=open-sheet]")) {
-                    clickable.addEventListener("click", () => fromUuid(uuid).then((a) => a?.sheet.render(true)));
+                    clickable.addEventListener("click", async () => {
+                        const border = await fromUuid(uuid);
+                        border?.sheet.render(true);
+                    });
                 }
             }
         }
