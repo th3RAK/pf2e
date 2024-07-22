@@ -19,6 +19,9 @@ class TokenDocumentPF2e<TParent extends ScenePF2e | null = ScenePF2e | null> ext
 
     declare auras: Map<string, TokenAura>;
 
+    /** The most recently used animation for later use when a token override is reverted. */
+    #lastAnimation: TokenAnimationOptions | null = null;
+
     /** Returns if the token is in combat, though some actors have different conditions */
     override get inCombat(): boolean {
         if (this.actor?.isOfType("party")) {
@@ -91,10 +94,15 @@ class TokenDocumentPF2e<TParent extends ScenePF2e | null = ScenePF2e | null> ext
         return super.getTrackedAttributeChoices(attributes);
     }
 
-    /** Make stamina and resolve editable despite not being present in template.json */
+    /** Make stamina, resolve, and shield HP editable despite not being present in template.json */
     override getBarAttribute(barName: string, options?: { alternative?: string }): TokenResourceData | null {
         const attribute = super.getBarAttribute(barName, options);
-        if (attribute && ["attributes.hp.sp", "resources.resolve"].includes(attribute.attribute)) {
+        if (!attribute) return null;
+        const isStaminaOrResolve =
+            ["attributes.hp.sp", "resources.resolve"].includes(attribute.attribute) &&
+            game.pf2e.settings.variants.stamina;
+        const isShieldHP = attribute.attribute === "attributes.shield.hp" && !!this.actor?.attributes.shield?.itemId;
+        if (isStaminaOrResolve || isShieldHP) {
             attribute.editable = true;
         }
 
@@ -258,6 +266,32 @@ class TokenDocumentPF2e<TParent extends ScenePF2e | null = ScenePF2e | null> ext
         }
     }
 
+    /** Ensure that actors that don't allow synthetics are linked */
+    protected override _preCreate(
+        data: this["_source"],
+        options: DatabaseCreateOperation<TParent>,
+        user: User<Actor<null>>,
+    ): Promise<boolean | void> {
+        if (this.actor?.allowSynthetics === false && data.actorLink === false) {
+            this.updateSource({ actorLink: true });
+        }
+
+        return super._preCreate(data, options, user);
+    }
+
+    /** Ensure that actors that don't allow synthetics stay linked */
+    protected override _preUpdate(
+        data: Record<string, unknown>,
+        options: TokenUpdateOperation<TParent>,
+        user: User<Actor<null>>,
+    ): Promise<boolean | void> {
+        if (this.actor?.allowSynthetics === false && (data.actorLink ?? this.actorLink) === false) {
+            data.actorLink = true;
+        }
+
+        return super._preUpdate(data, options, user);
+    }
+
     /** Synchronize the token image with the actor image if the token does not currently have an image */
     static assignDefaultImage(token: TokenDocumentPF2e | PrototypeTokenPF2e<ActorPF2e>): void {
         const actor = token.actor;
@@ -380,11 +414,16 @@ class TokenDocumentPF2e<TParent extends ScenePF2e | null = ScenePF2e | null> ext
         const tokenChanges = fu.diffObject<DeepPartial<this["_source"]>>(preUpdate, postUpdate);
 
         if (this.scene?.isView && Object.keys(tokenChanges).length > 0) {
-            this.object?._onUpdate(tokenChanges, { broadcast: false, updates: [] }, game.user.id);
+            const tokenOverrides = this.actor?.synthetics.tokenOverrides ?? {};
+            const animation = tokenChanges.texture?.src ? tokenOverrides.animation ?? this.#lastAnimation ?? {} : {};
+            this.#lastAnimation = R.isDeepEqual(animation, this.#lastAnimation ?? {})
+                ? null
+                : tokenOverrides.animation ?? null;
+            this.object?._onUpdate(tokenChanges, { broadcast: false, updates: [], animation }, game.user.id);
         }
 
         // Assess the full diff using `diffObject`: additions, removals, and changes
-        const aurasChanged = () => !!this.scene?.isInFocus && !R.equals(preUpdateAuras, postUpdateAuras);
+        const aurasChanged = () => !!this.scene?.isInFocus && !R.isDeepEqual(preUpdateAuras, postUpdateAuras);
 
         if ("disposition" in tokenChanges || "width" in tokenChanges || "height" in tokenChanges || aurasChanged()) {
             this.scene?.checkAuras?.();

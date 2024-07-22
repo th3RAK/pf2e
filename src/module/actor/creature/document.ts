@@ -20,8 +20,8 @@ import { RollNotePF2e } from "@module/notes.ts";
 import { extractModifiers } from "@module/rules/helpers.ts";
 import { BaseSpeedSynthetic } from "@module/rules/synthetics.ts";
 import type { UserPF2e } from "@module/user/index.ts";
+import type { EnvironmentFeatureRegionBehavior, RegionDocumentPF2e, ScenePF2e, TokenDocumentPF2e } from "@scene";
 import { LightLevels } from "@scene/data.ts";
-import type { TokenDocumentPF2e } from "@scene/index.ts";
 import { eventToRollParams } from "@scripts/sheet-util.ts";
 import type { CheckRoll } from "@system/check/index.ts";
 import { CheckDC } from "@system/degree-of-success.ts";
@@ -218,6 +218,16 @@ abstract class CreaturePF2e<
                 );
         }
 
+        if (slug in CONFIG.PF2E.magicTraditions) {
+            const bestSpellcasting =
+                this.spellcasting
+                    .filter((c) => c.tradition === slug)
+                    .flatMap((s) => s.statistic ?? [])
+                    .sort((a, b) => b.check.mod - a.check.mod)
+                    .shift() ?? null;
+            return bestSpellcasting ?? null;
+        }
+
         return (
             this.spellcasting.contents.flatMap((sc) => sc.statistic ?? []).find((s) => s.slug === slug) ??
             super.getStatistic(slug)
@@ -323,14 +333,30 @@ abstract class CreaturePF2e<
 
         // Set IWR guaranteed by traits
         setImmunitiesFromTraits(this);
+
+        // Set difficult terrain roll options
+        if (game.ready && game.scenes.active) {
+            const tokens = this.getActiveTokens(true, true);
+            const difficultTerrains = tokens
+                .map((t) =>
+                    Array.from(t.regions ?? []).map((r) =>
+                        r.behaviors.filter(
+                            (b): b is EnvironmentFeatureRegionBehavior<RegionDocumentPF2e<ScenePF2e>> =>
+                                b.type === "environmentFeature" && b.system.terrain.difficult > 0,
+                        ),
+                    ),
+                )
+                .flat(2);
+            if (difficultTerrains.length > 0) {
+                this.rollOptions.all["self:position:difficult-terrain"] = true;
+                const inGreater = difficultTerrains.some((t) => t.system.terrain.difficult === 2);
+                this.rollOptions.all[`self:position:difficult-terrain:${inGreater ? "greater" : "normal"}`] = true;
+            }
+        }
     }
 
     override prepareEmbeddedDocuments(): void {
         super.prepareEmbeddedDocuments();
-
-        for (const rule of this.rules) {
-            rule.onApplyActiveEffects?.();
-        }
 
         for (const changeEntries of Object.values(this.system.autoChanges)) {
             changeEntries?.sort((a, b) => (a.level ?? 0) - (b.level ?? 0));
@@ -377,7 +403,7 @@ abstract class CreaturePF2e<
 
         // Set labels for attributes
         if (this.system.abilities) {
-            for (const [shortForm, data] of R.toPairs.strict(this.system.abilities)) {
+            for (const [shortForm, data] of R.entries.strict(this.system.abilities)) {
                 data.label = CONFIG.PF2E.abilities[shortForm];
                 data.shortLabel = `PF2E.AbilityId.${shortForm}`;
             }
@@ -763,11 +789,11 @@ abstract class CreaturePF2e<
 
         // Preserve alignment traits if not exposed
         const traitChanges = changed.system.traits;
-        if (R.isObject(traitChanges) && Array.isArray(traitChanges.value)) {
+        if (R.isPlainObject(traitChanges) && Array.isArray(traitChanges.value)) {
             const sourceAlignmentTraits = this._source.system.traits?.value.filter(
                 (t) => ["good", "evil", "lawful", "chaotic"].includes(t) && !(t in CONFIG.PF2E.creatureTraits),
             );
-            traitChanges.value = R.uniq(R.compact([traitChanges.value, sourceAlignmentTraits].flat()).sort());
+            traitChanges.value = R.unique([traitChanges.value, sourceAlignmentTraits].flat()).filter(R.isTruthy).sort();
         }
 
         return super._preUpdate(changed, options, user);

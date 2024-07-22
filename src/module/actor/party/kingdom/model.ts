@@ -96,7 +96,7 @@ class Kingdom extends DataModel<PartyPF2e, KingdomSchema> implements PartyCampai
         const hoverIcon = this.active === "building" ? "wrench" : !this.active ? "plus" : null;
         const icon = createHTMLElement("a", {
             classes: ["create-button"],
-            children: R.compact([fontAwesomeIcon("crown"), hoverIcon ? fontAwesomeIcon(hoverIcon) : null]),
+            children: [fontAwesomeIcon("crown"), hoverIcon ? fontAwesomeIcon(hoverIcon) : null].filter(R.isTruthy),
             dataset: {
                 tooltip: game.i18n.localize(
                     `PF2E.Kingmaker.SIDEBAR.${this.active === true ? "OpenSheet" : "CreateKingdom"}`,
@@ -385,7 +385,7 @@ class Kingdom extends DataModel<PartyPF2e, KingdomSchema> implements PartyCampai
             );
         }
 
-        const settlements = R.compact(Object.values(this.settlements));
+        const settlements = Object.values(this.settlements).filter(R.isTruthy);
 
         // Initialize settlement data
         for (const settlement of settlements) {
@@ -752,7 +752,7 @@ class Kingdom extends DataModel<PartyPF2e, KingdomSchema> implements PartyCampai
 
     getRollOptions(): string[] {
         const prefix = "kingdom";
-        return R.compact([this.unrest.value ? `${prefix}:unrest:${this.unrest.value}` : null]);
+        return [this.unrest.value ? `${prefix}:unrest:${this.unrest.value}` : null].filter(R.isTruthy);
     }
 
     getRollData(): Record<string, unknown> {

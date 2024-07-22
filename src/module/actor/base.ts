@@ -22,7 +22,7 @@ import { createDisintegrateEffect } from "@item/effect/helpers.ts";
 import { itemIsOfType } from "@item/helpers.ts";
 import { CoinsPF2e } from "@item/physical/coins.ts";
 import { MAGIC_TRADITIONS } from "@item/spell/values.ts";
-import type { ActiveEffectPF2e } from "@module/active-effect.ts";
+import { ActiveEffectPF2e } from "@module/active-effect.ts";
 import type { TokenPF2e } from "@module/canvas/index.ts";
 import { ChatMessagePF2e } from "@module/chat-message/document.ts";
 import type { AppliedDamageFlag } from "@module/chat-message/index.ts";
@@ -75,9 +75,14 @@ import { ItemTransfer } from "./item-transfer.ts";
 import { applyStackingRules } from "./modifiers.ts";
 import type { ActorSheetPF2e } from "./sheet/base.ts";
 import type { ActorSpellcasting } from "./spellcasting.ts";
-import { TokenEffect } from "./token-effect.ts";
 import type { ActorType } from "./types.ts";
-import { CREATURE_ACTOR_TYPES, SAVE_TYPES, SIZE_LINKABLE_ACTOR_TYPES, UNAFFECTED_TYPES } from "./values.ts";
+import {
+    ACTOR_TYPES,
+    CREATURE_ACTOR_TYPES,
+    SAVE_TYPES,
+    SIZE_LINKABLE_ACTOR_TYPES,
+    UNAFFECTED_TYPES,
+} from "./values.ts";
 
 /**
  * Extend the base Actor class to implement additional logic specialized for PF2e.
@@ -104,7 +109,7 @@ class ActorPF2e<TParent extends TokenDocumentPF2e | null = TokenDocumentPF2e | n
     /** Rule elements drawn from owned items */
     declare rules: RuleElementPF2e[];
 
-    declare synthetics: RuleElementSynthetics;
+    declare synthetics: RuleElementSynthetics<this>;
 
     /** Saving throw statistics */
     declare saves?: { [K in SaveType]?: Statistic };
@@ -154,6 +159,11 @@ class ActorPF2e<TParent extends TokenDocumentPF2e | null = TokenDocumentPF2e | n
 
     get allowedItemTypes(): (ItemType | "physical")[] {
         return ["condition", "effect"];
+    }
+
+    /** Returns true if this actor allows synthetic tokens to be created */
+    get allowSynthetics(): boolean {
+        return this.type === "party" ? false : true;
     }
 
     /** The compendium source ID of the actor **/
@@ -303,11 +313,11 @@ class ActorPF2e<TParent extends TokenDocumentPF2e | null = TokenDocumentPF2e | n
     }
 
     /** Add effect icons from effect items and rule elements */
-    override get temporaryEffects(): TemporaryEffect[] {
-        const fromConditions = this.conditions.active.map((c) => new TokenEffect(c));
+    override get temporaryEffects(): ActiveEffect<this>[] {
+        const fromConditions = this.conditions.map((c) => ActiveEffectPF2e.fromEffect(c));
         const fromEffects = this.itemTypes.effect
             .filter((e) => e.system.tokenIcon?.show && (e.isIdentified || game.user.isGM))
-            .map((e) => new TokenEffect(e));
+            .map((e) => ActiveEffectPF2e.fromEffect(e));
 
         return R.uniqueBy(
             [super.temporaryEffects, fromConditions, fromEffects, this.synthetics.tokenEffectIcons].flat(),
@@ -500,44 +510,38 @@ class ActorPF2e<TParent extends TokenDocumentPF2e | null = TokenDocumentPF2e | n
         }
     }
 
-    /** Don't allow the user to create in development actor types. */
+    /** Don't allow the user to create in-development actor types. */
     static override createDialog<TDocument extends foundry.abstract.Document>(
         this: ConstructorOf<TDocument>,
         data?: Record<string, unknown>,
         context?: {
             parent?: TDocument["parent"];
             pack?: Collection<TDocument> | null;
-            types?: (ActorType | "creature")[];
+            types?: ActorType[];
         } & Partial<FormApplicationOptions>,
     ): Promise<TDocument | null>;
-    static override async createDialog(
-        data: { folder?: string | undefined } = {},
+    static override createDialog(
+        data?: Record<string, unknown>,
         context: {
-            parent?: TokenDocumentPF2e | null;
-            pack?: Collection<ActorPF2e<null>> | null;
-            types?: (ActorType | "creature")[];
-            [key: string]: unknown;
-        } = {},
-    ): Promise<Actor<TokenDocument<Scene | null> | null> | null> {
-        const omittedTypes: ActorType[] = [];
-        if (game.settings.get("pf2e", "campaignType") !== "kingmaker") omittedTypes.push("army");
+            parent?: TokenDocument | null;
+            pack?: Collection<Actor> | null;
+            types?: string[];
+        } & Partial<FormApplicationOptions> = {},
+    ): Promise<Actor | null> {
+        context.types &&= R.unique(context.types);
+        context.types ??= [...ACTOR_TYPES];
 
-        const original = game.system.documentTypes.Actor;
-        try {
-            game.system.documentTypes.Actor = R.difference(original, omittedTypes);
-
-            if (context.types) {
-                const validTypes = context.types ?? [];
-                if (validTypes.includes("creature")) validTypes.push(...CREATURE_ACTOR_TYPES);
-                game.system.documentTypes.Actor = game.system.documentTypes.Actor.filter((type) =>
-                    tupleHasValue(validTypes, type),
-                );
-            }
-
-            return super.createDialog(data, context);
-        } finally {
-            game.system.documentTypes.Actor = original;
+        // Determine omitted types. Army is hidden in most games, and party is hidden in folders
+        const omittedTypes = game.settings.get("pf2e", "campaignType") !== "kingmaker" ? ["army"] : [];
+        if (data?.folder) {
+            omittedTypes.push("party");
         }
+
+        for (const type of omittedTypes) {
+            context.types.findSplice((t) => t === type);
+        }
+
+        return super.createDialog(data, context);
     }
 
     /**
@@ -562,6 +566,9 @@ class ActorPF2e<TParent extends TokenDocumentPF2e | null = TokenDocumentPF2e | n
             const linkToActorSize = linkable && (source.prototypeToken?.flags?.pf2e?.linkToActorSize ?? true);
             const autoscale =
                 linkable &&
+                // Don't autoscale if the scale is preset to something other than 1
+                (typeof source.prototypeToken?.texture?.scaleX !== "number" ||
+                    source.prototypeToken.texture.scaleX === 1) &&
                 (source.prototypeToken?.flags?.pf2e?.autoscale ??
                     (linkToActorSize && game.settings.get("pf2e", "tokens.autoscale")));
             const merged = fu.mergeObject(source, {
@@ -784,6 +791,10 @@ class ActorPF2e<TParent extends TokenDocumentPF2e | null = TokenDocumentPF2e | n
         }
 
         this.prepareDataFromItems();
+
+        for (const rule of this.rules) {
+            rule.onApplyActiveEffects?.();
+        }
     }
 
     /** Prepare data among owned items as well as actor-data preparation performed by items */
@@ -924,6 +935,17 @@ class ActorPF2e<TParent extends TokenDocumentPF2e | null = TokenDocumentPF2e | n
             const damage = isDelta ? -1 * value : hitPoints.value - value;
             return this.applyDamage({ damage, token, final: true });
         }
+        const isShield = !!(attribute === "attributes.shield.hp" && this.isOfType("character", "npc"));
+        if (isShield && token) {
+            const { hp, itemId } = this.attributes.shield;
+            if (itemId) {
+                const damage = isDelta ? hp.value + value : value;
+                const item = this.items.get(itemId);
+                await item?.update({ "system.hp.value": damage });
+            }
+            return this;
+        }
+
         return super.modifyTokenAttribute(attribute, value, isDelta, isBar);
     }
 
@@ -1196,7 +1218,8 @@ class ActorPF2e<TParent extends TokenDocumentPF2e | null = TokenDocumentPF2e | n
         const statements = ((): string => {
             const deathMessage =
                 instantDeath && localize(`InstantDeath.${sluggify(instantDeath, { camel: "bactrian" })}`);
-            const concatenated = R.compact([hpStatement, shieldStatement, deathMessage])
+            const concatenated = [hpStatement, shieldStatement, deathMessage]
+                .filter(R.isTruthy)
                 .map((s) =>
                     game.i18n.format(s, {
                         actor: token.name.replace(/[<>]/g, ""),
@@ -1226,7 +1249,7 @@ class ActorPF2e<TParent extends TokenDocumentPF2e | null = TokenDocumentPF2e | n
                 criticalHit: damage instanceof Roll ? damage.options.degreeOfSuccess === 3 : false,
             };
             condition.system.traits = {
-                value: R.uniq(Array.from(rollOptions).map((o) => o.replace(/^origin:action:trait:/, ""))).filter(
+                value: R.unique(Array.from(rollOptions).map((o) => o.replace(/^origin:action:trait:/, ""))).filter(
                     (t): t is EffectTrait => t in CONFIG.PF2E.effectTraits,
                 ),
                 otherTags: [],
@@ -1242,7 +1265,7 @@ class ActorPF2e<TParent extends TokenDocumentPF2e | null = TokenDocumentPF2e | n
         const content = await renderTemplate("systems/pf2e/templates/chat/damage/damage-taken.hbs", {
             breakdown,
             statements,
-            persistent: R.compact(persistentCreated.map((p) => p.system.persistent?.damage.formula)),
+            persistent: persistentCreated.map((p) => p.system.persistent?.damage.formula).filter(R.isTruthy),
             iwr: {
                 applications: result.applications,
                 visibility: this.hasPlayerOwner ? "all" : "gm",
@@ -1290,6 +1313,11 @@ class ActorPF2e<TParent extends TokenDocumentPF2e | null = TokenDocumentPF2e | n
             flags: {
                 pf2e: {
                     appliedDamage,
+                    context: {
+                        type: "damage-taken",
+                        options: Array.from(rollOptions),
+                    },
+                    origin: item?.getOriginData(),
                 },
             },
             flavor,
@@ -1659,16 +1687,32 @@ class ActorPF2e<TParent extends TokenDocumentPF2e | null = TokenDocumentPF2e | n
     }
 
     /** Toggle a condition as present or absent. If a valued condition is toggled on, it will be set to a value of 1. */
-    async toggleCondition(conditionSlug: ConditionSlug): Promise<void> {
+    async toggleCondition(conditionSlug: ConditionSlug, options?: { active?: boolean }): Promise<boolean | void> {
         if (!setHasElement(CONDITION_SLUGS, conditionSlug)) {
             throw ErrorPF2e(`Unrecognized condition: ${conditionSlug}`);
         }
 
-        if (this.hasCondition(conditionSlug)) {
-            await this.decreaseCondition(conditionSlug, { forceRemove: true });
-        } else {
+        const hasCondition = this.hasCondition(conditionSlug);
+        const active = options?.active ?? !hasCondition;
+
+        if (active && !hasCondition) {
             await this.increaseCondition(conditionSlug);
+        } else if (active) {
+            return true;
+        } else if (!active && hasCondition) {
+            await this.decreaseCondition(conditionSlug, { forceRemove: true });
+            return false;
         }
+    }
+
+    /** Redirect to `toggleCondition` if possible. */
+    override async toggleStatusEffect(
+        statusId: string,
+        options?: { active?: boolean; overlay?: boolean },
+    ): Promise<boolean | void | ActiveEffect<this>> {
+        return setHasElement(CONDITION_SLUGS, statusId)
+            ? this.toggleCondition(statusId, options)
+            : super.toggleStatusEffect(statusId, options);
     }
 
     /** Assess and pre-process this JSON data, ensuring it's importable and fully migrated */

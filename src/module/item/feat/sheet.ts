@@ -11,6 +11,7 @@ import { ItemSheetDataPF2e, ItemSheetOptions, ItemSheetPF2e } from "@item/base/s
 import type { FeatPF2e } from "@item/feat/document.ts";
 import { WEAPON_CATEGORIES } from "@item/weapon/values.ts";
 import { OneToFour } from "@module/data.ts";
+import type { HTMLTagifyTagsElement } from "@system/html-elements/tagify-tags.ts";
 import {
     ErrorPF2e,
     htmlClosest,
@@ -208,8 +209,10 @@ class FeatSheetPF2e extends ItemSheetPF2e<FeatPF2e> {
         const feat = this.item;
         activateActionSheetListeners(feat, html);
 
-        const getInput = (name: string): HTMLInputElement | null => html.querySelector(`input[name="${name}"]`);
-        tagify(getInput("system.prerequisites.value"), { maxTags: 6 });
+        const getInput = (name: string): HTMLTagifyTagsElement | null =>
+            htmlQuery<HTMLTagifyTagsElement>(html, `tagify-tags[name="${name}"]`);
+
+        tagify(getInput("system.prerequisites.value"), { maxTags: 6, delimiters: ";" });
         tagify(getInput("system.subfeatures.keyOptions"), { whitelist: CONFIG.PF2E.abilities, maxTags: 3 });
 
         // Disable the "add subfeature" anchor unless a corresponding option is selected
@@ -245,7 +248,7 @@ class FeatSheetPF2e extends ItemSheetPF2e<FeatPF2e> {
                 } else if (objectHasKey(CONFIG.PF2E.languages, slug)) {
                     const options = this.#getLanguageOptions().granted.available;
                     if (options.some((o) => o.slug === slug)) {
-                        feat.update({ [`system.subfeatures.languages.granted`]: R.uniq([...currentGranted, slug]) });
+                        feat.update({ [`system.subfeatures.languages.granted`]: R.unique([...currentGranted, slug]) });
                     }
                 }
             } else if (anchor.dataset.action === "delete-language") {

@@ -1,6 +1,6 @@
 {
     "_id": "sdDOkl7IZZ0o0dix",
-    "img": "systems/pf2e/icons/default-icons/feats.webp",
+    "img": "icons/sundries/books/book-red-exclamation.webp",
     "name": "Wild Speech",
     "system": {
         "actionType": {
@@ -31,7 +31,24 @@
             "remaster": true,
             "title": "Pathfinder Howl of the Wild"
         },
-        "rules": [],
+        "rules": [
+            {
+                "key": "FlatModifier",
+                "predicate": [
+                    "action:make-an-impression",
+                    "target:trait:animal",
+                    {
+                        "or": [
+                            "feat:animal-empathy",
+                            "feat:animal-empathy-ranger"
+                        ]
+                    }
+                ],
+                "selector": "diplomacy",
+                "type": "circumstance",
+                "value": 1
+            }
+        ],
         "traits": {
             "rarity": "common",
             "value": [

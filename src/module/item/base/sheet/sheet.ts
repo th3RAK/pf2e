@@ -6,11 +6,10 @@ import {
     createSheetTags,
     createTagifyTraits,
     maintainFocusInRender,
-    processTagifyInSubmitData,
     SheetOptions,
     TraitTagifyEntry,
 } from "@module/sheet/helpers.ts";
-import { InlineRollLinks } from "@scripts/ui/inline-roll-links.ts";
+import type { HTMLTagifyTagsElement } from "@system/html-elements/tagify-tags.ts";
 import {
     BasicConstructorOptions,
     LanguageSelector,
@@ -190,7 +189,7 @@ class ItemSheetPF2e<TItem extends ItemPF2e> extends ItemSheet<TItem, ItemSheetOp
             // If we find a match, delete it so that we don't use the same form for two different REs
             const FormClass = RULE_ELEMENT_FORMS[String(rule.key)] ?? RuleElementForm;
             const existing =
-                previousForms.find((f) => R.equals(f.rule, rule) && f.constructor.name === FormClass.name) ?? null;
+                previousForms.find((f) => R.isDeepEqual(f.rule, rule) && f.constructor.name === FormClass.name) ?? null;
             if (existing) {
                 previousForms.splice(previousForms.indexOf(existing), 1);
             }
@@ -458,24 +457,24 @@ class ItemSheetPF2e<TItem extends ItemPF2e> extends ItemSheet<TItem, ItemSheetOp
             this.#ruleElementForms.at(idx)?.activateListeners(ruleSection);
         }
 
-        InlineRollLinks.listen(html, this.item);
-
         // Set up traits selection in the header
         const { validTraits } = this;
-        const tagElement = htmlQuery(this.form, ":scope > header .tags");
+        const tagElement = htmlQuery<HTMLTagifyTagsElement>(this.form, ":scope > header tagify-tags");
         const traitsPrepend = html.querySelector<HTMLTemplateElement>(".traits-extra");
-        if (validTraits !== null && tagElement instanceof HTMLInputElement) {
+        if (validTraits !== null && tagElement) {
             const tags = tagify(tagElement, { whitelist: validTraits });
             if (traitsPrepend) {
                 tags.DOM.scope.prepend(traitsPrepend.content);
             }
-        } else if (tagElement && traitsPrepend) {
+        } else if (traitsPrepend) {
             // If there are no traits, we still need to show elements like rarity
-            tagElement.append(traitsPrepend.content);
+            htmlQuery(html, "div.paizo-style.tags")?.append(traitsPrepend.content);
         }
 
         // Tagify other-tags input if present
-        tagify(htmlQuery<HTMLInputElement>(html, 'input[type=text][name="system.traits.otherTags"]'), { maxTags: 6 });
+        tagify(htmlQuery<HTMLTagifyTagsElement>(html, 'tagify-tags[name="system.traits.otherTags"]'), {
+            maxTags: 6,
+        });
 
         // Handle select and input elements that show modified prepared values until focused
         const modifiedPropertyFields = htmlQueryAll<HTMLSelectElement | HTMLInputElement>(html, "[data-property]");
@@ -495,24 +494,6 @@ class ItemSheetPF2e<TItem extends ItemPF2e> extends ItemSheet<TItem, ItemSheetOp
                 if (input.value === baseValue) {
                     input.value = input.dataset.value ?? "";
                 }
-            });
-        }
-
-        // Lore items
-        htmlQuery(html, ".add-skill-variant")?.addEventListener("click", (): void => {
-            if (!this.item.isOfType("lore")) return;
-            const variants = this.item.system.variants ?? {};
-            const index = Object.keys(variants).length;
-            this.item.update({
-                [`system.variants.${index}`]: { label: "+X in terrain", options: "" },
-            });
-        });
-
-        for (const button of htmlQueryAll(html, ".skill-variants .remove-skill-variant")) {
-            button.addEventListener("click", (event): void => {
-                if (!(event.currentTarget instanceof HTMLElement)) return;
-                const index = event.currentTarget.dataset.skillVariantIndex;
-                this.item.update({ [`system.variants.-=${index}`]: null });
             });
         }
 
@@ -582,18 +563,6 @@ class ItemSheetPF2e<TItem extends ItemPF2e> extends ItemSheet<TItem, ItemSheetOp
         }
     }
 
-    protected override _getSubmitData(updateData: Record<string, unknown> | null = null): Record<string, unknown> {
-        // create the expanded update data object
-        const fd = new FormDataExtended(this.form, { editors: this.editors });
-        const data: Record<string, unknown> & { system?: { rules?: string[] } } = updateData
-            ? fu.mergeObject(fd.object, updateData)
-            : fu.expandObject(fd.object);
-
-        const flattenedData = fu.flattenObject(data);
-        processTagifyInSubmitData(this.form, flattenedData);
-        return flattenedData;
-    }
-
     /** Add button to refresh from compendium if setting is enabled. */
     protected override _getHeaderButtons(): ApplicationHeaderButton[] {
         const buttons = super._getHeaderButtons();
@@ -621,18 +590,6 @@ class ItemSheetPF2e<TItem extends ItemPF2e> extends ItemSheet<TItem, ItemSheetOp
 
     protected override _canDragDrop(_selector: string): boolean {
         return this.item.isOwner;
-    }
-
-    /** Tagify sets an empty input field to "" instead of "[]", which later causes the JSON parse to throw an error */
-    protected override async _onSubmit(
-        event: Event,
-        { updateData = null, preventClose = false, preventRender = false }: OnSubmitFormOptions = {},
-    ): Promise<Record<string, unknown> | false> {
-        for (const input of htmlQueryAll<HTMLInputElement>(this.form, "tags ~ input")) {
-            if (input.value === "") input.value = "[]";
-        }
-
-        return super._onSubmit(event, { updateData, preventClose, preventRender });
     }
 
     protected override async _updateObject(event: Event, formData: Record<string, unknown>): Promise<void> {
