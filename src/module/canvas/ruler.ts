@@ -16,7 +16,7 @@ class RulerPF2e<TToken extends TokenPF2e | null = TokenPF2e | null> extends Rule
     }
 
     static get hasModuleConflict(): boolean {
-        return ["elevationruler", "pf2e-ruler"].some((id) => game.modules.get(id)?.active);
+        return ["drag-ruler", "elevationruler", "pf2e-ruler"].some((id) => game.modules.get(id)?.active);
     }
 
     /** The footprint of the drag-measured token relative to the origin center */
@@ -80,11 +80,20 @@ class RulerPF2e<TToken extends TokenPF2e | null = TokenPF2e | null> extends Rule
     /**
      * @param [exactDestination] The coordinates of the dragged token preview, if any
      */
-    async finishDragMeasurement(exactDestination: Point | null = null): Promise<boolean | void> {
+    async finishDragMeasurement(
+        event: TokenPointerEvent<NonNullable<TToken>>,
+        exactDestination: Point | null = null,
+    ): Promise<boolean | void> {
         if (!this.dragMeasurement) return;
         if (this.token) {
             this.token.document.locked = this.token.document._source.locked;
             if (!this.isMeasuring) canvas.mouseInteractionManager.cancel();
+            // If snapping, adjust the token document's current position to prevent upstream from "correcting" it
+            if (!event.shiftKey) {
+                const { x, y } = this.token.getSnappedPosition();
+                this.token.document.x = x;
+                this.token.document.y = y;
+            }
             // Special consideration for tiny tokens: allow them to move within a square
             this.#exactDestination = exactDestination;
             if (exactDestination && this.token.document.width < 1) {

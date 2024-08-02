@@ -33,23 +33,19 @@ class MeasuredTemplatePF2e<
         const M = CONST.GRID_SNAPPING_MODES;
         switch (this.areaShape) {
             case "burst":
-                return M.CORNER;
-            case "emanation":
-                return M.CENTER;
+                return M.VERTEX;
             case "cone":
-                return M.CENTER | M.CORNER | M.SIDE_MIDPOINT;
+                return M.CENTER | M.VERTEX | M.EDGE_MIDPOINT;
             case "line":
-                return M.SIDE_MIDPOINT | M.CORNER;
+                return M.EDGE_MIDPOINT | M.VERTEX;
             default:
-                return M.CENTER | M.CORNER;
+                return M.CENTER | M.VERTEX;
         }
     }
 
     override highlightGrid(): void {
-        // Only square grids use overriden code. The future might add collision detection to hex but not gridless
-        if (!canvas.grid.isSquare) {
-            return super.highlightGrid();
-        }
+        // Only square grids use this override
+        if (!canvas.grid.isSquare) return super.highlightGrid();
 
         const grid = canvas.interface.grid;
         const highlightLayer = grid.getHighlightLayer(this.highlightId);
