@@ -141,7 +141,7 @@ class TextEditorPF2e extends TextEditor {
             }
 
             // Retrieve item/actor from anywhere via UUID
-            const itemUuid = anchor.dataset.itemUuid;
+            const itemUuid = htmlClosest(anchor, "[data-item-uuid]")?.dataset.itemUuid;
             const itemByUUID = itemUuid && !itemUuid.startsWith("Compendium.") ? fromUuidSync(itemUuid) : null;
             if (itemByUUID instanceof ItemPF2e) {
                 return [itemByUUID.actor, itemByUUID.getRollData()];
@@ -868,7 +868,7 @@ function getCheckDC({
     if (base && actor && !immutable) {
         const idDomain = item ? `${item.id}-inline-dc` : null;
         const slugDomain = `${sluggify(name)}-inline-dc`;
-        const domains = ["all", "inline-dc", idDomain, slugDomain].filter(R.isTruthy);
+        const domains = [params.type !== "flat" ? "all" : null, "inline-dc", idDomain, slugDomain].filter(R.isTruthy);
         const { synthetics } = actor;
         const modifier = new ModifierPF2e({
             slug: "base",
