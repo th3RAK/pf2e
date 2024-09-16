@@ -1009,7 +1009,7 @@
                     "sourceId": "Compendium.pf2e.spells-srd.Item.b5sGjGlBf58f8jn0"
                 }
             },
-            "img": "systems/pf2e/icons/spells/air-walk.webp",
+            "img": "icons/magic/water/wave-water-teal.webp",
             "name": "Air Walk",
             "sort": 1300000,
             "system": {
@@ -2002,7 +2002,7 @@
                     "sourceId": "Compendium.pf2e.spells-srd.Item.3wmX7htzOXiHLdAn"
                 }
             },
-            "img": "systems/pf2e/icons/spells/delay-consequence.webp",
+            "img": "icons/skills/melee/blade-tips-double-blue.webp",
             "name": "Delay Consequence",
             "sort": 2700000,
             "system": {

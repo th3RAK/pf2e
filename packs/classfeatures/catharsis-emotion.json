@@ -11,7 +11,7 @@
         },
         "category": "classfeature",
         "description": {
-            "value": "<p><strong>Catharsis Trigger</strong> The event or conditions you must meet to take your Catharsis reaction.</p>\n<p><strong>Catharsis Activation</strong> The benefit when you use Catharsis.</p>\n<p><strong>Emotional Fervor</strong> <strong>Benefits</strong> you gain for 3 rounds after you use Catharsis. This entry also lists a spell you're able to cast while in your emotional fervor. You must expend a spell slot to cast it. This slot most be of at least the spell's level, and the spell is automatically heightened to the level of slot you expended.</p>\n<p><strong>Emotional Fallout</strong> The effect you experience when your emotional fervor ends.</p>\n<p><strong>Focus Spell</strong> The focus spell you gain if you select the Cathartic Focus Spell archetype feat.</p>"
+            "value": "<p><strong>Catharsis Trigger</strong> The event or conditions you must meet to take your Catharsis reaction.</p>\n<p><strong>Catharsis Activation</strong> The benefit when you use Catharsis.</p>\n<p><strong>Emotional Fervor</strong> <strong>Benefits</strong> you gain for 3 rounds after you use Catharsis. This entry also lists a spell you're able to cast while in your emotional fervor. You must expend a spell slot to cast it. This slot most be of at least the spell's rank, and the spell is automatically heightened to the rank of slot you expended.</p>\n<p><strong>Emotional Fallout</strong> The effect you experience when your emotional fervor ends.</p>\n<p><strong>Focus Spell</strong> The focus spell you gain if you select the Cathartic Focus Spell archetype feat.</p>"
         },
         "level": {
             "value": 2
@@ -39,43 +39,73 @@
                 "choices": [
                     {
                         "label": "PF2E.SpecificRule.CatharticMage.Anger.Label",
-                        "value": "anger"
+                        "value": {
+                            "label": "Anger",
+                            "option": "anger"
+                        }
                     },
                     {
                         "label": "PF2E.SpecificRule.CatharticMage.Awe.Label",
-                        "value": "awe"
+                        "value": {
+                            "label": "Awe",
+                            "option": "awe"
+                        }
                     },
                     {
                         "label": "PF2E.SpecificRule.CatharticMage.Dedication.Label",
-                        "value": "dedication"
+                        "value": {
+                            "label": "Dedication",
+                            "option": "dedication"
+                        }
                     },
                     {
                         "label": "PF2E.SpecificRule.CatharticMage.Fear.Label",
-                        "value": "fear"
+                        "value": {
+                            "label": "Fear",
+                            "option": "fear"
+                        }
                     },
                     {
                         "label": "PF2E.SpecificRule.CatharticMage.Hatred.Label",
-                        "value": "hatred"
+                        "value": {
+                            "label": "Hatred",
+                            "option": "hatred"
+                        }
                     },
                     {
                         "label": "PF2E.SpecificRule.CatharticMage.Joy.Label",
-                        "value": "joy"
+                        "value": {
+                            "label": "Joy",
+                            "option": "joy"
+                        }
                     },
                     {
                         "label": "PF2E.SpecificRule.CatharticMage.Love.Label",
-                        "value": "love"
+                        "value": {
+                            "label": "Love",
+                            "option": "love"
+                        }
                     },
                     {
                         "label": "PF2E.SpecificRule.CatharticMage.Misery.Label",
-                        "value": "misery"
+                        "value": {
+                            "label": "Misery",
+                            "option": "misery"
+                        }
                     },
                     {
                         "label": "PF2E.SpecificRule.CatharticMage.Pride.Label",
-                        "value": "pride"
+                        "value": {
+                            "label": "Pride",
+                            "option": "pride"
+                        }
                     },
                     {
                         "label": "PF2E.SpecificRule.CatharticMage.Remorse.Label",
-                        "value": "remorse"
+                        "value": {
+                            "label": "Remorse",
+                            "option": "remorse"
+                        }
                     }
                 ],
                 "flag": "catharticMageDedication",
@@ -89,26 +119,26 @@
                 "property": "description",
                 "value": [
                     {
-                        "text": "PF2E.SpecificRule.CatharticMage.{item|flags.pf2e.rulesSelections.catharticMageDedication}.Description"
+                        "text": "PF2E.SpecificRule.CatharticMage.{item|flags.pf2e.rulesSelections.catharticMageDedication.label}.Description"
                     },
                     {
-                        "text": "PF2E.SpecificRule.CatharticMage.{item|flags.pf2e.rulesSelections.catharticMageDedication}.Trigger",
+                        "text": "PF2E.SpecificRule.CatharticMage.{item|flags.pf2e.rulesSelections.catharticMageDedication.label}.Trigger",
                         "title": "PF2E.SpecificRule.CatharticMage.EmotionalState.Trigger"
                     },
                     {
-                        "text": "PF2E.SpecificRule.CatharticMage.{item|flags.pf2e.rulesSelections.catharticMageDedication}.Activation",
+                        "text": "PF2E.SpecificRule.CatharticMage.{item|flags.pf2e.rulesSelections.catharticMageDedication.label}.Activation",
                         "title": "PF2E.SpecificRule.CatharticMage.EmotionalState.Activation"
                     },
                     {
-                        "text": "PF2E.SpecificRule.CatharticMage.{item|flags.pf2e.rulesSelections.catharticMageDedication}.Fervor",
+                        "text": "PF2E.SpecificRule.CatharticMage.{item|flags.pf2e.rulesSelections.catharticMageDedication.label}.Fervor",
                         "title": "PF2E.SpecificRule.CatharticMage.EmotionalState.Fervor"
                     },
                     {
-                        "text": "PF2E.SpecificRule.CatharticMage.{item|flags.pf2e.rulesSelections.catharticMageDedication}.Fallout",
+                        "text": "PF2E.SpecificRule.CatharticMage.{item|flags.pf2e.rulesSelections.catharticMageDedication.label}.Fallout",
                         "title": "PF2E.SpecificRule.CatharticMage.EmotionalState.Fallout"
                     },
                     {
-                        "text": "PF2E.SpecificRule.CatharticMage.{item|flags.pf2e.rulesSelections.catharticMageDedication}.Focus",
+                        "text": "PF2E.SpecificRule.CatharticMage.{item|flags.pf2e.rulesSelections.catharticMageDedication.label}.Focus",
                         "title": "PF2E.SpecificRule.CatharticMage.EmotionalState.Focus"
                     }
                 ]
@@ -121,7 +151,7 @@
             },
             {
                 "key": "RollOption",
-                "option": "emotional-catharsis:{item|flags.pf2e.rulesSelections.catharticMageDedication}"
+                "option": "emotional-catharsis:{item|flags.pf2e.rulesSelections.catharticMageDedication.option}"
             },
             {
                 "domain": "all",

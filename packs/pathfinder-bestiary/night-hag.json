@@ -1166,7 +1166,7 @@
                     "sourceId": "Compendium.pf2e.spells-srd.Item.HXhWYJviWalN5tQ2"
                 }
             },
-            "img": "systems/pf2e/icons/spells/clairaudience.webp",
+            "img": "icons/magic/light/orb-hand-green.webp",
             "name": "Clairaudience",
             "sort": 1800000,
             "system": {
@@ -2010,7 +2010,7 @@
                     "sourceId": "Compendium.pf2e.equipment-srd.Item.yhw1mr4oDhzMQc3D"
                 }
             },
-            "img": "systems/pf2e/icons/equipment/worn-items/other-worn-items/heartstone.webp",
+            "img": "icons/commodities/gems/gem-rough-heart-pink.webp",
             "name": "Heartstone",
             "sort": 3000000,
             "system": {

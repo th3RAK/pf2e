@@ -642,7 +642,7 @@
                     "sourceId": "Compendium.pf2e.spells-srd.Item.HXhWYJviWalN5tQ2"
                 }
             },
-            "img": "systems/pf2e/icons/spells/clairaudience.webp",
+            "img": "icons/magic/light/orb-hand-green.webp",
             "name": "Clairaudience",
             "sort": 1100000,
             "system": {
@@ -1050,7 +1050,7 @@
                     "sourceId": "Compendium.pf2e.spells-srd.Item.dileJ0Yxqg76LMvu"
                 }
             },
-            "img": "systems/pf2e/icons/spells/tree-shape.webp",
+            "img": "icons/magic/nature/tree-twisted-glow-yellow.webp",
             "name": "Tree Shape (At Will)",
             "sort": 1700000,
             "system": {

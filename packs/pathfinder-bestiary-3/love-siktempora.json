@@ -84,7 +84,7 @@
                     "sourceId": "Compendium.pf2e.spells-srd.Item.b5sGjGlBf58f8jn0"
                 }
             },
-            "img": "systems/pf2e/icons/spells/air-walk.webp",
+            "img": "icons/magic/water/wave-water-teal.webp",
             "name": "Air Walk (Constant)",
             "sort": 300000,
             "system": {
@@ -785,7 +785,18 @@
                     "remaster": false,
                     "title": ""
                 },
-                "rules": [],
+                "rules": [
+                    {
+                        "key": "Note",
+                        "predicate": [
+                            "dimension-of-time-lore"
+                        ],
+                        "selector": "initiative",
+                        "text": "{item|system.description.value}",
+                        "title": "{item|name}",
+                        "visibility": "owner"
+                    }
+                ],
                 "slug": null,
                 "traits": {
                     "rarity": "common",

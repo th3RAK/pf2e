@@ -511,7 +511,7 @@
                         "uuid": "Compendium.pf2e.classfeatures.Item.Reflow Elements"
                     },
                     "J86Sn": {
-                        "img": "systems/pf2e/icons/features/classes/divine-ally.webp",
+                        "img": "icons/magic/light/explosion-star-glow-silhouette.webp",
                         "level": 19,
                         "name": "Kinetic Legend",
                         "uuid": "Compendium.pf2e.classfeatures.Item.Kinetic Legend"
@@ -553,7 +553,7 @@
                         "uuid": "Compendium.pf2e.classfeatures.Item.Impulses"
                     },
                     "bKOQI": {
-                        "img": "systems/pf2e/icons/spells/empower-ley-line.webp",
+                        "img": "icons/magic/water/projectiles-ice-explosion.webp",
                         "level": 17,
                         "name": "Double Reflow",
                         "uuid": "Compendium.pf2e.classfeatures.Item.Double Reflow"
@@ -607,7 +607,7 @@
                         "uuid": "Compendium.pf2e.classfeatures.Item.Extract Element"
                     },
                     "udfhZ": {
-                        "img": "systems/pf2e/icons/spells/air-walk.webp",
+                        "img": "icons/magic/water/wave-water-teal.webp",
                         "level": 7,
                         "name": "Kinetic Expertise",
                         "uuid": "Compendium.pf2e.classfeatures.Item.Kinetic Expertise"
@@ -2346,7 +2346,7 @@
                     "type": "vitality"
                 },
                 "description": {
-                    "value": "<p><strong>Activate</strong> <span class=\"action-glyph\">A</span> (manipulate)</p>\n<hr />\n<p>A <em>healing potion</em> is a vial of a ruby-red liquid that imparts a tingling sensation as the drinker's wounds heal rapidly. When you drink a <em>healing potion</em>, you regain [[/r 1d8[healing]]]{1d8 Hit Points}.</p>"
+                    "value": "<p><strong>Activate</strong> <span class=\"action-glyph\">A</span> (manipulate)</p><hr /><p>A <em>healing potion</em> is a vial of a ruby-red liquid that imparts a tingling sensation as the drinker's wounds heal rapidly. When you drink a <em>healing potion</em>, you regain @Damage[1d8[healing]] Hit Points.</p>"
                 },
                 "equipped": {
                     "carryType": "worn"

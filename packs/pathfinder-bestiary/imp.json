@@ -50,7 +50,7 @@
                     "sourceId": "Compendium.pf2e.spells-srd.Item.pkcOby5prOausy1k"
                 }
             },
-            "img": "systems/pf2e/icons/spells/read-omens.webp",
+            "img": "icons/sundries/gaming/playing-cards-black.webp",
             "name": "Read Omens",
             "sort": 200000,
             "system": {
@@ -568,7 +568,7 @@
                 },
                 "category": "offensive",
                 "description": {
-                    "value": "<p><strong>Frequency</strong> once per round.</p>\n<hr />\n<p><strong>Effect</strong> The imp regains [[/r 1d6[healing]]] Hit Points.</p>"
+                    "value": "<p><strong>Frequency</strong> once per round.</p><hr /><p><strong>Effect</strong> The imp regains @Damage[1d6[healing]] Hit Points.</p>"
                 },
                 "frequency": {
                     "max": 1,

@@ -403,7 +403,7 @@
                     "sourceId": "Compendium.pf2e.spells-srd.Item.b5sGjGlBf58f8jn0"
                 }
             },
-            "img": "systems/pf2e/icons/spells/air-walk.webp",
+            "img": "icons/magic/water/wave-water-teal.webp",
             "name": "Air Walk",
             "sort": 700000,
             "system": {
@@ -2829,7 +2829,7 @@
         },
         {
             "_id": "UZ4VlSGBzBXCEdfz",
-            "img": "systems/pf2e/icons/default-icons/equipment.svg",
+            "img": "icons/commodities/treasure/broach-gold-ruby.webp",
             "name": "Religious Symbol of Lamashtu (Gold)",
             "sort": 3800000,
             "system": {
