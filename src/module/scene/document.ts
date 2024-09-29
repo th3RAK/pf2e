@@ -23,6 +23,10 @@ class ScenePF2e extends Scene {
         return this.flags.pf2e.hearingRange;
     }
 
+    get visionRange(): number | null {
+        return this.flags.pf2e.visionRange;
+    }
+
     /** Is this scene's darkness value synced to the world time? */
     get darknessSyncedToTime(): boolean {
         return (
@@ -75,6 +79,7 @@ class ScenePF2e extends Scene {
         this.flags.pf2e = fu.mergeObject(
             {
                 hearingRange: null,
+                visionRange: null,
                 rulesBasedVision: null,
                 syncDarkness: "default",
             },
@@ -112,7 +117,7 @@ class ScenePF2e extends Scene {
         super._onUpdate(changed, operation, userId);
 
         const flagChanges = changed.flags?.pf2e ?? {};
-        if (this.isView && ["rulesBasedVision", "hearingRange"].some((k) => flagChanges[k] !== undefined)) {
+        if (this.isView && (["rulesBasedVision", "hearingRange", "visionRange"].some((k) => flagChanges[k] !== undefined))) {
             canvas.perception.update({ initializeLighting: true, initializeVision: true });
         }
 

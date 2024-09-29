@@ -55,7 +55,8 @@ function computeSightAndDetectionForRBV(token: TokenDocumentPF2e | PrototypeToke
 
     // Reset detection modes if using rules-based vision
     const hasVision = !!actor.perception?.hasVision;
-    const lightPerception: DetectionModeEntry = { id: "lightPerception", enabled: hasVision, range: null };
+    const range = scene?.flags.pf2e.visionRange ?? null;
+    const lightPerception: DetectionModeEntry = { id: "lightPerception", enabled: hasVision, range };
     const basicSight: DetectionModeEntry = { id: "basicSight", enabled: hasVision, range: 0 };
     token.detectionModes = [lightPerception, basicSight];
 
@@ -75,7 +76,7 @@ function computeSightAndDetectionForRBV(token: TokenDocumentPF2e | PrototypeToke
 
     // Update basic sight and adjust saturation based on darkvision or light levels
     if (visionMode === "darkvision") {
-        token.sight.range = basicSight.range = null;
+        token.sight.range = basicSight.range = range;
 
         if (actor.isOfType("character") && actor.flags.pf2e.colorDarkvision) {
             token.sight.saturation = 1;
@@ -85,7 +86,8 @@ function computeSightAndDetectionForRBV(token: TokenDocumentPF2e | PrototypeToke
     }
 
     if (actor.perception.senses.has("see-invisibility")) {
-        token.detectionModes.push({ id: "seeInvisibility", enabled: true, range: null });
+        const range = scene?.flags.pf2e.visionRange ?? null;
+        token.detectionModes.push({ id: "seeInvisibility", enabled: true, range });
     }
 
     const tremorsense = actor.perception.senses.get("tremorsense");

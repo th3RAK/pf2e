@@ -143,6 +143,10 @@ export class SceneConfigPF2e<TDocument extends ScenePF2e> extends SceneConfig<TD
         formData["flags.pf2e.hearingRange"] =
             typeof hearingRange === "number" ? Math.ceil(Math.clamp(hearingRange || 5, 5, 3000) / 5) * 5 : null;
 
+            const visionRange = formData["flags.pf2e.visionRange"];
+            formData["flags.pf2e.visionRange"] =
+                typeof visionRange === "number" ? Math.ceil(Math.clamp(visionRange || 5, 5, 3000) / 5) * 5 : null;
+
         const terrainChanged = !R.isDeepEqual(
             formData["flags.pf2e.environmentTypes"],
             this.scene._source.flags?.pf2e?.environmentTypes ?? [],
