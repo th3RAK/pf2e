@@ -41,6 +41,7 @@ import { sluggify } from "@util";
 /** Expose public game.pf2e interface */
 export const SetGamePF2e = {
     onInit: (): void => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
         type ActionCollection = Record<string, Function> & Collection<Action>;
         const actions = new Collection<Action>(
             SystemActions.map((action) => [action.slug, action]),
@@ -113,6 +114,7 @@ export const SetGamePF2e = {
                     sections: game.settings.get("pf2e", "campaignFeatSections"),
                 },
                 languages: game.settings.get("pf2e", "homebrew.languageRarities"),
+                mythic: game.settings.get("pf2e", "mythic"),
             },
             critFumble: {
                 buttons: game.settings.get("pf2e", "critFumbleButtons"),

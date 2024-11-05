@@ -246,16 +246,16 @@ const speedTypes = R.mapToObj(MOVEMENT_TYPES, (t) => [
 ]);
 
 const featCategories: Record<FeatOrFeatureCategory, string> = {
-    ancestry: "PF2E.FeatTypeAncestry",
-    ancestryfeature: "PF2E.FeatTypeAncestryfeature",
-    class: "PF2E.FeatTypeClass",
-    classfeature: "PF2E.FeatTypeClassfeature",
-    skill: "PF2E.FeatTypeSkill",
-    general: "PF2E.FeatTypeGeneral",
-    bonus: "PF2E.FeatTypeBonus",
-    pfsboon: "PF2E.FeatTypePfsboon",
-    deityboon: "PF2E.FeatTypeDeityboon",
-    curse: "PF2E.FeatTypeCurse",
+    ancestry: "PF2E.Item.Feat.Category.Ancestry",
+    ancestryfeature: "PF2E.Item.Feat.Category.AncestryFeature",
+    class: "PF2E.Item.Feat.Category.Class",
+    classfeature: "PF2E.Item.Feat.Category.ClassFeature",
+    skill: "PF2E.Item.Feat.Category.Skill",
+    general: "PF2E.Item.Feat.Category.General",
+    bonus: "PF2E.Item.Feat.Category.Bonus",
+    pfsboon: "PF2E.Item.Feat.Category.PfsBoon",
+    deityboon: "PF2E.Item.Feat.Category.DeityBoon",
+    curse: "PF2E.Item.Feat.Category.Curse",
 };
 
 const creatureTypes = R.pick(creatureTraits, [
@@ -493,6 +493,7 @@ export const PF2ECONFIG = {
         "attached-to-crossbow-or-firearm-scope": "PF2E.TraitAttachedToCrossbowOrFirearmScope",
         "attached-to-firearm": "PF2E.TraitAttachedToFirearm",
         "attached-to-firearm-scope": "PF2E.TraitAttachedToFirearmScope",
+        "attached-to-melee-weapon": "PF2E.TraitAttachedToMeleeWeapon",
         "attached-to-ships-bow": "PF2E.TraitAttachedToShipsBow",
         bonded: "PF2E.TraitBonded",
         carried: "PF2E.TraitCarried",
@@ -699,10 +700,10 @@ export const PF2ECONFIG = {
     },
 
     actionCategories: {
-        interaction: "PF2E.Item.Action.Category.Interaction",
-        defensive: "PF2E.Item.Action.Category.Defensive",
-        offensive: "PF2E.Item.Action.Category.Offensive",
-        familiar: "PF2E.Item.Action.Category.Familiar",
+        interaction: "PF2E.Item.Ability.Category.Interaction",
+        defensive: "PF2E.Item.Ability.Category.Defensive",
+        offensive: "PF2E.Item.Ability.Category.Offensive",
+        familiar: "PF2E.Item.Ability.Category.Familiar",
     },
 
     frequencies: {

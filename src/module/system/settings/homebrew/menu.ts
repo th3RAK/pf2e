@@ -6,7 +6,7 @@ import { MigrationRunner } from "@module/migration/runner/index.ts";
 import { LanguageSelector } from "@system/tag-selector/languages.ts";
 import { ErrorPF2e, htmlClosest, htmlQuery, htmlQueryAll, localizer, objectHasKey, sluggify } from "@util";
 import Tagify from "@yaireo/tagify";
-import "@yaireo/tagify/src/tagify.scss";
+import "@yaireo/tagify/dist/tagify.css";
 import * as R from "remeda";
 import { PartialSettingsData, SettingsMenuPF2e } from "../menu.ts";
 import { DamageTypeManager } from "./damage.ts";
@@ -348,7 +348,7 @@ class HomebrewElements extends SettingsMenuPF2e {
     /** Register homebrew elements stored in a prescribed location in module flags */
     #registerModuleTags(): void {
         const settings = HomebrewElements.moduleData;
-        for (const [recordKey, tags] of R.entries.strict(settings.traits)) {
+        for (const [recordKey, tags] of R.entries(settings.traits)) {
             if (tags.length > 0) {
                 this.#updateConfigRecords(tags, recordKey);
             }

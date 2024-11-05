@@ -52,6 +52,7 @@ import type {
 } from "@system/statistic/index.ts";
 import { EnrichmentOptionsPF2e, TextEditorPF2e } from "@system/text-editor.ts";
 import { ErrorPF2e, localizer, objectHasKey, setHasElement, signedInteger, sluggify, tupleHasValue } from "@util";
+import { Duration } from "luxon";
 import * as R from "remeda";
 import { v5 as UUIDv5 } from "uuid";
 import { ActorConditions } from "./conditions.ts";
@@ -62,6 +63,7 @@ import type { ActorSourcePF2e } from "./data/index.ts";
 import { Immunity, Resistance, Weakness } from "./data/iwr.ts";
 import { ActorSizePF2e } from "./data/size.ts";
 import {
+    applyActorUpdate,
     auraAffectsActor,
     checkAreaEffects,
     createEncounterRollOptions,
@@ -75,7 +77,7 @@ import { ItemTransfer } from "./item-transfer.ts";
 import { applyStackingRules } from "./modifiers.ts";
 import type { ActorSheetPF2e } from "./sheet/base.ts";
 import type { ActorSpellcasting } from "./spellcasting.ts";
-import type { ActorType } from "./types.ts";
+import type { ActorRechargeData, ActorType } from "./types.ts";
 import {
     ACTOR_TYPES,
     CREATURE_ACTOR_TYPES,
@@ -168,7 +170,7 @@ class ActorPF2e<TParent extends TokenDocumentPF2e | null = TokenDocumentPF2e | n
 
     /** The UUID of the actor from which this one was copied (or is identical to if a compendium actor) **/
     get sourceId(): ActorUUID | null {
-        return this._id && this.pack ? this.uuid : this._stats.duplicateSource ?? this._stats.compendiumSource;
+        return this._id && this.pack ? this.uuid : (this._stats.duplicateSource ?? this._stats.compendiumSource);
     }
 
     /** The recorded schema version of this actor, updated after each data migration */
@@ -313,14 +315,15 @@ class ActorPF2e<TParent extends TokenDocumentPF2e | null = TokenDocumentPF2e | n
     }
 
     /** Add effect icons from effect items and rule elements */
-    override get temporaryEffects(): ActiveEffect<this>[] {
+    override get temporaryEffects(): ActiveEffectPF2e<this>[] {
         const fromConditions = this.conditions.map((c) => ActiveEffectPF2e.fromEffect(c));
         const fromEffects = this.itemTypes.effect
             .filter((e) => e.system.tokenIcon?.show && (e.isIdentified || game.user.isGM))
             .map((e) => ActiveEffectPF2e.fromEffect(e));
+        const temporaryEffects = super.temporaryEffects as ActiveEffectPF2e<this>[];
 
         return R.uniqueBy(
-            [super.temporaryEffects, fromConditions, fromEffects, this.synthetics.tokenEffectIcons].flat(),
+            [temporaryEffects, fromConditions, fromEffects, this.synthetics.tokenEffectIcons].flat(),
             (e) => e.img,
         );
     }
@@ -356,7 +359,7 @@ class ActorPF2e<TParent extends TokenDocumentPF2e | null = TokenDocumentPF2e | n
         const damageType = objectHasKey(CONFIG.PF2E.damageTypes, damage)
             ? damage
             : damage.isOfType("condition")
-              ? damage.system.persistent?.damageType ?? null
+              ? (damage.system.persistent?.damageType ?? null)
               : null;
 
         if (!setHasElement(UNAFFECTED_TYPES, damageType)) return true;
@@ -511,6 +514,78 @@ class ActorPF2e<TParent extends TokenDocumentPF2e | null = TokenDocumentPF2e | n
         }
     }
 
+    /** Recharges all abilities after some time has elapsed. */
+    async recharge(options: RechargeOptions): Promise<ActorRechargeData<this>> {
+        const commitData: ActorRechargeData<this> = {
+            actorUpdates: null,
+            itemCreates: [],
+            itemUpdates: [],
+            affected: {
+                frequencies: false,
+                spellSlots: false,
+                resources: [],
+            },
+        };
+
+        const elapsed = options.duration;
+        const specificDurations = ["turn", "round", "day"];
+        for (const item of [this.itemTypes.action, this.itemTypes.feat].flat()) {
+            // This item is irrelevant if there is no frequency or its already fully charged
+            if (!item.frequency || item.frequency.value >= item.frequency.max) {
+                continue;
+            }
+
+            const per = item.frequency.per;
+
+            // Handle special per values or daily prep. These do not ever update via time elapsing normally
+            // Greater ones refresh lower ones. Daily prep isn't necessarily 24 hours, but it is at least 8 hours of rest
+            const specificPerIdx = specificDurations.indexOf(per);
+            if (specificPerIdx >= 0 || elapsed === "day") {
+                const performUpdate =
+                    specificPerIdx >= 0
+                        ? specificDurations.indexOf(elapsed) >= specificPerIdx
+                        : Duration.fromISO(per) <= Duration.fromISO("PT8H");
+                if (performUpdate) {
+                    const frequency = { value: item.frequency.max };
+                    commitData.itemUpdates.push({ _id: item.id, system: { frequency } });
+                    commitData.affected.frequencies = true;
+                }
+            }
+        }
+
+        // If this recharge is for daily prep, perform daily prep updates
+        if (elapsed === "day") {
+            const spellcastingRecharge = this.spellcasting?.recharge();
+            if (spellcastingRecharge) {
+                commitData.actorUpdates = spellcastingRecharge.actorUpdates;
+                commitData.itemUpdates.push(...spellcastingRecharge.itemUpdates);
+                commitData.affected.spellSlots = spellcastingRecharge.itemUpdates.length > 0;
+            }
+
+            // Restore special resources
+            for (const resource of Object.values(this.synthetics.resources)) {
+                const updates = await resource.update(resource.max, { save: false });
+                commitData.itemCreates.push(...updates.itemCreates);
+                commitData.itemUpdates.push(...updates.itemUpdates);
+                if (updates.itemCreates.length || updates.itemUpdates.length) {
+                    commitData.affected.resources.push(resource.slug);
+                }
+            }
+        }
+
+        // Log what resources got updated in commit data
+        const commitSystemData = commitData.actorUpdates?.system;
+        commitData.affected.resources =
+            commitSystemData && "resources" in commitSystemData ? Object.keys(commitSystemData.resources ?? {}) : [];
+
+        // Commit to the database unless commit is explicitly set to false
+        if (options.commit !== false) {
+            await applyActorUpdate(this, commitData);
+        }
+
+        return commitData;
+    }
+
     /** Don't allow the user to create in-development actor types. */
     static override createDialog<TDocument extends foundry.abstract.Document>(
         this: ConstructorOf<TDocument>,
@@ -639,6 +714,10 @@ class ActorPF2e<TParent extends TokenDocumentPF2e | null = TokenDocumentPF2e | n
         return super.updateDocuments(updates, operation);
     }
 
+    /* -------------------------------------------- */
+    /*  Data Preparation                            */
+    /* -------------------------------------------- */
+
     /** Set module art if available */
     protected override _initializeSource(
         source: Record<string, unknown>,
@@ -672,11 +751,13 @@ class ActorPF2e<TParent extends TokenDocumentPF2e | null = TokenDocumentPF2e | n
             damageDice: { damage: [] },
             degreeOfSuccessAdjustments: {},
             dexterityModifierCaps: [],
+            itemAlterations: [],
             modifierAdjustments: { all: [], damage: [] },
             modifiers: { all: [], damage: [] },
             movementTypes: {},
             multipleAttackPenalties: {},
             ephemeralEffects: {},
+            resources: {},
             rollNotes: {},
             rollSubstitutions: {},
             rollTwice: {},
@@ -698,14 +779,14 @@ class ActorPF2e<TParent extends TokenDocumentPF2e | null = TokenDocumentPF2e | n
     /**
      * Never prepare data except as part of `DataModel` initialization. If embedded, don't prepare data if the parent is
      * not yet initialized. See https://github.com/foundryvtt/foundryvtt/issues/7987
+     * @todo remove in V13
      */
     override prepareData(): void {
-        if (this.initialized) return;
-
+        if (game.release.generation === 12 && (this.initialized || (this.parent && !this.parent.initialized))) {
+            return;
+        }
         // Set after data model is initialized so that `this.id` will be defined (and `this.uuid` will be complete)
         this.signature ??= UUIDv5(this.uuid, "e9fa1461-0edc-4791-826e-08633f1c6ef7"); // magic number as namespace
-
-        if (this.parent && !this.parent.initialized) return;
         this.initialized = true;
         super.prepareData();
 
@@ -888,7 +969,7 @@ class ActorPF2e<TParent extends TokenDocumentPF2e | null = TokenDocumentPF2e | n
         suboption: string | null = null,
     ): Promise<boolean | null> {
         // Backward compatibility
-        value = typeof itemId === "boolean" ? itemId : value ?? !this.rollOptions[domain]?.[option];
+        value = typeof itemId === "boolean" ? itemId : (value ?? !this.rollOptions[domain]?.[option]);
 
         type MaybeRollOption = { key: string; domain?: unknown; option?: unknown };
         if (typeof itemId === "string") {
@@ -944,6 +1025,17 @@ class ActorPF2e<TParent extends TokenDocumentPF2e | null = TokenDocumentPF2e | n
                 const item = this.items.get(itemId);
                 await item?.update({ "system.hp.value": damage });
             }
+            return this;
+        }
+
+        // If this is a resource, update the resource instead. It may be a SpecialResource rule element.
+        const actor = token?.actor;
+        const isCreature = actor?.isOfType("creature");
+        const resourceMatch = isCreature ? /^resources\.([\w-]+)/.exec(attribute) : null;
+        if (isCreature && resourceMatch) {
+            const resource = resourceMatch[1];
+            const newValue = isDelta ? (actor.system.resources?.[resource]?.value ?? 0) + value : value;
+            await actor.updateResource(resource, newValue);
             return this;
         }
 
@@ -1086,11 +1178,11 @@ class ActorPF2e<TParent extends TokenDocumentPF2e | null = TokenDocumentPF2e | n
                   })()
                 : false;
 
-        const shieldHardness = shieldBlock ? actorShield?.hardness ?? 0 : 0;
+        const shieldHardness = shieldBlock ? (actorShield?.hardness ?? 0) : 0;
         const damageAbsorbedByShield = finalDamage > 0 ? Math.min(shieldHardness, finalDamage) : 0;
         // The blocking shield may not be the held shield, such as in when the Shield spell is in play
         const blockingShield = heldShield?.id === actorShield?.itemId ? heldShield : null;
-        const currentShieldHP = blockingShield ? blockingShield._source.system.hp.value : actorShield?.hp.value ?? 0;
+        const currentShieldHP = blockingShield ? blockingShield._source.system.hp.value : (actorShield?.hp.value ?? 0);
         const shieldDamage = shieldBlock
             ? Math.min(currentShieldHP, Math.abs(finalDamage) - damageAbsorbedByShield)
             : 0;
@@ -1105,7 +1197,7 @@ class ActorPF2e<TParent extends TokenDocumentPF2e | null = TokenDocumentPF2e | n
             const damageHasAdamantine = typeof damage === "number" ? false : damage.materials.has("adamantine");
             const materialGrade =
                 item?.isOfType("weapon") && item.system.material.type === "adamantine"
-                    ? item.system.material.grade ?? "standard"
+                    ? (item.system.material.grade ?? "standard")
                     : "standard";
             // Hardness values for thin adamantine items (inclusive of weapons):
             const itemHardness = {
@@ -1150,7 +1242,7 @@ class ActorPF2e<TParent extends TokenDocumentPF2e | null = TokenDocumentPF2e | n
             );
         }
 
-        const staminaMax = this.isOfType("character") ? this.attributes.hp.sp?.max ?? 0 : 0;
+        const staminaMax = this.isOfType("character") ? (this.attributes.hp.sp?.max ?? 0) : 0;
         const instantDeath = ((): string | null => {
             if (damageResult.totalApplied <= 0 || damageResult.updates["system.attributes.hp.value"] !== 0) {
                 return null;
@@ -1713,10 +1805,10 @@ class ActorPF2e<TParent extends TokenDocumentPF2e | null = TokenDocumentPF2e | n
     override async toggleStatusEffect(
         statusId: string,
         options?: { active?: boolean; overlay?: boolean },
-    ): Promise<boolean | void | ActiveEffect<this>> {
+    ): Promise<boolean | void | ActiveEffectPF2e<this>> {
         return setHasElement(CONDITION_SLUGS, statusId)
             ? this.toggleCondition(statusId, options)
-            : super.toggleStatusEffect(statusId, options);
+            : (super.toggleStatusEffect(statusId, options) as Promise<boolean | void | ActiveEffectPF2e<this>>);
     }
 
     /** Assess and pre-process this JSON data, ensuring it's importable and fully migrated */
@@ -1883,6 +1975,12 @@ interface ActorUpdateOperation<TParent extends TokenDocumentPF2e | null> extends
 
 interface EmbeddedItemUpdateOperation<TParent extends ActorPF2e> extends DatabaseUpdateOperation<TParent> {
     checkHP?: boolean;
+}
+
+interface RechargeOptions {
+    /** How much time elapsed as a delta operation */
+    duration: "turn" | "round" | "day";
+    commit?: boolean;
 }
 
 /** A `Proxy` to to get Foundry to construct `ActorPF2e` subclasses */

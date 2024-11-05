@@ -8,8 +8,16 @@ import { coerceToSpellGroupId, spellSlotGroupIdToNumber } from "@item/spellcasti
 import { SpellcastingSheetData } from "@item/spellcasting-entry/index.ts";
 import { DropCanvasItemDataPF2e } from "@module/canvas/drop-canvas-data.ts";
 import { OneToTen, ZeroToFour, goesToEleven } from "@module/data.ts";
-import { eventToRollParams } from "@scripts/sheet-util.ts";
-import { ErrorPF2e, createHTMLElement, fontAwesomeIcon, htmlClosest, htmlQueryAll, tupleHasValue } from "@util";
+import {
+    ErrorPF2e,
+    createHTMLElement,
+    fontAwesomeIcon,
+    htmlClosest,
+    htmlQueryAll,
+    sluggify,
+    tupleHasValue,
+} from "@util";
+import { eventToRollParams } from "@util/sheet.ts";
 import * as R from "remeda";
 import { ActorSheetPF2e, SheetClickActionHandlers } from "../sheet/base.ts";
 import { CreatureConfig } from "./config.ts";
@@ -53,6 +61,9 @@ abstract class CreatureSheetPF2e<TActor extends CreaturePF2e> extends ActorSheet
                 remainingDying: Math.max(actor.attributes.dying.max - actor.attributes.dying.value),
                 remainingWounded: Math.max(actor.attributes.wounded.max - actor.attributes.wounded.value),
             },
+            specialResources: Object.values(this.actor.synthetics.resources)
+                .filter((r) => !r.itemUUID)
+                .map((r) => R.pick(r, ["slug", "label", "value", "max"])),
         };
     }
 
@@ -61,7 +72,7 @@ abstract class CreatureSheetPF2e<TActor extends CreaturePF2e> extends ActorSheet
         const entry = this.actor.items.get(collectionId, { strict: true });
         if (entry?.isOfType("spellcastingEntry") && entry.isPrepared) {
             const referenceEl = htmlClosest(event?.target, "[data-action=open-spell-preparation]");
-            const offset = referenceEl ? $(referenceEl).offset() ?? { left: 0, top: 0 } : null;
+            const offset = referenceEl ? ($(referenceEl).offset() ?? { left: 0, top: 0 }) : null;
             const options = offset ? { top: offset.top - 60, left: offset.left + 200 } : {};
             const sheet = new SpellPreparationSheet(entry, options);
             sheet.render(true);
@@ -93,6 +104,41 @@ abstract class CreatureSheetPF2e<TActor extends CreaturePF2e> extends ActorSheet
             });
             pips.addEventListener("contextmenu", () => {
                 return this.actor.decreaseCondition(slug);
+            });
+        }
+
+        // Resource Pips
+        const resourcePips = htmlQueryAll(html, "[data-action=adjust-resource]:not(input)");
+        if (resourcePips.length > 0) {
+            const listener = (event: Event) => {
+                const resources = this.actor.system.resources;
+                const resource = htmlClosest(event.target, "[data-resource]")?.dataset.resource;
+                if (!resource || !resources || !(sluggify(resource, { camel: "dromedary" }) in resources)) {
+                    return;
+                }
+
+                const current = resources[resource]?.value ?? 0;
+                const change = event.type === "click" ? 1 : -1;
+                this.actor.updateResource(resource, current + change);
+            };
+
+            for (const pips of resourcePips) {
+                pips.addEventListener("click", listener);
+                pips.addEventListener("contextmenu", listener);
+            }
+        }
+
+        // Resource Input Fields
+        const resourceInputs = htmlQueryAll<HTMLInputElement>(html, "input[data-resource]");
+        for (const element of resourceInputs) {
+            const resources = this.actor.system.resources;
+            const resource = element.dataset.resource;
+            if (!resource || !resources || !(sluggify(resource, { camel: "dromedary" }) in resources)) {
+                return;
+            }
+
+            element.addEventListener("change", () => {
+                this.actor.updateResource(resource, Number(element.value));
             });
         }
     }
@@ -474,6 +520,12 @@ interface CreatureSheetData<TActor extends CreaturePF2e> extends ActorSheetDataP
         remainingDying: number;
         remainingWounded: number;
     };
+    specialResources: {
+        slug: string;
+        label: string;
+        value: number;
+        max: number;
+    }[];
 }
 
 export { CreatureSheetPF2e, type CreatureSheetData };

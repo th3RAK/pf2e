@@ -23,7 +23,6 @@ import type {
 } from "types/foundry/common/data/fields.d.ts";
 import { RuleElementOptions, RuleElementPF2e } from "./base.ts";
 import { ModelPropsFromRESchema, ResolvableValueField, RuleElementSchema, RuleElementSource } from "./data.ts";
-import { ItemAlterationRuleElement } from "./item-alteration/rule-element.ts";
 
 /**
  * Create an ephemeral strike on an actor
@@ -43,7 +42,7 @@ class StrikeRuleElement extends RuleElementPF2e<StrikeSchema> {
         this.battleForm ??= false;
         this.options ??= [];
         this.graspingAppendage = ["fist", "claw"].includes(this.baseType ?? "")
-            ? this.graspingAppendage ?? true
+            ? (this.graspingAppendage ?? true)
             : this.category === "unarmed" || this.traits.includes("unarmed")
               ? !!this.graspingAppendage
               : false;
@@ -250,7 +249,7 @@ class StrikeRuleElement extends RuleElementPF2e<StrikeSchema> {
             flags: {
                 pf2e: {
                     battleForm: this.battleForm,
-                    fixedAttack: actorIsNPC ? this.attackModifier ?? null : null,
+                    fixedAttack: actorIsNPC ? (this.attackModifier ?? null) : null,
                 },
             },
             system: {
@@ -261,7 +260,7 @@ class StrikeRuleElement extends RuleElementPF2e<StrikeSchema> {
                 baseItem: this.baseType,
                 attribute,
                 bonus: {
-                    value: actorIsNPC ? this.attackModifier ?? 0 : 0,
+                    value: actorIsNPC ? (this.attackModifier ?? 0) : 0,
                 },
                 damage: {
                     ...this.damage.base,
@@ -280,7 +279,7 @@ class StrikeRuleElement extends RuleElementPF2e<StrikeSchema> {
                     },
                 },
                 options: { value: this.options },
-                runes: this.category === "unarmed" ? unarmedRunes ?? {} : {},
+                runes: this.category === "unarmed" ? (unarmedRunes ?? {}) : {},
                 usage: { value: "held-in-one-hand" },
                 equipped: {
                     carryType: "held",
@@ -293,8 +292,7 @@ class StrikeRuleElement extends RuleElementPF2e<StrikeSchema> {
         const weapon = new WeaponPF2e(source, { parent: actor });
         weapon.rule = this;
         weapon.name = weapon._source.name; // Remove renaming by runes
-        const alterations = actor.rules.filter((r): r is ItemAlterationRuleElement => r.key === "ItemAlteration");
-        for (const alteration of alterations) {
+        for (const alteration of actor.synthetics.itemAlterations) {
             alteration.applyAlteration({ singleItem: weapon });
         }
 

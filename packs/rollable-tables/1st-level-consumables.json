@@ -435,7 +435,7 @@
             "documentCollection": "pf2e.equipment-srd",
             "documentId": "Km4lSOsyrip5q6iD",
             "drawn": false,
-            "img": "systems/pf2e/icons/equipment/snares/hampering-snare.webp",
+            "img": "icons/commodities/wood/kindling-sticks-yellow.webp",
             "range": [
                 181,
                 186
@@ -449,7 +449,7 @@
             "documentCollection": "pf2e.equipment-srd",
             "documentId": "oplQpQSTyTvHDDtq",
             "drawn": false,
-            "img": "systems/pf2e/icons/equipment/snares/marking-snare.webp",
+            "img": "icons/consumables/potions/potion-jar-corked-glowing-blue.webp",
             "range": [
                 187,
                 192
@@ -561,7 +561,7 @@
             "documentCollection": "pf2e.equipment-srd",
             "documentId": "y4WJY8rCbY6d1MET",
             "drawn": false,
-            "img": "systems/pf2e/icons/equipment/alchemical-items/alchemical-tools/sunrod.webp",
+            "img": "icons/weapons/wands/wand-carved-fire.webp",
             "range": [
                 235,
                 240

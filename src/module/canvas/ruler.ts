@@ -148,13 +148,13 @@ class RulerPF2e<TToken extends TokenPF2e | null = TokenPF2e | null> extends Rule
                 .filter(
                     (r) =>
                         r.document.behaviors.some(
-                            (b) => b.type === "environmentFeature" && b.system.terrain.difficult > 0,
+                            (b) => !b.disabled && b.type === "environmentFeature" && b.system.terrain.difficult > 0,
                         ) && token.testInsideRegion(r, toPoint),
                 )
                 .flatMap((r) =>
                     r.document.behaviors.filter(
                         (b): b is EnvironmentFeatureRegionBehavior<RegionDocumentPF2e<ScenePF2e>> =>
-                            b.type === "environmentFeature" && b.system.terrain.difficult > 0,
+                            !b.disabled && b.type === "environmentFeature" && b.system.terrain.difficult > 0,
                     ),
                 );
 
@@ -236,8 +236,9 @@ class RulerPF2e<TToken extends TokenPF2e | null = TokenPF2e | null> extends Rule
         return super._animateSegment(token, segment, destination);
     }
 
-    /** If measuring with a token, only broadcast during an encounter. */
+    /** If measuring with a token, broadcast if the token is not hidden and only during encounters. */
     protected override _broadcastMeasurement(): void {
+        if (this.token?.document.hidden) return;
         if (!this.dragMeasurement || game.activeTool === "ruler" || game.combat?.started) {
             return super._broadcastMeasurement();
         }

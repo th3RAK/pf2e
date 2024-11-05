@@ -45,10 +45,8 @@
         },
         {
             "_id": "qvwIwJ9QBihy8R0t",
-            "flags": {
-                "core": {
-                    "sourceId": "Compendium.pf2e.spells-srd.Item.qvwIwJ9QBihy8R0t"
-                }
+            "_stats": {
+                "compendiumSource": "Compendium.pf2e.spells-srd.Item.qvwIwJ9QBihy8R0t"
             },
             "img": "icons/magic/nature/plant-poison-spit-green.webp",
             "name": "Speak with Plants",
@@ -210,7 +208,7 @@
                 "category": "defensive",
                 "deathNote": true,
                 "description": {
-                    "value": "<p>When a follower of Shumfallow dies, a burst of primal energy explodes from its body, restoring [[/r 1d8[healing]]]{1d8 Hit Points} to each fungus creature in a @Template[emanation|distance:30]. This area is filled with fungi, becoming difficult terrain. If the terrain is not a viable environment for this fungi, they wither after 24 hours.</p>"
+                    "value": "<p>When a follower of Shumfallow dies, a burst of primal energy explodes from its body, restoring @Damage[1d8[healing]] Hit Points to each fungus creature in a @Template[emanation|distance:30]. This area is filled with fungi, becoming difficult terrain. If the terrain is not a viable environment for this fungi, they wither after 24 hours.</p>"
                 },
                 "publication": {
                     "license": "OGL",
@@ -230,10 +228,8 @@
         },
         {
             "_id": "m2Yh3ElHq4mWrY6O",
-            "flags": {
-                "core": {
-                    "sourceId": "Compendium.pf2e.bestiary-ability-glossary-srd.Item.eQM5hQ1W3d1uen97"
-                }
+            "_stats": {
+                "compendiumSource": "Compendium.pf2e.bestiary-ability-glossary-srd.Item.eQM5hQ1W3d1uen97"
             },
             "img": "systems/pf2e/icons/actions/OneAction.webp",
             "name": "Change Shape",
