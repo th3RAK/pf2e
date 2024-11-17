@@ -402,7 +402,8 @@ class Kingdom extends DataModel<PartyPF2e, KingdomSchema> implements PartyCampai
             settlement.storage["danger"] = typeData.danger * Object.keys(settlement.districts).length
 
             // Initialize settlement data
-            const districts = R.compact(Object.values(settlement.districts));
+            //const districts = R.compact(Object.values(settlement.districts));
+            const districts = Object.values(settlement.districts);
             for (const district of districts) {
                 if (!district) continue;
                 KINGDOM_SETTLEMENT_GRID_BLOCKS.forEach((block) => {
